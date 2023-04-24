@@ -124,7 +124,7 @@ Presentamos el bucle principal en el que se basa toda la interacción de cada in
 
 ## Link de video de presentación:
 
-https://youtu.be/nkVhM3Y2_gY
+https://youtu.be
 
 ## Autores:
 + Bladimir Alferez Vicente
