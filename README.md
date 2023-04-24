@@ -1,7 +1,7 @@
 # Proyecto 1 - Parte Web
 
 <p align="center">
-<img width="460" height="400" src="maze logo.png">
+  <img src="https://github.com/bianca-ap01/ProyectoDBP/blob/main/logo.png" width="460" height="400">
 </p>
 
 <details open>
