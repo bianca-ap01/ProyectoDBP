@@ -13,25 +13,28 @@ import os
 
 # Configuration
 app = Flask(__name__)
-                                    #Dialect://username:password@host:port/dbname
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://alva:123@localhost:5432/test'
-app.config['UPLOAD_FOLDER'] = 'static/employees'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres@localhost:5432/dbCPC'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 
 # Models
-
-    
 with app.app_context():
    #Convertir el modelo en una tabla
    db.create_all()
 
+
+
+
 # Routes
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html')
+    return render_template('home.html')
+
+
+
 
 # Run the app
 if __name__ == '__main__':
