@@ -1,4 +1,4 @@
-# Proyecto Final 2023-0 
+# Proyecto 1 - Parte Web
 
 <p align="center">
 <img width="460" height="400" src="maze logo.jpg">
