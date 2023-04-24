@@ -1,7 +1,7 @@
 # Proyecto 1 - Parte Web
 
 <p align="center">
-<img width="460" height="400" src="maze logo.jpg">
+<img width="460" height="400" src="maze logo.png">
 </p>
 
 <details open>
