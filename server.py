@@ -38,7 +38,7 @@ class Usuario(db.Model):
     fecha_de_nacimiento = db.Column(db.Date(), nullable = True)
     created_at = db.Column(db.DateTime(timezone=True), nullable = False, server_default=db.text("now()"))
     modified_at = db.Column(db.DateTime(timezone=True), nullable = False, server_default=db.text("now()"))
-    miembro = db.relationship('miembros', backref='usuarios', lazy=True)
+    miembros = db.relationship('Miembro', backref='usuarios', lazy=True)
 
     def __init__(self, name, lastname, nickname, fecha_de_nacimiento, codeforces_handle, atcoder_handle, vjudge_handle):
         self.name = name
@@ -57,16 +57,65 @@ class Usuario(db.Model):
 
 class Miembro(Usuario):
     __tablename__ = 'miembros'
-    user_id = db.Column(db.String(36), db.ForeignKey('usuarios.id'), nullable=False)
-    
-    
+    user_id = db.Column(db.String(36), db.ForeignKey('usuarios.id'), nullable=False, primary_key=True)
+    __mapper_args__ = {
+        'polymorphic_identity': 'miembro',
+    }
+class NoMiembro(Usuario):
+    __tablename__ = 'no_miembros'
+    user_id = db.Column(db.String(36), db.ForeignKey('usuarios.id'), nullable=False, primary_key=True)
+    principiante = db.Column(db.Boolean, nullable=False)
+    status = db.Column(db.Boolean, nullable=False)
+    suscrito = db.Column(db.Boolean, nullable=False)
+    __mapper_args__ = {
+        'polymorphic_identity': 'no_miembro',
+    }
+class Profesor(db.Model):
+    __tablename__ = 'profesores'
+    id = db.Column(db.String(36), nullable=False, default=lambda:str(uuid.uuid4()), primary_key=True)
+    nombre = db.Column(db.String(50), nullable=False)
+    apellido = db.Column(db.String(50), nullable=False)
+    correo = db.Column(db.String(100), nullable=False)
+    status = db.Column(db.Boolean, nullable=False)
+    equipo_id = db.Column(db.String(36), db.ForeignKey('equipos.id'), nullable=True)
+
+class Equipo(db.Model):
+    __tablename__ = 'equipos'
+    id = db.Column(db.String(36), nullable=False, default=lambda:str(uuid.uuid4()), primary_key=True)
+    nombre = db.Column(db.String(50), nullable=False)
+    profe_id = db.Column(db.String(36), db.ForeignKey('profesores.id'), nullable=False)
+    status = db.Column(db.Boolean, nullable=False)
+    profesor = db.relationship('Profesor', backref='equipos', lazy=True)
+
+class Contest(db.Model):
+    __tablename__ = 'contests'
+    id = db.Column(db.String(36), nullable=False, default=lambda:str(uuid.uuid4()), primary_key=True)
+    cantidad_problemas = db.Column(db.Integer, nullable=False)
+    privacidad = db.Column(db.Boolean, nullable=False)
+    nombre = db.Column(db.String(50), nullable=False)
+    duracion = db.Column(db.Integer, nullable=False)
+
+class Problema(db.Model):
+    __tablename__ = 'problemas'
+    id = db.Column(db.String(36), nullable=False, default=lambda:str(uuid.uuid4()), primary_key=True)
+    contest_id = db.Column(db.String(36), db.ForeignKey('contests.id'), nullable=False)
+    link = db.Column(db.String(100), nullable=False)
+    nombre = db.Column(db.String(50), nullable=False)
+    clave = db.Column(db.String(10), nullable=False)
+    plataforma = db.Column(db.String(50), nullable=False)
+    contest = db.relationship('Contest', backref='problemas', lazy=True)
+
+class Directiva(db.Model):
+    __tablename__ = 'directivas'
+    id = db.Column(db.String(36), nullable=False, default=lambda:str(uuid.uuid4()), primary_key=True)
+    cargo = db.Column(db.String(50), nullable=False)
+    fecha_salida_cargo = db.Column(db.DateTime(timezone=True), nullable=True)
+    fecha_entrada_cargo = db.Column(db.DateTime(timezone=True), nullable=False)
 
 # Routes
 @app.route('/', methods=['GET'])
 def home():
     return render_template('home.html')
-
-
 
 
 # Run the app
