@@ -117,6 +117,10 @@ class Directiva(db.Model):
 def home():
     return render_template('home.html')
 
+@app.route('/faq', methods=['GET'])
+def faq():
+    return render_template('faq.html')
+
 
 # Run the app
 if __name__ == '__main__':
