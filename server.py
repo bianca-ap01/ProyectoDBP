@@ -165,28 +165,22 @@ class Directiva(db.Model):
         'miembros.user_id'), nullable=True)
 
 # Routes
-
-
 @login_manager.user_loader
 def load_user(user_id):
     return Usuario.query.get(user_id)
-
 
 @app.route('/', methods=['GET'])
 def home():
     return render_template('home.html')
 
-
 @app.route('/faq', methods=['GET'])
 def faq():
     return render_template('faq.html')
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        user = Usuario.query.filter_by(
-            nickname=request.form['nickname']).first()
+        user = Usuario.query.filter_by(nickname=request.form['username']).first()
         if user:
             if user.password == request.form['password']:
                 login_user(user)
@@ -201,6 +195,40 @@ def login():
     else:
         return render_template('login.html')
 
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        mail = Usuario.query.filter_by(email=request.form['email']).first()
+        nusername = Usuario.query.filter_by(nickname=request.form['username']).first()
+        if mail and nusername:
+            if mail.email == request.form['email']:
+                flash('El correo ya está registrado')
+                return redirect(url_for('signup'))
+            elif nusername.username == request.form['username']:
+                flash('El nickname ya está registrado')
+                return redirect(url_for('signup'))
+            elif request.form['password'] != request.form['confirm_password']:
+                flash('Las contraseñas no coinciden')
+                return redirect(url_for('signup'))
+            else:
+                user = Usuario(
+                    nickname=request.form['username'],
+                    email=request.form['email'],
+                    password=request.form['password'],
+                    nombre=request.form['nombre'],
+                    apellido=request.form['apellido'],
+                    vjudge_handle=request.form['vjudge_handle'],
+                    fecha_de_nacimiento=request.form['fecha_de_nacimiento']
+                )
+                db.session.add(user)
+                db.session.commit()
+                flash('Te has registrado correctamente')
+                return redirect(url_for('home'))
+        else:
+            flash('Usuario no encontrado')
+            return redirect(url_for('signup'))
+    else:
+        return render_template('signup.html')
 
 @app.route('/logout')
 @login_required
