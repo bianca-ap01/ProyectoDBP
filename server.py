@@ -171,6 +171,12 @@ def login():
     else:
         return render_template('login.html')
 
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('Has cerrado sesión correctamente')
+    return redirect(url_for('home'))
 
 # Run the app
 if __name__ == '__main__':
