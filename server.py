@@ -3,7 +3,11 @@ from flask import (
     jsonify, 
     render_template, 
     request,
-    abort
+    abort,
+    redirect,
+    url_for,
+    session,
+    flash
 )
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import UUID
@@ -11,15 +15,23 @@ from flask_migrate import Migrate
 import uuid
 import os
 from datetime import datetime
+from flask_login import (
+    LoginManager,
+    current_user,
+    login_required,
+    login_user,
+    logout_user
+)
 
 # Configuration
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres@localhost:5432/dbCPC'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-
 
 # Models
 with app.app_context():
@@ -53,6 +65,22 @@ class Usuario(db.Model):
 
     def __repr__(self):
         return f"Usuario {self.name} {self.nickname}"
+    
+    def serialize(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'lastname': self.lastname,
+            'nickname': self.nickname,
+            'codeforces_handle': self.codeforces_handle,
+            'atcoder_handle': self.atcoder_handle,
+            'vjudge_handle': self.vjudge_handle,
+            'fecha_de_nacimiento': self.fecha_de_nacimiento,
+            'created_at': self.created_at,
+            'modified_at': self.modified_at
+        }
+    
+
 
 
 class Miembro(Usuario):
@@ -113,6 +141,10 @@ class Directiva(db.Model):
     fecha_entrada_cargo = db.Column(db.DateTime(timezone=True), nullable=False)
 
 # Routes
+@login_manager.user_loader
+def load_user(user_id):
+    return Usuario.query.get(user_id)
+
 @app.route('/', methods=['GET'])
 def home():
     return render_template('home.html')
@@ -120,6 +152,24 @@ def home():
 @app.route('/faq', methods=['GET'])
 def faq():
     return render_template('faq.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        user = Usuario.query.filter_by(nickname=request.form['nickname']).first()
+        if user:
+            if user.password == request.form['password']:
+                login_user(user)
+                flash('Has iniciado sesión correctamente')
+                return redirect(url_for('home'))
+            else:
+                flash('Contraseña incorrecta')
+                return redirect(url_for('login'))
+        else:
+            flash('Usuario no encontrado')
+            return redirect(url_for('login'))
+    else:
+        return render_template('login.html')
 
 
 # Run the app
