@@ -87,7 +87,7 @@ class Usuario(db.Model):
 
 class Miembro(Usuario):
     __tablename__ = 'miembros'
-    __table_args__ = {'extend_existing': True}
+    # __table_args__ = {'extend_existing': True}
     user_id = db.Column(db.String(36), db.ForeignKey(
         'usuarios.id'), nullable=False, primary_key=True)
     miembro_directiva = db.relationship(
@@ -99,8 +99,7 @@ class Miembro(Usuario):
 
 class Profesor(db.Model):
     __tablename__ = 'profesores'
-    __table_args__ = {'extend_existing': True}
-    __table_args__ = {'extend_existing': True}
+   # __table_args__ = {'extend_existing': True}
     id = db.Column(db.String(36), nullable=False,
                    default=lambda: str(uuid.uuid4()), primary_key=True)
     nombre = db.Column(db.String(50), nullable=False)
@@ -119,7 +118,7 @@ profesor_equipo = db.Table('profesor_equipo',
 
 class Equipo(db.Model):
     __tablename__ = 'equipos'
-    __table_args__ = {'extend_existing': True}
+    # __table_args__ = {'extend_existing': True}
     id = db.Column(db.String(36), nullable=False,
                    default=lambda: str(uuid.uuid4()), primary_key=True)
     nombre = db.Column(db.String(50), nullable=False)
@@ -132,7 +131,7 @@ class Equipo(db.Model):
 
 class Contest(db.Model):
     __tablename__ = 'contests'
-    __table_args__ = {'extend_existing': True}
+    # __table_args__ = {'extend_existing': True}
     id = db.Column(db.String(36), nullable=False,
                    default=lambda: str(uuid.uuid4()), primary_key=True)
     cantidad_problemas = db.Column(db.Integer, nullable=False)
