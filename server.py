@@ -173,6 +173,14 @@ def load_user(user_id):
 def home():
     return render_template('home.html')
 
+@app.route('/blog', methods=['GET'])
+def blog():
+    return render_template('blog.html')
+
+@app.route('/aboutus', methods=['GET'])
+def aboutus():
+    return render_template('aboutus.html')
+
 @app.route('/faq', methods=['GET'])
 def faq():
     return render_template('faq.html')
