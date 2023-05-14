@@ -183,7 +183,7 @@ contest_problem = db.Table('contest_problem', db.Column('contest_id', db.String(
     'contests.id')), db.Column('problem_id', db.String(36), db.ForeignKey('problems.id')))
 
 
-class Problema(db.Model):
+class Problem(db.Model):
     __tablename__ = 'problems'
     id = db.Column(db.String(36), nullable=False,
                    default=lambda: str(uuid.uuid4()), primary_key=True)
@@ -269,13 +269,16 @@ def load_user(user_id):
 def home():
     return render_template('home.html')
 
+
 @app.route('/blog', methods=['GET'])
 def blog():
     return render_template('blog.html')
 
+
 @app.route('/aboutus', methods=['GET'])
 def aboutus():
     return render_template('aboutus.html')
+
 
 @app.route('/faq', methods=['GET'])
 def faq():
