@@ -335,9 +335,6 @@ def login():
 
     else:
         return render_template('login.html')
-    
-    
-
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -385,7 +382,7 @@ def logout():
 
 @app.route('/profile/edit', methods=['GET', 'POST'])
 @login_required
-def profile():
+def profile_edit():
     if request.method == 'POST':
         try:
             _nickname = request.form['nickname']
