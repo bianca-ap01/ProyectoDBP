@@ -56,6 +56,7 @@ class User(db.Model):
     vjudge_handle = db.Column(db.String(30), nullable=True, unique=True)
     date_of_birth = db.Column(db.Date(), nullable=True, unique=False)
     image = db.Column(db.String(500), nullable=True, unique=False)
+    hpassword = db.Column(db.String(100), nullable=False)
 
     created_at = db.Column(db.DateTime(timezone=True),
                            nullable=False, server_default=db.text("now()"))
@@ -64,7 +65,7 @@ class User(db.Model):
     members = db.relationship('Member', backref='users', lazy=True)
     board = db.relationship('Board', backref='users', lazy=True)
 
-    def __init__(self, nickname, email, date_of_birth, codeforces_handle, atcoder_handle, vjudge_handle, image):
+    def __init__(self, nickname, email, date_of_birth, codeforces_handle, atcoder_handle, vjudge_handle, image, hpassword):
         self.nickname = nickname
         self.email = email
         self.date_of_birth = date_of_birth
@@ -74,6 +75,7 @@ class User(db.Model):
         self.image = image
         self.created_at = datetime.utcnow()
         self.modified_at = datetime.utcnow()
+        self.hpassword = generate_password_hash(hpassword)
 
     def __repr__(self):
         return f"User {self.nickname}"
@@ -326,7 +328,7 @@ def login():
         user = User.query.filter_by(
             nickname=request.form['nickname']).first()
         if user:
-            if check_password_hash(user.password, request.form['password']):
+            if check_password_hash(user.hpassword, request.form['password']):
                 login_user(user)
                 flash('Has iniciado sesión correctamente')
                 return redirect(url_for('home'), 200)
@@ -369,29 +371,37 @@ def signup():
             if User.query.filter_by(email=_email).first():
                 flash('El email ya está registrado')
                 return redirect(url_for('signup'), 401)
+            
+            if _image.filename == '':
+                _image.filename = 'default.png'
+            
+            _password = generate_password_hash(_password)
 
-            user = User(_nickname, _email, _date_of_birth,
-                        _codeforces_handle, _atcoder_handle, _vjudge_handle, _image)
+            user = User(
+                _nickname, _email, _date_of_birth,
+                _codeforces_handle, _atcoder_handle, _vjudge_handle,
+                _image.filename, generate_password_hash(_password)
+                )
+            
+            if _image.filename != 'default.png':
+                cwd = os.getcwd()
 
+                users_dir = os.path.join(app.config['UPLOAD_FOLDER'], user.id)
+                os.makedirs(users_dir, exist_ok=True)
+
+                upload_folder = os.path.join(cwd, users_dir)
+                _image.save(os.path.join(upload_folder, _image.filename))
+            
             db.session.add(user)
             db.session.commit()
-
-            cwd = os.getcwd()
-
-            users_dir = os.path.join(app.config['UPLOAD_FOLDER'], user.id)
-            os.makedirs(users_dir, exist_ok=True)
-
-            upload_folder = os.path.join(cwd, users_dir)
-
-            _image.save(os.path.join(upload_folder, _image.filename))
-
-            user.image = _image.filename
+            db.session.close()
             flash('Te has registrado correctamente')
-
+            
             return redirect(url_for('login'), 200)
 
         except Exception as e:
             flash("Ha ocurrido un error")
+            db.session.rollback()
             return redirect(url_for('login'))
     else:
         return render_template('signup.html')

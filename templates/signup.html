@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
     <head>
-        <meta http-equiv="content-type" content="text/html">
+        <!-- <meta http-equiv="content-type" content="text/html"> -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="/static/styles/home.css">
-        <link rel="stylesheet" href="/static/styles/signup.css">
+        <!-- <link rel="stylesheet" href="/static/styles/signup.css"> -->
 
         <script src="/static/styles/home.js" defer></script> 
         <title>Club de Programación Competitiva</title>
         <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" />
 
-        <script type="module" src="/static/js/mantenimiento.js"></script>
+        <script type="module" src="/static/styles/signup.js"></script>
     </head>
     <body>
         <nav>
@@ -28,7 +28,7 @@
             </nav>
         </nav>
         
-        <form id="signup" action="/signup" method="post">
+        <form id="formSignUp" action="/signup" method="post">
             <h1>Sign Up</h1>
             <input type="text" name="nickname" placeholder="Nickname" required>
             <input type="email" name="email" placeholder="Email" required>
@@ -38,6 +38,7 @@
             <input type="text" name="vjudge_handle" placeholder="VJudge Handle">
             <input type="password" name="password" placeholder="Password" required>
             <input type="password" name="confirmation" placeholder="Confirm Password" required>
+            <input type="file" name="image" accept="image/*">
             <input type="submit" value="Sign Up">
             <p>Already have an account? <a href="/login">Log In</a></p>
         </form>
