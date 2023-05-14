@@ -1,5 +1,5 @@
-#En este server se creo la clase CREDENCIALES ,para tener una tabla adicional donde se guarde el USERNAME, EMAIL, PASSWORD, al momento de registrarse EN SIGN UP
-#ADEMAS SE AGREGARON LAS RUTA /BLOG, /ABOUTUS, Y /signup/success, Y SE HIZO ALGUNAS MODIFICACIONES EN LA RUTA @app.route('/signup', methods=['GET', 'POST'])
+# En este server se creo la clase CREDENCIALES ,para tener una tabla adicional donde se guarde el USERNAME, EMAIL, PASSWORD, al momento de registrarse EN SIGN UP
+# ADEMAS SE AGREGARON LAS RUTA /BLOG, /ABOUTUS, Y /signup/success, Y SE HIZO ALGUNAS MODIFICACIONES EN LA RUTA @app.route('/signup', methods=['GET', 'POST'])
 
 from flask import (
     Flask,
@@ -99,9 +99,11 @@ class Miembro(Usuario):
         'polymorphic_identity': 'miembro',
     }
 
+
 class Credenciales(db.Model):
     __tablename__ = 'credenciales'
-    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    id = db.Column(db.String(36), primary_key=True,
+                   default=lambda: str(uuid.uuid4()))
     username = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(100), nullable=False)
@@ -110,6 +112,7 @@ class Credenciales(db.Model):
         self.username = username
         self.email = email
         self.password = password
+
 
 class Profesor(db.Model):
     __tablename__ = 'profesores'
@@ -180,30 +183,38 @@ class Directiva(db.Model):
         'miembros.user_id'), nullable=True)
 
 # Routes
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return Usuario.query.get(user_id)
+
 
 @app.route('/', methods=['GET'])
 def home():
     return render_template('home.html')
 
+
 @app.route('/faq', methods=['GET'])
 def faq():
     return render_template('faq.html')
+
 
 @app.route('/blog', methods=['GET'])
 def blog():
     return render_template('blog.html')
 
+
 @app.route('/aboutus', methods=['GET'])
 def aboutus():
     return render_template('aboutus.html')
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        user = Usuario.query.filter_by(nickname=request.form['username']).first()
+        user = Usuario.query.filter_by(
+            nickname=request.form['username']).first()
         if user:
             if user.password == request.form['password']:
                 login_user(user)
@@ -245,7 +256,8 @@ def signup():
             return redirect(url_for('signup'))
 
         # Crear un nuevo usuario en la tabla de credenciales
-        new_user = Credenciales(username=username, email=email, password=password)
+        new_user = Credenciales(
+            username=username, email=email, password=password)
         db.session.add(new_user)
         db.session.commit()
 
@@ -265,6 +277,7 @@ def logout():
     logout_user()
     flash('Has cerrado sesión correctamente')
     return redirect(url_for('home'))
+
 
 with app.app_context():
     db.create_all()

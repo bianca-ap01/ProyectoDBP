@@ -30,6 +30,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres@localhost:5432/dbCPC'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+app.secret_key = 'clave_super_secreta'
 login_manager = LoginManager()
 login_manager.init_app(app)
 app.config['UPLOAD_FOLDER'] = 'static/users'
@@ -42,6 +43,7 @@ with app.app_context():
 
 session = {}    # Session
 current_user = {}   # Current User
+
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -59,8 +61,8 @@ class User(db.Model):
                            nullable=False, server_default=db.text("now()"))
     modified_at = db.Column(db.DateTime(timezone=True),
                             nullable=False, server_default=db.text("now()"))
-    members = db.relationship('members', backref='users', lazy=True)
-    board = db.relationship('board', backref='users', lazy=True)
+    members = db.relationship('Member', backref='users', lazy=True)
+    board = db.relationship('Board', backref='users', lazy=True)
 
     def __init__(self, nickname, date_of_birth, codeforces_handle, atcoder_handle, vjudge_handle, image):
         self.nickname = nickname
@@ -162,7 +164,7 @@ class Team(db.Model):
         'professors.id'), nullable=False)
     status = db.Column(db.Boolean(), nullable=False, default=True)
     professor = db.relationship(
-        'professors', backref='teams', lazy=True, secondary=professor_team)
+        'Professor', backref='teams', lazy=True, secondary=professor_team)
 
     def __init__(self, name):
         self.name = name
@@ -213,7 +215,7 @@ class Problem(db.Model):
     modified_at = db.Column(db.DateTime(timezone=True),
                             nullable=False, server_default=db.text("now()"))
     contest = db.relationship(
-        'contests', backref='problems', lazy=True, secondary=contest_problem)
+        'Contest', backref='problems', lazy=True, secondary=contest_problem)
 
     def __init__(self, title, link, platform):
         self.title = title
@@ -263,7 +265,7 @@ class Video(db.Model):
     modified_at = db.Column(db.DateTime(timezone=True),
                             nullable=False, server_default=db.text("now()"))
     professors = db.relationship(
-        'professors', secondary=professor_video, backref='videos')
+        'Professor', secondary=professor_video, backref='videos')
 
     def __init__(self, title, link):
         self.title = title
@@ -290,10 +292,12 @@ class Video(db.Model):
 def load_user(user_id):
     return User.query.get(user_id)
 
+
 @login_manager.unauthorized_handler
 def unauthorized():
     flash('Debes iniciar sesión para acceder a esta página')
     return redirect(url_for('login'))
+
 
 @app.route('/', methods=['GET'])
 def home():
@@ -319,7 +323,7 @@ def faq():
 def login():
     if request.method == 'POST':
         user = User.query.filter_by(
-            nickname=request.form['username']).first()
+            nickname=request.form['nickname']).first()
         if user:
             if check_password_hash(user.password, request.form['password']):
                 login_user(user)
@@ -331,44 +335,51 @@ def login():
         else:
             flash('Usuario no encontrado')
             return redirect(url_for('login'), 401)
-    
 
     else:
         return render_template('login.html')
 
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        mail = User.query.filter_by(email=request.form['email']).first()
-        nusername = User.query.filter_by(
-            nickname=request.form['username']).first()
-        if mail and nusername:
-            if mail.email == request.form['email']:
-                flash('El correo ya está registrado')
-                return redirect(url_for('signup'), 401)
-            elif nusername.username == request.form['username']:
-                flash('El nickname ya está registrado')
-                return redirect(url_for('signup'), 401)
-            elif request.form['password'] != request.form['confirm_password']:
-                flash('Las contraseñas no coinciden')
-                return redirect(url_for('signup'), 401)
-            else:
-                user = User(
-                    nickname=request.form['username'],
-                    email=request.form['email'],
-                    password= generate_password_hash(request.form['password']),
-                    nombre=request.form['nombre'],
-                    apellido=request.form['apellido'],
-                    vjudge_handle=request.form['vjudge_handle'],
-                    fecha_de_nacimiento=request.form['fecha_de_nacimiento']
-                )
-                db.session.add(user)
-                db.session.commit()
+        try:
+            mail = User.query.filter_by(email=request.form['email']).first()
+            n_nickname = User.query.filter_by(
+                nickname=request.form['nickname']).first()
+            if mail and n_nickname:
+                if mail.email == request.form['email']:
+                    flash('El correo ya está registrado')
+                    return redirect(url_for('signup'), 401)
+                elif n_nickname.nickname == request.form['nickname']:
+                    flash('El nickname ya está registrado')
+                    return redirect(url_for('signup'), 401)
+                elif request.form['password'] != request.form['confirm_password']:
+                    flash('Las contraseñas no coinciden')
+                    return redirect(url_for('signup'), 401)
+                else:
+                    user = User(
+                        nickname=request.form['nickname'],
+                        email=request.form['email'],
+                        password=generate_password_hash(
+                            request.form['password']),
+                        nombre=request.form['nombre'],
+                        apellido=request.form['apellido'],
+                        vjudge_handle=request.form['vjudge_handle'],
+                        fecha_de_nacimiento=request.form['fecha_de_nacimiento']
+                    )
+                    db.session.add(user)
+                    db.session.commit()
                 flash('Te has registrado correctamente')
                 return redirect(url_for('login'), 200)
-        else:
-            flash('Usuario no encontrado')
-            return redirect(url_for('signup'), 401)
+
+            else:
+                flash('Usuario no encontrado')
+                return redirect(url_for('signup'), 401)
+
+        except:
+            flash("Ha ocurrido un error")
+            return redirect(url_for('login'))
     else:
         return render_template('signup.html')
 
@@ -379,6 +390,7 @@ def logout():
     logout_user()
     flash('Has cerrado sesión correctamente')
     return redirect(url_for('home'), 200)
+
 
 @app.route('/profile/edit', methods=['GET', 'POST'])
 @login_required
@@ -394,9 +406,9 @@ def profile_edit():
             if check_password_hash(current_user.password, _password):
                 flash('Contraseña incorrecta')
                 return redirect(url_for('profile'), 401)
-            else:  
+            else:
                 user = User.query.filter_by(id=current_user.id).first()
-                
+
                 if _nickname != '':
                     user.nickname = _nickname
                 if _codeforces_handle != '':
@@ -407,7 +419,7 @@ def profile_edit():
                     user.vjudge_handle = _vjudge_handle
                 if _image != '':
                     user.image = _image
-                
+
                 user.modified_at = datetime.datetime.now()
                 db.session.commit()
                 flash('Se han actualizado tus datos correctamente')
@@ -418,7 +430,8 @@ def profile_edit():
 
     else:
         return render_template('profile.html')
-    
+
+
 @app.route('/profile/<int:id>', methods=['GET'])
 def profile_id(_id):
     if _id == '':
@@ -426,16 +439,19 @@ def profile_id(_id):
     _user = User.query.filter_by(id=_id).first()
     return render_template('perfil.html', user=_user.serialize())
 
+
 @app.route('/lectures', methods=['GET'])
 def lectures():
     _lectures = Video.query.all()
-    return render_template('lectures.html', lectures=_lectures.serialize()) 
+    return render_template('lectures.html', lectures=_lectures.serialize())
+
 
 @app.route('/lectures/<int:id>', methods=['GET'])
 @login_required
 def lecture(id):
     _lecture = Video.query.filter_by(id=id).first()
     return render_template('lecture.html', lecture=_lecture.serialize())
+
 
 @app.route('/lectures/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -461,7 +477,8 @@ def edit_lecture(_id):
             return redirect(url_for('lecture', id=_id), 500)
     else:
         return render_template('edit_lecture.html', lecture=_lecture.serialize())
-    
+
+
 @app.route('/lectures/new', methods=['GET', 'POST'])
 @login_required
 def new_lecture():
@@ -485,10 +502,12 @@ def new_lecture():
     else:
         return render_template('new_lecture.html')
 
-@app.route('pendings', methods=['GET'])
+
+@app.route('/pendings/', methods=['GET'])
 @login_required
 def pendings():
     pass
+
 
 # Run the app
 if __name__ == '__main__':
