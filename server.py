@@ -7,11 +7,12 @@ from flask import (
     redirect,
     url_for,
     session,
-    flash
+    flash,
+    Blueprint,
 )
+
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import Blueprint
 from flask_migrate import Migrate
 import uuid
 import os
@@ -267,6 +268,10 @@ class Video(db.Model):
 def load_user(user_id):
     return User.query.get(user_id)
 
+@login_manager.unauthorized_handler
+def unauthorized():
+    flash('Debes iniciar sesión para acceder a esta página')
+    return redirect(url_for('login'))
 
 @app.route('/', methods=['GET'])
 def home():
@@ -294,7 +299,7 @@ def login():
         user = User.query.filter_by(
             nickname=request.form['username']).first()
         if user:
-            if user.password == request.form['password']:
+            if check_password_hash(user.password, request.form['password']):
                 login_user(user)
                 flash('Has iniciado sesión correctamente')
                 return redirect(url_for('home'))
@@ -304,8 +309,12 @@ def login():
         else:
             flash('Usuario no encontrado')
             return redirect(url_for('login'))
+    
+
     else:
         return render_template('login.html')
+    
+    
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -328,7 +337,7 @@ def signup():
                 user = User(
                     nickname=request.form['username'],
                     email=request.form['email'],
-                    password=request.form['password'],
+                    password= generate_password_hash(request.form['password']),
                     nombre=request.form['nombre'],
                     apellido=request.form['apellido'],
                     vjudge_handle=request.form['vjudge_handle'],
@@ -337,7 +346,7 @@ def signup():
                 db.session.add(user)
                 db.session.commit()
                 flash('Te has registrado correctamente')
-                return redirect(url_for('home'))
+                return redirect(url_for('login'))
         else:
             flash('Usuario no encontrado')
             return redirect(url_for('signup'))
