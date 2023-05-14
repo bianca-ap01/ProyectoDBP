@@ -176,6 +176,10 @@ class Team(db.Model):
         return f"<Team {self.name}>"
 
 
+user_contest = db.Table('user_contest', db.Column('user_id', db.String(36), db.ForeignKey(
+    'users.id')), db.Column('contest_id', db.String(36), db.ForeignKey('contests.id')))
+
+
 class Contest(db.Model):
     __tablename__ = 'contests'
     id = db.Column(db.String(36), nullable=False,
@@ -189,6 +193,8 @@ class Contest(db.Model):
                            nullable=False, server_default=db.text("now()"))
     modified_at = db.Column(db.DateTime(timezone=True),
                             nullable=False, server_default=db.text("now()"))
+    user = db.relationship(
+        'User', backref='users', lazy=True, secondary=user_contest)
 
     def __init__(self, title, link, platorm, num_prob):
         self.title = title
@@ -357,8 +363,11 @@ def signup():
             _date_of_birth = request.form['date_of_birth']
             _image = request.files['image']
 
-            if not allowed_file(_image):
-                return "Image format not allowed"
+            if _image != '':
+                if not allowed_file(_image):
+                    return "Image format not allowed"
+            else:
+                _image = 'static/images/default_picture.png'
 
             if _password != _confirm_password:
                 flash('Las contraseñas no coinciden')
@@ -371,18 +380,18 @@ def signup():
             if User.query.filter_by(email=_email).first():
                 flash('El email ya está registrado')
                 return redirect(url_for('signup'), 401)
-            
+
             if _image.filename == '':
                 _image.filename = 'default.png'
-            
+
             _password = generate_password_hash(_password)
 
             user = User(
                 _nickname, _email, _date_of_birth,
                 _codeforces_handle, _atcoder_handle, _vjudge_handle,
                 _image.filename, generate_password_hash(_password)
-                )
-            
+            )
+
             if _image.filename != 'default.png':
                 cwd = os.getcwd()
 
@@ -391,15 +400,15 @@ def signup():
 
                 upload_folder = os.path.join(cwd, users_dir)
                 _image.save(os.path.join(upload_folder, _image.filename))
-            
+
             db.session.add(user)
             db.session.commit()
             db.session.close()
             flash('Te has registrado correctamente')
-            
+
             return redirect(url_for('login'), 200)
 
-        except Exception as e:
+        except:
             flash("Ha ocurrido un error")
             db.session.rollback()
             return redirect(url_for('login'))
