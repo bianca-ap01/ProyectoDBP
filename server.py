@@ -10,6 +10,7 @@ from flask import (
     flash
 )
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_migrate import Migrate
 import uuid
 import os
@@ -119,8 +120,8 @@ class Professor(db.Model):
                            nullable=False, server_default=db.text("now()"))
     modified_at = db.Column(db.DateTime(timezone=True),
                             nullable=False, server_default=db.text("now()"))
-    team_id = db.Column(db.String(36), db.ForeignKey(
-        'teams.id'), nullable=False)
+    # team_id = db.Column(db.String(36), db.ForeignKey(
+    # 'teams.id'), nullable=False)
 
     def __init__(self, name, lastname, email):
         self.name = name
