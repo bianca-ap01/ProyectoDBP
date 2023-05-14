@@ -503,7 +503,7 @@ def new_lecture():
         return render_template('new_lecture.html')
 
 
-@app.route('/pendings/', methods=['GET'])
+@app.route('/pendings', methods=['GET'])
 @login_required
 def pendings():
     pass
