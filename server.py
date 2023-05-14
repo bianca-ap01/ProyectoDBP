@@ -39,6 +39,7 @@ with app.app_context():
     # Convertir el modelo en una tabla
     db.create_all()
 
+session = {}    # Session
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -351,6 +352,40 @@ def logout():
     flash('Has cerrado sesión correctamente')
     return redirect(url_for('home'))
 
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    if request.method == 'POST':
+        try:
+            _nickname = request.form['nickname']
+            _codeforces_handle = request.form['codeforces_handle']
+            _atcoder_handle = request.form['atcoder_handle']
+            _vjudge_handle = request.form['vjudge_handle']
+            _image = request.form['image']
+
+            user = User.query.filter_by(nickname=_nickname).first()
+            
+            if _nickname != '':
+                user.nickname = _nickname
+            if _codeforces_handle != '':
+                user.codeforces_handle = _codeforces_handle
+            if _atcoder_handle != '':
+                user.atcoder_handle = _atcoder_handle
+            if _vjudge_handle != '':
+                user.vjudge_handle = _vjudge_handle
+            if _image != '':
+                user.image = _image
+            
+            user.modified_at = datetime.datetime.now()
+            db.session.commit()
+            flash('Se han actualizado tus datos correctamente')
+            return redirect(url_for('profile'))
+        except:
+            flash('Ha ocurrido un error')
+            return redirect(url_for('profile'))
+
+    else:
+        return render_template('profile.html')
 
 # Run the app
 if __name__ == '__main__':
