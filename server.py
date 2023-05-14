@@ -383,7 +383,7 @@ def logout():
     flash('Has cerrado sesión correctamente')
     return redirect(url_for('home'), 200)
 
-@app.route('/profile', methods=['GET', 'POST'])
+@app.route('/profile/edit', methods=['GET', 'POST'])
 @login_required
 def profile():
     if request.method == 'POST':
@@ -421,6 +421,13 @@ def profile():
 
     else:
         return render_template('profile.html')
+    
+@app.route('/profile/<int:id>', methods=['GET'])
+def profile_id(_id):
+    if _id == '':
+        _id = current_user.id
+    _user = User.query.filter_by(id=_id).first()
+    return render_template('perfil.html', user=_user.serialize())
 
 @app.route('/lectures', methods=['GET'])
 def lectures():
@@ -458,7 +465,33 @@ def edit_lecture(_id):
     else:
         return render_template('edit_lecture.html', lecture=_lecture.serialize())
     
+@app.route('/lectures/new', methods=['GET', 'POST'])
+@login_required
+def new_lecture():
+    if request.method == 'POST':
+        try:
+            _title = request.form['title']
+            _link = request.form['link']
+            _professors = request.form['professors']
+            _lecture = Video(
+                title=_title,
+                link=_link,
+                professors=_professors
+            )
+            db.session.add(_lecture)
+            db.session.commit()
+            flash('Se ha creado la clase correctamente')
+            return redirect(url_for('lectures'), 200)
+        except:
+            flash('Ha ocurrido un error')
+            return redirect(url_for('lectures'), 500)
+    else:
+        return render_template('new_lecture.html')
 
+@app.route('pendings', methods=['GET'])
+@login_required
+def pendings():
+    pass
 
 # Run the app
 if __name__ == '__main__':
