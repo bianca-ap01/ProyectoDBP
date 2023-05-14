@@ -64,8 +64,9 @@ class User(db.Model):
     members = db.relationship('Member', backref='users', lazy=True)
     board = db.relationship('Board', backref='users', lazy=True)
 
-    def __init__(self, nickname, date_of_birth, codeforces_handle, atcoder_handle, vjudge_handle, image):
+    def __init__(self, nickname, email, date_of_birth, codeforces_handle, atcoder_handle, vjudge_handle, image):
         self.nickname = nickname
+        self.email = email
         self.date_of_birth = date_of_birth
         self.codeforces_handle = codeforces_handle
         self.atcoder_handle = atcoder_handle
@@ -344,44 +345,61 @@ def login():
 def signup():
     if request.method == 'POST':
         try:
-            mail = User.query.filter_by(email=request.form['email']).first()
-            n_nickname = User.query.filter_by(
-                nickname=request.form['nickname']).first()
-            if mail and n_nickname:
-                if mail.email == request.form['email']:
-                    flash('El correo ya está registrado')
-                    return redirect(url_for('signup'), 401)
-                elif n_nickname.nickname == request.form['nickname']:
-                    flash('El nickname ya está registrado')
-                    return redirect(url_for('signup'), 401)
-                elif request.form['password'] != request.form['confirm_password']:
-                    flash('Las contraseñas no coinciden')
-                    return redirect(url_for('signup'), 401)
-                else:
-                    user = User(
-                        nickname=request.form['nickname'],
-                        email=request.form['email'],
-                        password=generate_password_hash(
-                            request.form['password']),
-                        nombre=request.form['nombre'],
-                        apellido=request.form['apellido'],
-                        vjudge_handle=request.form['vjudge_handle'],
-                        fecha_de_nacimiento=request.form['fecha_de_nacimiento']
-                    )
-                    db.session.add(user)
-                    db.session.commit()
-                flash('Te has registrado correctamente')
-                return redirect(url_for('login'), 200)
+            _nickname = request.form['nickname']
+            _email = request.form['email']
+            _password = request.form['password']
+            _confirm_password = request.form['confirmation']
+            _vjudge_handle = request.form['vjudge_handle']
+            _codeforces_handle = request.form['codeforces_handle']
+            _atcoder_handle = request.form['atcoder_handle']
+            _date_of_birth = request.form['date_of_birth']
+            _image = request.files['image']
 
-            else:
-                flash('Usuario no encontrado')
+            if not allowed_file(_image):
+                return "Image format not allowed"
+
+            if _password != _confirm_password:
+                flash('Las contraseñas no coinciden')
                 return redirect(url_for('signup'), 401)
 
-        except:
+            if User.query.filter_by(nickname=_nickname).first():
+                flash('El nickname ya está registrado')
+                return redirect(url_for('signup'), 401)
+
+            if User.query.filter_by(email=_email).first():
+                flash('El email ya está registrado')
+                return redirect(url_for('signup'), 401)
+
+            user = User(_nickname, _email, _date_of_birth,
+                        _codeforces_handle, _atcoder_handle, _vjudge_handle, _image)
+
+            db.session.add(user)
+            db.session.commit()
+
+            cwd = os.getcwd()
+
+            users_dir = os.path.join(app.config['UPLOAD_FOLDER'], user.id)
+            os.makedirs(users_dir, exist_ok=True)
+
+            upload_folder = os.path.join(cwd, users_dir)
+
+            _image.save(os.path.join(upload_folder, _image.filename))
+
+            user.image = _image.filename
+            flash('Te has registrado correctamente')
+
+            return redirect(url_for('login'), 200)
+
+        except Exception as e:
             flash("Ha ocurrido un error")
             return redirect(url_for('login'))
     else:
         return render_template('signup.html')
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @app.route('/logout')
