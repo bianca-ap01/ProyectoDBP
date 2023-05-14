@@ -135,6 +135,17 @@ class Professor(db.Model):
     def __repr__(self):
         return f"<Professor {self.email}>"
 
+    def serialize(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'lastname': self.lastname,
+            'email': self.email,
+            'status': self.status,
+            'created_at': self.created_at,
+            'modified_at': self.modified_at
+        }
+
 
 professor_team = db.Table('professor_team',
                           db.Column('professor_id',  db.String(36), db.ForeignKey(
@@ -261,6 +272,16 @@ class Video(db.Model):
     def __repr__(self):
         return f"<Video {self.title}>"
 
+    def serialize(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'link': self.link,
+            'created_at': self.created_at,
+            'modified_at': self.modified_at,
+            'professors': self.professors
+        }
+
 
 # Routes
 
@@ -303,13 +324,13 @@ def login():
             if check_password_hash(user.password, request.form['password']):
                 login_user(user)
                 flash('Has iniciado sesión correctamente')
-                return redirect(url_for('home'))
+                return redirect(url_for('home'), 200)
             else:
                 flash('Contraseña incorrecta')
-                return redirect(url_for('login'))
+                return redirect(url_for('login'), 401)
         else:
             flash('Usuario no encontrado')
-            return redirect(url_for('login'))
+            return redirect(url_for('login'), 401)
     
 
     else:
@@ -327,13 +348,13 @@ def signup():
         if mail and nusername:
             if mail.email == request.form['email']:
                 flash('El correo ya está registrado')
-                return redirect(url_for('signup'))
+                return redirect(url_for('signup'), 401)
             elif nusername.username == request.form['username']:
                 flash('El nickname ya está registrado')
-                return redirect(url_for('signup'))
+                return redirect(url_for('signup'), 401)
             elif request.form['password'] != request.form['confirm_password']:
                 flash('Las contraseñas no coinciden')
-                return redirect(url_for('signup'))
+                return redirect(url_for('signup'), 401)
             else:
                 user = User(
                     nickname=request.form['username'],
@@ -347,10 +368,10 @@ def signup():
                 db.session.add(user)
                 db.session.commit()
                 flash('Te has registrado correctamente')
-                return redirect(url_for('login'))
+                return redirect(url_for('login'), 200)
         else:
             flash('Usuario no encontrado')
-            return redirect(url_for('signup'))
+            return redirect(url_for('signup'), 401)
     else:
         return render_template('signup.html')
 
@@ -360,7 +381,7 @@ def signup():
 def logout():
     logout_user()
     flash('Has cerrado sesión correctamente')
-    return redirect(url_for('home'))
+    return redirect(url_for('home'), 200)
 
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
@@ -375,7 +396,7 @@ def profile():
             _password = request.form['password']
             if check_password_hash(current_user.password, _password):
                 flash('Contraseña incorrecta')
-                return redirect(url_for('profile'))
+                return redirect(url_for('profile'), 401)
             else:  
                 user = User.query.filter_by(id=current_user.id).first()
                 
@@ -393,13 +414,51 @@ def profile():
                 user.modified_at = datetime.datetime.now()
                 db.session.commit()
                 flash('Se han actualizado tus datos correctamente')
-                return redirect(url_for('profile'))
+                return redirect(url_for('profile'), 200)
         except:
             flash('Ha ocurrido un error')
             return redirect(url_for('profile'), 500)
 
     else:
         return render_template('profile.html')
+
+@app.route('/lectures', methods=['GET'])
+def lectures():
+    _lectures = Video.query.all()
+    return render_template('lectures.html', lectures=_lectures.serialize()) 
+
+@app.route('/lectures/<int:id>', methods=['GET'])
+@login_required
+def lecture(id):
+    _lecture = Video.query.filter_by(id=id).first()
+    return render_template('lecture.html', lecture=_lecture.serialize())
+
+@app.route('/lectures/<int:id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_lecture(_id):
+    _lecture = Video.query.filter_by(id=_id).first()
+    if request.method == 'POST':
+        try:
+            _title = request.form['title']
+            _link = request.form['link']
+            _professors = request.form['professors']
+            if _title != '':
+                _lecture.title = _title
+            if _link != '':
+                _lecture.link = _link
+            if _professors != '':
+                _lecture.professors = _professors
+            _lecture.modified_at = datetime.datetime.now()
+            db.session.commit()
+            flash('Se han actualizado los datos correctamente')
+            return redirect(url_for('lecture', id=_id), 200)
+        except:
+            flash('Ha ocurrido un error')
+            return redirect(url_for('lecture', id=_id), 500)
+    else:
+        return render_template('edit_lecture.html', lecture=_lecture.serialize())
+    
+
 
 # Run the app
 if __name__ == '__main__':
