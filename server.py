@@ -54,8 +54,8 @@ class User(db.Model):
     codeforces_handle = db.Column(db.String(30), nullable=True, unique=True)
     atcoder_handle = db.Column(db.String(30), nullable=True, unique=True)
     vjudge_handle = db.Column(db.String(30), nullable=True, unique=True)
-    image = db.Column(db.String(500), nullable=False)
-    hpassword = db.Column(db.String(1000), nullable=False)
+    image = db.Column(db.String(500), nullable=True)
+    hpassword = db.Column(db.String(1000), nullable=False, unique=False)
 
     created_at = db.Column(db.DateTime(timezone=True),
                            nullable=False, server_default=db.text("now()"))
@@ -373,16 +373,16 @@ def signup():
 
             print("passwords ok")
 
-            if len(User.query.all()) != 0 and User.query.filter_by(nickname=_nickname) is not None:
-                flash('El nickname ya está registrado')
-                return jsonify({'error': 'El nickname ya está registrado'}), 401
-            print("nickname unique ok")
+            # if len(User.query.all()) != 0 and User.query.filter_by(nickname=_nickname) is not None:
+            #     flash('El nickname ya está registrado')
+            #     return jsonify({'error': 'El nickname ya está registrado'}), 401
+            # print("nickname unique ok")
 
-            if len(User.query.all()) != 0 and User.query.filter_by(email=_email) is not None:
-                flash('El email ya está registrado')
-                return jsonify({'error': 'El email ya está registrado'}), 401
+            # if len(User.query.all()) != 0 and User.query.filter_by(email=_email) is not None:
+            #     flash('El email ya está registrado')
+            #     return jsonify({'error': 'El email ya está registrado'}), 401
 
-            print("email unique ok")
+            # print("email unique ok")
 
             if _email.split('@')[1] != 'utec.edu.pe':
                 flash('El email no es válido')
@@ -407,8 +407,10 @@ def signup():
 
             print("user created ok")
 
-            db.session_add(user)
+            db.session.add(user)
+            print("add user ok")
             db.session.commit()
+            print("commit user ok")
 
             cwd = os.getcwd()
             users_dir = os.path.join(app.config['UPLOAD_FOLDER'], user.id)
