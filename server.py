@@ -365,13 +365,10 @@ def signup():
             if len(User.query.all()) != 0 and User.query.filter_by(nickname=_nickname).first() != None:
                 flash('El nickname ya está registrado')
                 return jsonify({'error': 'El nickname ya está registrado'}), 401
-            print("nickname unique ok")
 
             if len(User.query.all()) != 0 and User.query.filter_by(email=_email).first() != None:
                 flash('El email ya está registrado')
                 return jsonify({'error': 'El email ya está registrado'}), 401
-
-            print("email unique ok")
 
             if _email.split('@')[1] != 'utec.edu.pe':
                 flash('El email no es válido')
