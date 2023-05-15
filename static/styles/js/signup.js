@@ -5,7 +5,7 @@ function createUser() {
     formCreateUserId.addEventListener('submit', handlingCreateUser)
   }
   
-  function handlingCreateUser(e) {
+function handlingCreateUser(e) {
     e.preventDefault()
     e.stopPropagation()
   
@@ -25,5 +25,23 @@ function createUser() {
       body: formData,
       signal: controller.signal,
     })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok')
+        }
+        return response.json()
+      }
+      )
+      .then((data) => {
+        console.log('data: ', data)
+        const { message } = data
+        alert(message)
+        window.location.href = '/login'
+      }
+      )
+      .catch((error) => {
+        console.error('There has been a problem with your fetch operation:', error)
+      }
+      )    
   }
   

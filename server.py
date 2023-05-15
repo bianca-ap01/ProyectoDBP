@@ -366,31 +366,32 @@ def signup():
 
             if _password != _confirm_password:
                 flash('Las contraseñas no coinciden')
-                return redirect(url_for('signup'), 401)
+                return jsonify({'error': 'Las contraseñas no coinciden'}), 401
 
-            if User.query.filter_by(nickname=_nickname).first():
+            if User.query.filter_by(nickname=_nickname).first() is not None:
                 flash('El nickname ya está registrado')
-                return redirect(url_for('signup'), 401)
+                return jsonify({'error': 'El nickname ya está registrado'}), 401
 
-            if User.query.filter_by(email=_email).first():
+            if _email.split('@')[1] != 'utec.edu.pe':
+                flash('El email no es válido')
+                return jsonify({'error': 'El email no es válido'}), 401
+
+            if User.query.filter_by(email=_email).first() is not None:
                 flash('El email ya está registrado')
-                return redirect(url_for('signup'), 401)
-
-            _password = generate_password_hash(_password)
-
-            if 'user_image' not in request.files:
-                flash("No ha seleccionado una imagen")
-
+                return jsonify({'error': 'El email ya está registrado'}), 401
+            
             if _image.filename == "":
                 flash("No ha seleccionado una imagen")
+                return jsonify  ({'error': 'No ha seleccionado una imagen'}), 401
 
             if not allowed_file(_image.filename):
-                flash("Solo se permiten los formatos png, jpg y jpeg")
+                flash("El formato de la imagen no es válido")
+                return jsonify({'error': 'El formato de la imagen no es válido'}), 401
 
             user = User(
                 _nickname, _email, _date_of_birth,
                 _codeforces_handle, _atcoder_handle, _vjudge_handle,
-                _image.filename, generate_password_hash(_password)
+                _image.filename, _password
             )
 
             db.session_add(user)
@@ -406,12 +407,12 @@ def signup():
             db.session.commit()
             flash('El usuario ha sido registrado exitosamente')
 
-            return redirect(url_for('login'), 200)
+            return jsonify({'success': 'El usuario ha sido registrado exitosamente'}), 200
 
         except:
             flash("Ha ocurrido un error")
             db.session.rollback()
-            return redirect(url_for('login'))
+            return jsonify({'error': 'Ha ocurrido un error'}), 500
 
         finally:
             db.session.close()
