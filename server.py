@@ -25,6 +25,7 @@ from flask_login import (
     logout_user,
     UserMixin,
 )
+from functools import wraps
 
 # Configuration
 app = Flask(__name__)
@@ -105,9 +106,12 @@ class Member(User):
         'polymorphic_load': 'inline'
     }
 
-    def __init__(self, nickname, email, codeforces_handle, atcoder_handle, vjudge_handle, hpassword):
-        super().__init__(nickname, email, codeforces_handle,
-                         atcoder_handle, vjudge_handle, hpassword)
+    def __init__(self, user, member_since, comp_status=True, member_status=True):
+        super().__init__(user.nickname, user.email, user.codeforces_handle, user.atcoder_handle, user.vjudge_handle, user.hpassword)
+        self.user_id = user.id
+        self.member_since = member_since
+        self.comp_status = comp_status
+        self.member_status = member_status
         self.member_since = datetime.utcnow()
 
     def __repr__(self):
@@ -296,12 +300,23 @@ class Video(db.Model):
 def load_user(user_id):
     return User.query.get(user_id)
 
-
 @login_manager.unauthorized_handler
 def unauthorized():
     flash('Debes iniciar sesión para acceder a esta página')
     return redirect(url_for('login'))
 
+def admin_required(route_function):
+    @wraps(route_function)
+    def wrapper(*args, **kwargs):
+        if not isinstance (current_user, Board):
+            flash('No tienes permiso para acceder a esta página')
+            return redirect(url_for('home'))
+        return route_function(*args, **kwargs)
+    return wrapper
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/', methods=['GET'])
 def home():
@@ -356,7 +371,6 @@ def login():
 
     else:
         return render_template('login.html')
-
 
 @app.route('/signup/', methods=['POST', 'GET'])
 def signup():
@@ -425,10 +439,33 @@ def signup():
     else:
         return render_template('signup.html')
 
+@app.route('/signup/member', methods=['POST', 'GET'])
+@admin_required
+def signup_member():
+    if request.method == 'POST':
+        try:
+            _mail = request.form['member_email']
+            if _mail.split('@')[1] != 'utec.edu.pe':
+                flash('El email no es válido')
+                return jsonify({'error': 'El email no es válido'}), 401
+            if User.query.filter_by(email=_mail).first() == None:
+                flash('El email no está registrado')
+                return jsonify({'error': 'El email no está registrado'}), 401
+            user = User.query.filter_by(email=_mail).first()
+            
+            #Inherits from User
+            member = Member(user)
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+            db.session.add(member)
+            db.session.commit()
+            flash('El miembro ha sido registrado exitosamente')
+            return jsonify({'success': 'El miembro ha sido registrado exitosamente'}), 200
+        except:
+            flash("Ha ocurrido un error")
+            db.session.rollback()
+            return jsonify({'error': 'Ha ocurrido un error'}), 500
+        finally:
+            db.session.close()
 
 
 @app.route('/logout')
