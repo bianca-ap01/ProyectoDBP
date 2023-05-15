@@ -549,7 +549,6 @@ def new_lecture():
     else:
         return render_template('new_lecture.html')
 
-
 @app.route('/pendings', methods=['GET'])
 @login_required
 def pendings():
