@@ -318,6 +318,11 @@ def aboutus():
     return render_template('aboutus.html')
 
 
+@app.route('/events', methods=['GET'])
+def events():
+    return render_template('events.html')
+
+
 @app.route('/faq', methods=['GET'])
 def faq():
     return render_template('faq.html')
