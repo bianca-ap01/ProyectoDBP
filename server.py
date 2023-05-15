@@ -296,35 +296,36 @@ class Video(db.Model):
 def load_user(user_id):
     return User.query.get(user_id)
 
+
 @login_manager.unauthorized_handler
 def unauthorized():
     flash('Debes iniciar sesión para acceder a esta página')
     return redirect(url_for('login'))
 
+
 @app.route('/', methods=['GET'])
 def home():
     return render_template('home.html')
 
-@app.route('/blog', methods=['GET'])
-def blog():
-    return render_template('blog.html')
+
+@app.route('/resources', methods=['GET'])
+def resources():
+    return render_template('resources.html')
 
 
 @app.route('/aboutus', methods=['GET'])
 def aboutus():
     return render_template('aboutus.html')
 
+
 @app.route('/faq', methods=['GET'])
 def faq():
     return render_template('faq.html')
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-<<<<<<< HEAD
-=======
-
->>>>>>> 6db759a944cf04a0774ac681a16ba5c6fa15ba93
         _input = request.form['user_nickname']
         if '@' in _input:
             user = User.query.filter_by(email=_input).first()
@@ -333,15 +334,12 @@ def login():
 
         if user:
             if check_password_hash(user.hpassword, request.form['user_password']):
-<<<<<<< HEAD
-                login_user(user)
-=======
                 if request.form.get('remember'):
                     login_user(user, remember=True, duration=timedelta(days=5))
                 else:
-                    login_user(user, remember=False, duration=timedelta(minutes=5))
-                    
->>>>>>> 6db759a944cf04a0774ac681a16ba5c6fa15ba93
+                    login_user(user, remember=False,
+                               duration=timedelta(minutes=5))
+
                 flash('Has iniciado sesión correctamente')
                 return redirect(url_for('home'), 200)
             else:
