@@ -350,7 +350,7 @@ def login():
         return render_template('login.html')
 
 
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route('/signup/', methods=['POST', 'GET'])
 def signup():
     if request.method == 'POST':
         try:
@@ -364,10 +364,6 @@ def signup():
             _date_of_birth = request.form['user_date_of_birth']
             _image = request.files['user_image']
 
-            if _image in request.files:
-                if not allowed_file(_image):
-                    flash("Image format not allowed")
-
             if _password != _confirm_password:
                 flash('Las contraseñas no coinciden')
                 return redirect(url_for('signup'), 401)
@@ -380,10 +376,16 @@ def signup():
                 flash('El email ya está registrado')
                 return redirect(url_for('signup'), 401)
 
-            if _image.filename == '':
-                _image = os.path('static/images/default_image.png')
-
             _password = generate_password_hash(_password)
+
+            if 'user_image' not in request.files:
+                flash("No ha seleccionado una imagen")
+
+            if _image.filename == "":
+                flash("No ha seleccionado una imagen")
+
+            if not allowed_file(_image.filename):
+                flash("Solo se permiten los formatos png, jpg y jpeg")
 
             user = User(
                 _nickname, _email, _date_of_birth,
@@ -391,19 +393,18 @@ def signup():
                 _image.filename, generate_password_hash(_password)
             )
 
-            if _image.filename != 'default_image.png':
-                cwd = os.getcwd()
-
-                users_dir = os.path.join(app.config['UPLOAD_FOLDER'], user.id)
-                os.makedirs(users_dir, exist_ok=True)
-
-                upload_folder = os.path.join(cwd, users_dir)
-                _image.save(os.path.join(upload_folder, _image.filename))
-
-            db.session.add(user)
+            db.session_add(user)
             db.session.commit()
-            db.session.close()
-            flash('Te has registrado correctamente')
+
+            cwd = os.getcwd()
+            users_dir = os.path.join(app.config['UPLOAD_FOLDER'], user.id)
+            os.makedirs(users_dir, exist_ok=True)
+
+            upload_folder = os.path.join(cwd, users_dir)
+            _image.save(os.path.join(upload_folder, _image.filename))
+
+            db.session.commit()
+            flash('El usuario ha sido registrado exitosamente')
 
             return redirect(url_for('login'), 200)
 
@@ -411,6 +412,10 @@ def signup():
             flash("Ha ocurrido un error")
             db.session.rollback()
             return redirect(url_for('login'))
+
+        finally:
+            db.session.close()
+
     else:
         return render_template('signup.html')
 

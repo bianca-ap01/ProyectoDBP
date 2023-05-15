@@ -12,6 +12,10 @@
     box-sizing: border-box;
 }
 
+body { 
+  padding-top: 65px; 
+}
+
 .SignUp{
   background-color: #fed010;
   border-radius:10px;
