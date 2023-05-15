@@ -94,6 +94,8 @@ class User(db.Model, UserMixin):
 
 class Member(User):
     __tablename__ = 'members'
+    id = db.Column(db.String(36), nullable=False,
+                   default=lambda: str(uuid.uuid4()), primary_key=True)
     user_id = db.Column(db.String(36), db.ForeignKey(
         'users.id'), nullable=False, primary_key=True)
     member_since = db.Column(db.DateTime(timezone=True),
@@ -106,12 +108,13 @@ class Member(User):
         'polymorphic_load': 'inline'
     }
 
-    def __init__(self, user, member_since, comp_status=True, member_status=True):
-        super().__init__(user.nickname, user.email, user.codeforces_handle, user.atcoder_handle, user.vjudge_handle, user.hpassword)
-        self.user_id = user.id
-        self.member_since = member_since
-        self.comp_status = comp_status
-        self.member_status = member_status
+    def __init__(self, nickname, email, codeforces_handle, atcoder_handle, vjudge_handle, hpassword):
+        self.nickname = nickname
+        self.email = email
+        self.codeforces_handle = codeforces_handle
+        self.atcoder_handle = atcoder_handle
+        self.vjudge_handle = vjudge_handle
+        self.hpassword = hpassword
         self.member_since = datetime.utcnow()
 
     def __repr__(self):
@@ -300,23 +303,27 @@ class Video(db.Model):
 def load_user(user_id):
     return User.query.get(user_id)
 
+
 @login_manager.unauthorized_handler
 def unauthorized():
     flash('Debes iniciar sesión para acceder a esta página')
     return redirect(url_for('login'))
 
+
 def admin_required(route_function):
     @wraps(route_function)
     def wrapper(*args, **kwargs):
-        if not isinstance (current_user, Board):
+        if not isinstance(current_user, Board):
             flash('No tienes permiso para acceder a esta página')
             return redirect(url_for('home'))
         return route_function(*args, **kwargs)
     return wrapper
 
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 @app.route('/', methods=['GET'])
 def home():
@@ -371,6 +378,7 @@ def login():
 
     else:
         return render_template('login.html')
+
 
 @app.route('/signup/', methods=['POST', 'GET'])
 def signup():
@@ -439,6 +447,7 @@ def signup():
     else:
         return render_template('signup.html')
 
+
 @app.route('/signup/member', methods=['POST', 'GET'])
 @admin_required
 def signup_member():
@@ -452,8 +461,8 @@ def signup_member():
                 flash('El email no está registrado')
                 return jsonify({'error': 'El email no está registrado'}), 401
             user = User.query.filter_by(email=_mail).first()
-            
-            #Inherits from User
+
+            # Inherits from User
             member = Member(user)
 
             db.session.add(member)
@@ -585,6 +594,7 @@ def new_lecture():
             return redirect(url_for('lectures'), 500)
     else:
         return render_template('new_lecture.html')
+
 
 @app.route('/pendings', methods=['GET'])
 @login_required
