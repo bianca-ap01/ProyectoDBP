@@ -51,9 +51,9 @@ class User(db.Model):
                    default=lambda: str(uuid.uuid4()), primary_key=True)
     nickname = db.Column(db.String(30), nullable=False, unique=True)
     email = db.Column(db.String(100), nullable=False, unique=True)
-    codeforces_handle = db.Column(db.String(30), nullable=True, unique=True)
-    atcoder_handle = db.Column(db.String(30), nullable=True, unique=True)
-    vjudge_handle = db.Column(db.String(30), nullable=True, unique=True)
+    codeforces_handle = db.Column(db.String(30), nullable=True, unique=False)
+    atcoder_handle = db.Column(db.String(30), nullable=True, unique=False)
+    vjudge_handle = db.Column(db.String(30), nullable=True, unique=False)
     image = db.Column(db.String(500), nullable=True)
     hpassword = db.Column(db.String(1000), nullable=False, unique=False)
 
@@ -349,7 +349,6 @@ def login():
 def signup():
     if request.method == 'POST':
         try:
-
             _nickname = request.form['user_nickname']
             print("nickname ok")
             _email = request.form['user_email']
@@ -402,13 +401,14 @@ def signup():
 
             print("image format ok")
 
-            user = User(_nickname, _email, _codeforces_handle,
-                        _atcoder_handle, _vjudge_handle, _password)
+            user = User(nickname=_nickname, email=_email, codeforces_handle=_codeforces_handle,
+                        atcoder_handle=_atcoder_handle, vjudge_handle=_vjudge_handle, key=generate_password_hash(_password))
 
             print("user created ok")
 
             db.session.add(user)
             print("add user ok")
+
             db.session.commit()
             print("commit user ok")
 
