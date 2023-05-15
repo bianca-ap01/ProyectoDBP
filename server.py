@@ -55,7 +55,8 @@ class User(db.Model):
     atcoder_handle = db.Column(db.String(30), nullable=True, unique=True)
     vjudge_handle = db.Column(db.String(30), nullable=True, unique=True)
     date_of_birth = db.Column(db.Date(), nullable=True, unique=False)
-    image = db.Column(db.String(500), nullable=True, unique=False)
+    image = db.Column(db.String(500), nullable=False,
+                      unique=False)
     hpassword = db.Column(db.String(100), nullable=False)
 
     created_at = db.Column(db.DateTime(timezone=True),
@@ -108,9 +109,9 @@ class Member(User):
         'polymorphic_load': 'inline'
     }
 
-    def __init__(self, nickname, date_of_birth, codeforces_handle, atcoder_handle, vjudge_handle, image):
+    def __init__(self, nickname, date_of_birth, codeforces_handle, atcoder_handle, vjudge_handle, image, hpassword):
         super().__init__(nickname, date_of_birth, codeforces_handle,
-                         atcoder_handle, vjudge_handle, image)
+                         atcoder_handle, vjudge_handle, image, hpassword)
         self.member_since = datetime.utcnow()
 
     def __repr__(self):
@@ -353,21 +354,19 @@ def login():
 def signup():
     if request.method == 'POST':
         try:
-            _nickname = request.form['nickname']
-            _email = request.form['email']
-            _password = request.form['password']
-            _confirm_password = request.form['confirmation']
-            _vjudge_handle = request.form['vjudge_handle']
-            _codeforces_handle = request.form['codeforces_handle']
-            _atcoder_handle = request.form['atcoder_handle']
-            _date_of_birth = request.form['date_of_birth']
-            _image = request.files['image']
+            _nickname = request.form['user_nickname']
+            _email = request.form['user_email']
+            _password = request.form['user_password']
+            _confirm_password = request.form['user_confirmation']
+            _vjudge_handle = request.form['user_vjudge_handle']
+            _codeforces_handle = request.form['user_codeforces_handle']
+            _atcoder_handle = request.form['user_atcoder_handle']
+            _date_of_birth = request.form['user_date_of_birth']
+            _image = request.files['user_image']
 
-            if _image != '':
+            if _image in request.files:
                 if not allowed_file(_image):
-                    return "Image format not allowed"
-            else:
-                _image = 'static/images/default_picture.png'
+                    flash("Image format not allowed")
 
             if _password != _confirm_password:
                 flash('Las contraseñas no coinciden')
@@ -382,7 +381,7 @@ def signup():
                 return redirect(url_for('signup'), 401)
 
             if _image.filename == '':
-                _image.filename = 'default.png'
+                _image = os.path('static/images/default_image.png')
 
             _password = generate_password_hash(_password)
 
@@ -392,7 +391,7 @@ def signup():
                 _image.filename, generate_password_hash(_password)
             )
 
-            if _image.filename != 'default.png':
+            if _image.filename != 'default_image.png':
                 cwd = os.getcwd()
 
                 users_dir = os.path.join(app.config['UPLOAD_FOLDER'], user.id)

@@ -1,6 +1,6 @@
 {%extends "home.html" %}
     {%block signup%}
-    <script src="/static/styles/signup.js" defer></script> 
+    <script src="/static/styles/js/signup.js" defer></script> 
         <form id="formSignUp" action="/signup" method="POST" enctype="multipart/form-data">
             <h1>Sign Up</h1>
             <ul>
@@ -50,7 +50,7 @@
                 </li>
 
                 <li>
-                    <button type="submit"  id="submit_form">Sign Up</button>
+                    <button type="submit"  name="submit_form">Sign Up</button>
                 </li>
 
                 <p>Already have an account? <a href="/login">Log In</a></p>

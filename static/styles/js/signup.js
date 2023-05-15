@@ -20,7 +20,7 @@ function createUser() {
     console.log('formCreateUser: ', formCreateUser)
   
     const formData = new FormData(formCreateUser)
-    fetch('/create-employee', {
+    fetch('/signup', {
       method: 'POST',
       body: formData,
       signal: controller.signal,
