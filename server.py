@@ -49,15 +49,13 @@ class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.String(36), nullable=False,
                    default=lambda: str(uuid.uuid4()), primary_key=True)
-    nickname = db.Column(db.String(30), nullable=True, unique=True)
+    nickname = db.Column(db.String(30), nullable=False, unique=True)
     email = db.Column(db.String(100), nullable=False, unique=True)
     codeforces_handle = db.Column(db.String(30), nullable=True, unique=True)
     atcoder_handle = db.Column(db.String(30), nullable=True, unique=True)
     vjudge_handle = db.Column(db.String(30), nullable=True, unique=True)
-    date_of_birth = db.Column(db.Date(), nullable=True, unique=False)
-    image = db.Column(db.String(500), nullable=False,
-                      unique=False)
-    hpassword = db.Column(db.String(100), nullable=False)
+    image = db.Column(db.String(500), nullable=False)
+    hpassword = db.Column(db.String(1000), nullable=False)
 
     created_at = db.Column(db.DateTime(timezone=True),
                            nullable=False, server_default=db.text("now()"))
@@ -66,17 +64,14 @@ class User(db.Model):
     members = db.relationship('Member', backref='users', lazy=True)
     board = db.relationship('Board', backref='users', lazy=True)
 
-    def __init__(self, nickname, email, date_of_birth, codeforces_handle, atcoder_handle, vjudge_handle, image, hpassword):
+    def __init__(self, nickname, email, codeforces_handle, atcoder_handle, vjudge_handle, key):
         self.nickname = nickname
         self.email = email
-        self.date_of_birth = date_of_birth
         self.codeforces_handle = codeforces_handle
         self.atcoder_handle = atcoder_handle
         self.vjudge_handle = vjudge_handle
-        self.image = image
+        self.hpassword = key
         self.created_at = datetime.utcnow()
-        self.modified_at = datetime.utcnow()
-        self.hpassword = generate_password_hash(hpassword)
 
     def __repr__(self):
         return f"User {self.nickname}"
@@ -86,10 +81,10 @@ class User(db.Model):
             'id': self.id,
             'nickname': self.nickname,
             'email': self.email,
+            'image': self.image,
             'codeforces_handle': self.codeforces_handle,
             'atcoder_handle': self.atcoder_handle,
             'vjudge_handle': self.vjudge_handle,
-            'date_of_birth': self.date_of_birth,
             'created_at': self.created_at,
             'modified_at': self.modified_at
         }
@@ -109,9 +104,9 @@ class Member(User):
         'polymorphic_load': 'inline'
     }
 
-    def __init__(self, nickname, date_of_birth, codeforces_handle, atcoder_handle, vjudge_handle, image, hpassword):
-        super().__init__(nickname, date_of_birth, codeforces_handle,
-                         atcoder_handle, vjudge_handle, image, hpassword)
+    def __init__(self, nickname, email, codeforces_handle, atcoder_handle, vjudge_handle, hpassword):
+        super().__init__(nickname, email, codeforces_handle,
+                         atcoder_handle, vjudge_handle, hpassword)
         self.member_since = datetime.utcnow()
 
     def __repr__(self):
@@ -242,9 +237,7 @@ class Board(db.Model):
                    default=lambda: str(uuid.uuid4()), primary_key=True)
     role = db.Column(db.String(50), nullable=False)
     status = db.Column(db.Boolean(), default=True, nullable=False)
-    created_at = db.Column(db.DateTime(timezone=True),
-                           nullable=False, server_default=db.text("now()"))
-    modified_at = db.Column(db.DateTime(timezone=True),
+    board_since = db.Column(db.DateTime(timezone=True),
                             nullable=False, server_default=db.text("now()"))
     member_id = db.Column(db.String(36), db.ForeignKey(
         'users.id'), nullable=True)
@@ -253,8 +246,10 @@ class Board(db.Model):
         'polymorphic_identity': 'board',
     }
 
-    def __init__(self, role):
-        self.role = role
+    def __init__(self, nickname, email, codeforces_handle, atcoder_handle, vjudge_handle, hpassword):
+        super().__init__(nickname, email, codeforces_handle,
+                         atcoder_handle, vjudge_handle, hpassword)
+        self.board_since = datetime.utcnow()
 
     def __repr__(self):
         return f"<Role: {self.role}>"
@@ -350,17 +345,15 @@ def login():
         return render_template('login.html')
 
 
-@app.route('/signup', methods=['POST', 'GET'])
+@app.route('/signup/', methods=['POST', 'GET'])
 def signup():
     if request.method == 'POST':
         try:
-            
+
             _nickname = request.form['user_nickname']
             print("nickname ok")
             _email = request.form['user_email']
             print("email ok")
-            _date_of_birth = request.form['user_date_of_birth']
-            print("date ok")
             _codeforces_handle = request.form['user_codeforces_handle']
             print("codeforces ok")
             _atcoder_handle = request.form['user_atcoder_handle']
@@ -373,25 +366,24 @@ def signup():
             print("confirm ok")
             _image = request.files['user_image']
             print("image ok")
-            
+
             if _password != _confirm_password:
                 flash('Las contraseñas no coinciden')
                 return jsonify({'error': 'Las contraseñas no coinciden'}), 401
-            
+
             print("passwords ok")
 
-            if len(User.query.all())!=0:
-                if User.query.filter_by(nickname=_nickname).first() is not None:
-                    flash('El nickname ya está registrado')
-                    return jsonify({'error': 'El nickname ya está registrado'}), 401
-                print("nickname unique ok")
-                if User.query.filter_by(email=_email).first() is not None:
-                    flash('El email ya está registrado')
-                    return jsonify({'error': 'El email ya está registrado'}), 401
-                            
-                print("email unique ok")
-            
-            
+            # if len(User.query.all()) != 0 and User.query.filter_by(nickname=_nickname).first() is not None:
+            #     flash('El nickname ya está registrado')
+            #     return jsonify({'error': 'El nickname ya está registrado'}), 401
+            # print("nickname unique ok")
+
+            # if len(User.query.all()) != 0 and User.query.filter_by(email=_email).first() is not None:
+            #     flash('El email ya está registrado')
+            #     return jsonify({'error': 'El email ya está registrado'}), 401
+
+            # print("email unique ok")
+
             if _email.split('@')[1] != 'utec.edu.pe':
                 flash('El email no es válido')
                 return jsonify({'error': 'El email no es válido'}), 401
@@ -400,7 +392,7 @@ def signup():
 
             if _image.filename == "":
                 flash("No ha seleccionado una imagen")
-                return jsonify  ({'error': 'No ha seleccionado una imagen'}), 401
+                return jsonify({'error': 'No ha seleccionado una imagen'}), 401
 
             print("image selected ok")
 
@@ -410,11 +402,8 @@ def signup():
 
             print("image format ok")
 
-            user = User(
-                _nickname, _email, _date_of_birth,
-                _codeforces_handle, _atcoder_handle, _vjudge_handle,
-                _image.filename, _password
-            )
+            user = User(_nickname, _email, _codeforces_handle,
+                        _atcoder_handle, _vjudge_handle, _password)
 
             print("user created ok")
 
@@ -425,10 +414,15 @@ def signup():
             users_dir = os.path.join(app.config['UPLOAD_FOLDER'], user.id)
             os.makedirs(users_dir, exist_ok=True)
 
+            print("folder created ok")
+
             upload_folder = os.path.join(cwd, users_dir)
             _image.save(os.path.join(upload_folder, _image.filename))
 
             db.session.commit()
+
+            print("usuario registrado ok")
+
             flash('El usuario ha sido registrado exitosamente')
 
             return jsonify({'success': 'El usuario ha sido registrado exitosamente'}), 200
