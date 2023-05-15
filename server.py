@@ -327,8 +327,13 @@ def faq():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        user = User.query.filter_by(
-            nickname=request.form['nickname']).first()
+
+        _input = request.form['nickname']
+        if '@' in _input:
+            user = User.query.filter_by(email=_input).first()
+        else:
+            user = User.query.filter_by(nickname=_input).first()
+            
         if user:
             if check_password_hash(user.hpassword, request.form['password']):
                 login_user(user)
