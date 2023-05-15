@@ -16,13 +16,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_migrate import Migrate
 import uuid
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask_login import (
     LoginManager,
     current_user,
     login_required,
     login_user,
-    logout_user
+    logout_user,
+    UserMixin,
 )
 
 # Configuration
@@ -45,7 +46,7 @@ session = {}    # Session
 current_user = {}   # Current User
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.String(36), nullable=False,
                    default=lambda: str(uuid.uuid4()), primary_key=True)
@@ -291,23 +292,18 @@ class Video(db.Model):
 
 
 # Routes
-
-
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
-
 
 @login_manager.unauthorized_handler
 def unauthorized():
     flash('Debes iniciar sesión para acceder a esta página')
     return redirect(url_for('login'))
 
-
 @app.route('/', methods=['GET'])
 def home():
     return render_template('home.html')
-
 
 @app.route('/blog', methods=['GET'])
 def blog():
@@ -318,15 +314,17 @@ def blog():
 def aboutus():
     return render_template('aboutus.html')
 
-
 @app.route('/faq', methods=['GET'])
 def faq():
     return render_template('faq.html')
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6db759a944cf04a0774ac681a16ba5c6fa15ba93
         _input = request.form['user_nickname']
         if '@' in _input:
             user = User.query.filter_by(email=_input).first()
@@ -335,7 +333,15 @@ def login():
 
         if user:
             if check_password_hash(user.hpassword, request.form['user_password']):
+<<<<<<< HEAD
                 login_user(user)
+=======
+                if request.form.get('remember'):
+                    login_user(user, remember=True, duration=timedelta(days=5))
+                else:
+                    login_user(user, remember=False, duration=timedelta(minutes=5))
+                    
+>>>>>>> 6db759a944cf04a0774ac681a16ba5c6fa15ba93
                 flash('Has iniciado sesión correctamente')
                 return redirect(url_for('home'), 200)
             else:
