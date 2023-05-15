@@ -473,7 +473,7 @@ def signup_member():
 def logout():
     logout_user()
     flash('Has cerrado sesión correctamente')
-    return redirect(url_for('home'), 200)
+    return redirect(url_for('home.html'), 200)
 
 
 @app.route('/profile/edit', methods=['GET', 'POST'])
