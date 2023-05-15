@@ -350,80 +350,55 @@ def signup():
     if request.method == 'POST':
         try:
             _nickname = request.form['user_nickname']
-            print("nickname ok")
             _email = request.form['user_email']
-            print("email ok")
             _codeforces_handle = request.form['user_codeforces_handle']
-            print("codeforces ok")
             _atcoder_handle = request.form['user_atcoder_handle']
-            print("atcoder ok")
             _vjudge_handle = request.form['user_vjudge_handle']
-            print("vjudge ok")
             _password = request.form['user_password']
-            print("password ok")
             _confirm_password = request.form['user_confirmation']
-            print("confirm ok")
             _image = request.files['user_image']
-            print("image ok")
 
             if _password != _confirm_password:
                 flash('Las contraseñas no coinciden')
                 return jsonify({'error': 'Las contraseñas no coinciden'}), 401
 
-            print("passwords ok")
+            if len(User.query.all()) != 0 and User.query.filter_by(nickname=_nickname).first() != None:
+                flash('El nickname ya está registrado')
+                return jsonify({'error': 'El nickname ya está registrado'}), 401
+            print("nickname unique ok")
 
-            # if len(User.query.all()) != 0 and User.query.filter_by(nickname=_nickname) is not None:
-            #     flash('El nickname ya está registrado')
-            #     return jsonify({'error': 'El nickname ya está registrado'}), 401
-            # print("nickname unique ok")
+            if len(User.query.all()) != 0 and User.query.filter_by(email=_email).first() != None:
+                flash('El email ya está registrado')
+                return jsonify({'error': 'El email ya está registrado'}), 401
 
-            # if len(User.query.all()) != 0 and User.query.filter_by(email=_email) is not None:
-            #     flash('El email ya está registrado')
-            #     return jsonify({'error': 'El email ya está registrado'}), 401
-
-            # print("email unique ok")
+            print("email unique ok")
 
             if _email.split('@')[1] != 'utec.edu.pe':
                 flash('El email no es válido')
                 return jsonify({'error': 'El email no es válido'}), 401
 
-            print("email available ok")
-
             if _image.filename == "":
                 flash("No ha seleccionado una imagen")
                 return jsonify({'error': 'No ha seleccionado una imagen'}), 401
-
-            print("image selected ok")
 
             if not allowed_file(_image.filename):
                 flash("El formato de la imagen no es válido")
                 return jsonify({'error': 'El formato de la imagen no es válido'}), 401
 
-            print("image format ok")
-
             user = User(nickname=_nickname, email=_email, codeforces_handle=_codeforces_handle,
                         atcoder_handle=_atcoder_handle, vjudge_handle=_vjudge_handle, key=generate_password_hash(_password))
 
-            print("user created ok")
-
             db.session.add(user)
-            print("add user ok")
-
             db.session.commit()
-            print("commit user ok")
 
             cwd = os.getcwd()
             users_dir = os.path.join(app.config['UPLOAD_FOLDER'], user.id)
             os.makedirs(users_dir, exist_ok=True)
 
-            print("folder created ok")
-
             upload_folder = os.path.join(cwd, users_dir)
             _image.save(os.path.join(upload_folder, _image.filename))
 
             db.session.commit()
-
-            print("usuario registrado ok")
 
             flash('El usuario ha sido registrado exitosamente')
 
