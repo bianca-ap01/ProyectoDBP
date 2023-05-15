@@ -172,8 +172,8 @@ class Team(db.Model):
         return f"<Team {self.name}>"
 
 
-user_contest = db.Table('user_contest', db.Column('user_id', db.String(36), db.ForeignKey(
-    'users.id')), db.Column('contest_id', db.String(36), db.ForeignKey('contests.id')))
+# user_contest = db.Table('user_contest', db.Column('user_id', db.String(36), db.ForeignKey(
+#     'users.id')), db.Column('contest_id', db.String(36), db.ForeignKey('contests.id')))
 
 
 class Contest(db.Model):
@@ -189,8 +189,8 @@ class Contest(db.Model):
                            nullable=False, server_default=db.text("now()"))
     modified_at = db.Column(db.DateTime(timezone=True),
                             nullable=False, server_default=db.text("now()"))
-    user = db.relationship(
-        'User', backref='users', lazy=True, secondary=user_contest)
+    # user = db.relationship(
+    #     'User', backref='users', lazy=True, secondary=user_contest)
 
     def __init__(self, title, link, platorm, num_prob):
         self.title = title
@@ -373,16 +373,16 @@ def signup():
 
             print("passwords ok")
 
-            # if len(User.query.all()) != 0 and User.query.filter_by(nickname=_nickname).first() is not None:
-            #     flash('El nickname ya está registrado')
-            #     return jsonify({'error': 'El nickname ya está registrado'}), 401
-            # print("nickname unique ok")
+            if len(User.query.all()) != 0 and User.query.filter_by(nickname=_nickname) is not None:
+                flash('El nickname ya está registrado')
+                return jsonify({'error': 'El nickname ya está registrado'}), 401
+            print("nickname unique ok")
 
-            # if len(User.query.all()) != 0 and User.query.filter_by(email=_email).first() is not None:
-            #     flash('El email ya está registrado')
-            #     return jsonify({'error': 'El email ya está registrado'}), 401
+            if len(User.query.all()) != 0 and User.query.filter_by(email=_email) is not None:
+                flash('El email ya está registrado')
+                return jsonify({'error': 'El email ya está registrado'}), 401
 
-            # print("email unique ok")
+            print("email unique ok")
 
             if _email.split('@')[1] != 'utec.edu.pe':
                 flash('El email no es válido')
