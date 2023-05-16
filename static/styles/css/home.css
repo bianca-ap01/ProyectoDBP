@@ -209,6 +209,37 @@ body {
   margin: 10px 0 0;
 }
 
+.success.register-success {
+  display: block;
+  margin-bottom: 20px;
+  transform: translateY(-20px);
+}
+
+.error.email-error {
+  display: block;
+  margin-bottom: 20px;
+  transform: translateY(-20px);
+}
+
+.error.password-error {
+  display: block;
+  margin-bottom: 20px;
+  transform: translateY(-20px);
+}
+
+.error.confirm-password-error {
+  display: block;
+  margin-bottom: 20px;
+  transform: translateY(-20px);
+}
+
+.error{
+  color:#ff0004;
+  background-color: #5a0002;
+  padding: 10px;
+  display: none;
+}
+
 .error.display-error {
   display: block;
   margin-bottom: 20px;
