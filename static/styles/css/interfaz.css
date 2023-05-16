@@ -52,3 +52,6 @@
     justify-content: center;
     align-items: center;
 }
+#typed-text {
+    font-size: 2em; 
+}
