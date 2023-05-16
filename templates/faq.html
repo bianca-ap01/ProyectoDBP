@@ -1,29 +1,48 @@
 {%extends "home.html"%}
-    {% block faq %}
-        <h1>FAQ</h1>
-        
-        <h2>¿Qué es el Club de Programación Competitiva?</h2>
-        <p>No sé</p>
+{% block faq %}
+    <h1>FAQ</h1>
 
-        <h2>¿Cómo me registro?</h2>
-        <p>Para registrarte, debes ir a la página de registro <a href="/signup"><strong>(Sign Up)</strong></a> y llenar el formulario.</p>
+    <div class="faq-item">
+        <h2 class="faq-question">¿Qué es el Club de Programación Competitiva?</h2>
+        <p class="faq-answer">No sé</p>
+    </div>
 
-        <h2>¿Cómo inicio sesión?</h2>
-        <p>Para iniciar sesión, debes ir a la página de incio de sesión <a href="/login"><strong>(Log In)</strong></a> y llenar el formulario.</p>
+    <div class="faq-item">
+        <h2 class="faq-question">¿Cómo me registro?</h2>
+        <p class="faq-answer">Para registrarte, debes ir a la página de registro <a href="/signup"><strong>(Sign Up)</strong></a> y llenar el formulario.</p>
+    </div>
 
-        <h2>Si me registro, ¿soy miembro automáticamente?</h2>
-        <p>No, para ser admitido debes pasar el Contest de Entrada</p>
+    <div class="faq-item">
+        <h2 class="faq-question">¿Cómo inicio sesión?</h2>
+        <p class="faq-answer">Para iniciar sesión, debes ir a la página de incio de sesión <a href="/login"><strong>(Log In)</strong></a> y llenar el formulario.</p>
+    </div>
 
-        <h2>¿Qué es el Contest de Entrada?</h2>
-        <p>Es el método de ingreso para ingresar al club, puedes ver más información en <a href="/eventos/contest_entrada"> <strong>Contest de Entrada</strong></a></p>
-    
-        <h2>¿Qué es un contest?</h2>
-        <p>Un contest es una competencia de programación, donde se resuelven problemas de programación, puedes ver más información en <a href="/eventos/contest_entrada"> <strong>Contest de Entrada</strong></a></p>
+    <div class="faq-item">
+        <h2 class="faq-question">Si me registro, ¿soy miembro automáticamente?</h2>
+        <p class="faq-answer">No, para ser admitido debes pasar el Contest de Entrada</p>
+    </div>
 
-        <h2>¿Qué es un problema?</h2>
-        <p>Un problema es un ejercicio de programación, donde se debe resolver un problema, puedes ver más información en <a href="/eventos/contest_entrada"> <strong>Contest de Entrada</strong></a></p>
+    <div class="faq-item">
+        <h2 class="faq-question">¿Qué es el Contest de Entrada?</h2>
+        <p class="faq-answer">Es el método de ingreso para ingresar al club, puedes ver más información en <a href="/eventos/contest_entrada"> <strong>Contest de Entrada</strong></a></p>
+    </div>
 
-        <h2>¿Qué beneficios tiene pertenecer al Club de Programación Competitiva</h2>
-        <p>Estrés!</p>
+    <div class="faq-item">
+        <h2 class="faq-question">¿Qué es un contest?</h2>
+        <p class="faq-answer">Un contest es una competencia de programación, donde se resuelven problemas de programación, puedes ver más información en <a href="/eventos/contest_entrada"> <strong>Contest de Entrada</strong></a></p>
+    </div>
+
+    <div class="faq-item">
+        <h2 class="faq-question">¿Qué es un problema?</h2>
+        <p class="faq-answer">Un problema es un ejercicio de programación, donde se debe resolver un problema, puedes ver más información en <a href="/eventos/contest_entrada"> <strong>Contest de Entrada</strong></a></p>
+    </div>
+
+    <div class="faq-item">
+        <h2 class="faq-question">¿Qué beneficios tiene pertenecer al Club de Programación Competitiva</h2>
+        <p class="faq-answer">Estrés!</p>
+    </div>
 
 {%endblock%}
+{% block extra_js %}
+<script src="/static/styles/js/faq.js" defer></script>
+{% endblock %}
