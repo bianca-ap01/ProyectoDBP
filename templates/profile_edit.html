@@ -1,7 +1,7 @@
 {%extends "home.html" %}
-    {%block profile%}
+    {% block profile_edit %}
     <script src="static/styles/js/profileEdit" defer></script> 
-        <form id="formEditUser" action="/profile/edit" method="POST" enctype="multipart/form-data">
+        <form id="formEditUser" action="/profile/edit/" method="POST" enctype="multipart/form-data">
             <h1>Sign Up</h1>
             <ul>
                 <li id="get_nickname">
@@ -47,9 +47,7 @@
                 <li>
                     <button type="submit">Sign Up</button>
                 </li>
-
-                <p>Already have an account? <a href="/login">Log In</a></p>
             </ul>
         </form>
-{% endblock %}
+{%endblock%}
 

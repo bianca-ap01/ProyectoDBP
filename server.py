@@ -487,7 +487,7 @@ def logout():
     return redirect(url_for('home'), 200)
 
 
-@app.route('/profile/edit', methods=['GET', 'POST'])
+@app.route('/profile/edit/', methods=['GET', 'POST'])
 @login_required
 def profile_edit():
     if request.method == 'POST':
@@ -500,7 +500,7 @@ def profile_edit():
             _password = request.form['password']
             if check_password_hash(current_user.password, _password):
                 flash('Contraseña incorrecta')
-                return redirect(url_for('profile'), 401)
+                return redirect(url_for('profile/edit/'), 401)
             else:
                 user = User.query.filter_by(id=current_user.id).first()
 
@@ -518,13 +518,13 @@ def profile_edit():
                 user.modified_at = datetime.datetime.now()
                 db.session.commit()
                 flash('Se han actualizado tus datos correctamente')
-                return redirect(url_for('profile'), 200)
+                return redirect(url_for('profile/edit/'), 200)
         except:
             flash('Ha ocurrido un error')
-            return redirect(url_for('profile'), 500)
+            return redirect(url_for('profile/edit/'), 500)
 
     else:
-        return render_template('profile.html')
+        return render_template('profile_edit.html')
 
 
 @app.route('/profile/<int:id>', methods=['GET'])
