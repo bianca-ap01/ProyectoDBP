@@ -1,0 +1,19 @@
+
+.carousel {
+  max-width: 1500px;
+  margin: 0 auto;
+}
+.carousel-cell img {
+  width: 700px;
+  height: 300px; /* Ajusta la altura de la imagen  */
+  object-fit: cover;
+}
+
+.carousel-cell {
+  margin-right: 0;
+}
+
+#aboutus-content {
+  margin-left: 4px;
+  margin-right: 4px;
+}

@@ -1,8 +1,27 @@
-{%extends "home.html"%}
-    {%block aboutus%}
-        <h1>About us</h1>
+{% extends "home.html" %}
 
-        <h2>Acerca de Nosotros</h2>
-        <p>El club se creó en 2020</p>
+{% block page_specific_styles %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flickity/2.2.2/flickity.min.css" />
+<link rel="stylesheet" href="/static/styles/css/aboutus.css">
+{% endblock %}
 
-    {%endblock%}
+{% block aboutus %}
+  <div id="aboutus-content">
+    <h1>About us</h1>
+
+    <h2>Acerca de Nosotros</h2>
+    <p>El club se creó en 2020</p>
+  </div>
+
+  <div class="carousel">
+    <div class="carousel-cell"><img src="/static/images/imagen1.jpg" alt="Imagen 1"></div>
+    <div class="carousel-cell"><img src="/static/images/imagen2.jpg" alt="Imagen 2"></div>
+    <div class="carousel-cell"><img src="/static/images/imagen3.jpg" alt="Imagen 3"></div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flickity/2.2.2/flickity.pkgd.min.js"></script>
+<script src="/static/styles/js/about.js" defer></script>
+{% endblock %}
+
