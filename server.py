@@ -63,8 +63,8 @@ class User(db.Model, UserMixin):
                            nullable=False, server_default=db.text("now()"))
     modified_at = db.Column(db.DateTime(timezone=True),
                             nullable=False, server_default=db.text("now()"))
-    members = db.relationship('Member', backref='users', lazy=True)
-    board = db.relationship('Board', backref='users', lazy=True)
+    member = db.relationship('Member', backref='users',
+                             lazy='joined', uselist=False)
 
     def __init__(self, nickname, email, codeforces_handle, atcoder_handle, vjudge_handle, key):
         self.nickname = nickname
@@ -92,33 +92,24 @@ class User(db.Model, UserMixin):
         }
 
 
-class Member(User):
+class Member(db.Model):
     __tablename__ = 'members'
-    id = db.Column(db.String(36), nullable=False,
-                   default=lambda: str(uuid.uuid4()), primary_key=True)
-    user_id = db.Column(db.String(36), db.ForeignKey(
-        'users.id'), nullable=False, primary_key=True)
+    m_id = db.Column(db.String(36), nullable=False,
+                     default=lambda: str(uuid.uuid4()), primary_key=True)
     member_since = db.Column(db.DateTime(timezone=True),
                              nullable=False, server_default=db.text("now()"))
     comp_status = db.Column(db.Boolean(), default=True, nullable=False)
     member_status = db.Column(db.Boolean(), default=True, nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey(
+        'users.id'), unique=True, nullable=False)
+    board = db.relationship('Board', backref='members',
+                            lazy='joined', uselist=False)
 
-    __mapper_args__ = {
-        'polymorphic_identity': 'members',
-        'polymorphic_load': 'inline'
-    }
-
-    def __init__(self, nickname, email, codeforces_handle, atcoder_handle, vjudge_handle, hpassword):
-        self.nickname = nickname
-        self.email = email
-        self.codeforces_handle = codeforces_handle
-        self.atcoder_handle = atcoder_handle
-        self.vjudge_handle = vjudge_handle
-        self.hpassword = hpassword
-        self.member_since = datetime.utcnow()
+    # def __init__(self):
+    #     self.member_since = datetime.utcnow()
 
     def __repr__(self):
-        return f"<Member {self.user_id}>"
+        return f"<Member {self.m_id}>"
 
 
 class Professor(db.Model):
@@ -248,15 +239,9 @@ class Board(db.Model):
     board_since = db.Column(db.DateTime(timezone=True),
                             nullable=False, server_default=db.text("now()"))
     member_id = db.Column(db.String(36), db.ForeignKey(
-        'users.id'), nullable=True)
+        'members.m_id'), nullable=False)
 
-    __mapper_args__ = {
-        'polymorphic_identity': 'board',
-    }
-
-    def __init__(self, nickname, email, codeforces_handle, atcoder_handle, vjudge_handle, hpassword):
-        super().__init__(nickname, email, codeforces_handle,
-                         atcoder_handle, vjudge_handle, hpassword)
+    def __init__(self):
         self.board_since = datetime.utcnow()
 
     def __repr__(self):
