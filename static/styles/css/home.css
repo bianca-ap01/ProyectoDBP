@@ -165,3 +165,46 @@ body {
       cursor: pointer;
     }
   }
+
+
+.faq-answer {
+  display: none;
+}
+.resource-card {
+  display: flex;
+  background-color: #fed010;
+  margin: 20px;
+  padding: 20px;
+  border-radius: 10px;
+  color: white;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  opacity: 1;
+}
+
+.resource-card:hover {
+  transform: scale(1.03);
+}
+
+.resource-img {
+  width: 20%;
+  min-width: 100px;
+}
+
+.resource-img img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.resource-info {
+  margin-left: 20px;
+}
+
+.resource-info h3 {
+  margin: 0;
+}
+
+.resource-info p {
+  margin: 10px 0 0;
+}
