@@ -316,6 +316,7 @@ def home():
 
 
 @app.route('/resources', methods=['GET'])
+@login_required
 def resources():
     return render_template('resources.html')
 
@@ -346,11 +347,24 @@ def login():
 
         if user:
             if check_password_hash(user.hpassword, request.form['user_password']):
+                
+                #Check if user is a board member
+                board = Board.query.filter_by(member_id=user.id).first()
+                member = Member.query.filter_by(id=user.id).first()
                 if request.form.get('remember'):
-                    login_user(user, remember=True, duration=timedelta(days=5))
+                    if board:
+                        login(board, remember=True, duration=timedelta(days=5))
+                    elif member:
+                        login(member, remember=True, duration=timedelta(days=5))
+                    else:
+                        login(user, remember=True, duration=timedelta(days=5))
                 else:
-                    login_user(user, remember=False,
-                               duration=timedelta(minutes=5))
+                    if board:
+                        login(board, remember=False, duration=timedelta(days=1))
+                    elif member:
+                        login(member, remember=False, duration=timedelta(days=1))
+                    else:
+                        login(user, remember=False, duration=timedelta(days=1))
 
                 flash('Has iniciado sesión correctamente')
                 return redirect(url_for('home'), 200)
