@@ -376,18 +376,18 @@ def login():
                 member = Member.query.filter_by(user_id=user.id).first()
 
                 if board != None:
-                    session['role'].append('admin')
-                    session['board_since'] = board.board_since
+                    current_user['role'].append('admin')
+                    current_user['board_since'] = board.board_since
 
                 if member != None:
-                    session['role'].append('member')
-                    session['member_since'] = member.member_since
-                    session['comp_status'] = member.comp_status
-                    session['status'] = member.status
+                    current_user['role'].append('member')
+                    current_user['member_since'] = member.member_since
+                    current_user['comp_status'] = member.comp_status
+                    current_user['status'] = member.status
 
-                session['role'].append('user')
+                current_user['role'].append('user')
 
-                print(session)
+                print(current_user)
 
                 flash('Has iniciado sesión correctamente')
                 return redirect(url_for('home'), 200)
