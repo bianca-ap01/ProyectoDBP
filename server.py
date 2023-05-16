@@ -25,6 +25,8 @@ from flask_login import (
     logout_user,
     UserMixin,
 )
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 from functools import wraps
 
 # Configuration
