@@ -4,7 +4,8 @@
         <meta http-equiv="content-type" content="text/html">
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="/static/styles/css/home.css">
-        <script src="/static/styles/js/home.js" defer></script> 
+        {% block page_specific_styles %}{% endblock %}
+        <script src="/static/styles/js/interfaz.js" defer></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <title>Club de Programación Competitiva</title>
         <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" />
@@ -43,5 +44,12 @@
 
         {%block events%}
         {%endblock%}
+        
+        {%block extra_js%}
+        {%endblock%}
+
+        {%block interfaz%}
+        {%endblock%}
+        
     </body>
 </html>
