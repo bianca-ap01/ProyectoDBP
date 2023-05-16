@@ -25,6 +25,7 @@ from flask_login import (
     logout_user,
     UserMixin,
 )
+from flask_user import roles_required
 from functools import wraps
 
 # Configuration
@@ -65,6 +66,7 @@ class User(db.Model, UserMixin):
                             nullable=False, server_default=db.text("now()"))
     member = db.relationship('Member', backref='users',
                              lazy='joined', uselist=False)
+    roles = db.relationship('Role', secondary='user_role')
 
     def __init__(self, nickname, email, codeforces_handle, atcoder_handle, vjudge_handle, key):
         self.nickname = nickname
@@ -91,6 +93,29 @@ class User(db.Model, UserMixin):
             'modified_at': self.modified_at
         }
 
+class Role(db.Model):
+    __tablename__ = 'roles'
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(50), unique=True)
+
+    def __init__(self, name):
+        self.name = name
+    
+    def __repr__(self):
+        return f"Role {self.name}"
+
+class UserRoles(db.Model):
+    __tablename__ = 'user_role'
+    id = db.Column(db.Integer(), primary_key=True)
+    user_id = db.Column(db.String(36), db.ForeignKey('users.id', ondelete='CASCADE'))
+    role_id = db.Column(db.Integer(), db.ForeignKey('roles.id', ondelete='CASCADE'))
+
+    def __init__(self, user_id, role_id):
+        self.user_id = user_id
+        self.role_id = role_id
+    
+    def __repr__(self):
+        return f"UserRoles {self.id}"
 
 class Member(db.Model):
     __tablename__ = 'members'
