@@ -527,10 +527,15 @@ def profile_edit():
         return render_template('profile_edit.html')
 
 
-@app.route('/profile/<string:nickname>', methods=['GET'])
-def profile_id(_nickname):
+@app.route('/profile/<string:_nickname>', methods=['GET'])
+def profile_user(_nickname):
     _user = User.query.filter_by(nickname=_nickname).first()
-    return render_template('profile.html', user=_user.serialize())
+
+    if _user == None:
+        flash('El usuario no existe')
+        return redirect(url_for('home'), 404)
+    else:
+        return render_template('profile.html', user=_user.serialize())
 
 
 @app.route('/lectures', methods=['GET'])
