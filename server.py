@@ -350,21 +350,24 @@ def login():
                 
                 #Check if user is a board member
                 board = Board.query.filter_by(member_id=user.id).first()
-                member = Member.query.filter_by(id=user.id).first()
-                if request.form.get('remember'):
+                member = Member.query.filter_by(m_id=user.id).first()
+
+                #check if user wants to be remembered
+                print(request.form.get('remember'))
+                if request.form.get('remember') :
                     if board:
-                        login(board, remember=True, duration=timedelta(days=5))
+                        login_user(board, remember=True, duration=timedelta(days=5))
                     elif member:
-                        login(member, remember=True, duration=timedelta(days=5))
+                        login_user(member, remember=True, duration=timedelta(days=5))
                     else:
-                        login(user, remember=True, duration=timedelta(days=5))
+                        login_user(user, remember=True, duration=timedelta(days=5))
                 else:
                     if board:
-                        login(board, remember=False, duration=timedelta(days=1))
+                        login_user(board, remember=False, duration=timedelta(days=1))
                     elif member:
-                        login(member, remember=False, duration=timedelta(days=1))
+                        login_user(member, remember=False, duration=timedelta(days=1))
                     else:
-                        login(user, remember=False, duration=timedelta(days=1))
+                        login_user(user, remember=False, duration=timedelta(days=1))
 
                 flash('Has iniciado sesión correctamente')
                 return redirect(url_for('home'), 200)
