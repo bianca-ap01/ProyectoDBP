@@ -184,7 +184,7 @@ body {
 }
 
 .resource-card:hover {
-  transform: scale(1.03);
+  transform: scale(1.02);
 }
 
 .resource-img {
@@ -264,3 +264,78 @@ body {
     color: black;
   }
 }
+
+/* ... estilo del footer... */
+
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+body {
+  flex: 1 0 auto;
+  padding-top: 65px;
+}
+.content {
+  flex: 1 0 auto;
+}
+
+footer {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px;
+  background-color: #E3E6EA;
+}
+
+.footer-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.footer-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+.footer-text {
+    margin-left: 20px;
+}
+
+.footer-text p {
+    margin: 0;
+    font-size: 20px;
+    font-weight: bold;
+}
+.footer-right {
+  display: flex;
+  flex-direction: row; /* Esto hace que los elementos se alineen horizontalmente */
+  justify-content: space-between;
+  align-items: center;
+}
+.footer-right img {
+  width: 40px;
+  height: 40px;
+  margin: 0 10px;
+}
+.footer-left img {
+  width: 150px;
+  height: auto;
+}
+.footer-center ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.footer-center ul li a {
+  text-decoration: none;
+  color: #000;
+}
+
+
