@@ -34,9 +34,11 @@
 
         {%block login%}
         {%endblock%}
-
-        {%block resources%}
-        {%endblock%}
+    
+        {%if current_user.role != ''%}
+            {%block resources%}
+            {%endblock%}
+        {%endif%}
 
         {%block faq%}
         {%endblock%}
