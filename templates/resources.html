@@ -1,14 +1,47 @@
 {%extends "home.html"%}
-    {%block resources%}
-        <h1>Recursos de aprendizaje</h1>
-        <p>Esta sección tiene como objetivo brindar recursos para iniciarse en programación competitiva. Se encontrán breves artículos sobre los siguientes temas: </p>
-        <ul>
-            <li>Complete Search</li>
-            <li>Divide and conquer</li>
-            <li>Game Theory</li>
-            <li>Graph Theory</li>
-        </ul>
+{%block resources%}
+    <h1>Recursos de aprendizaje</h1>
+    <p>Esta sección tiene como objetivo brindar recursos para iniciarse en programación competitiva. Se encontrán breves artículos sobre los siguientes temas: </p>
+    <ul>
+        <li>Complete Search</li>
+        <li>Divide and conquer</li>
+        <li>Game Theory</li>
+        <li>Graph Theory</li>
+    </ul>
 
-        
+    <h2>Sitios para practicar</h2>
+    <div class="resources">
+        <div class="resource-card" onclick="location.href='https://codeforces.com/';">
+            <div class="resource-img">
+                <img src="/static/images/codeforces.png" alt="Codeforces Logo">
+            </div>
+            <div class="resource-info">
+                <h3>Codeforces</h3>
+                <p>Codeforces es una plataforma en línea para la práctica y competencia en programación. Ofrece desafíos de programación y competiciones en línea donde los participantes pueden mejorar sus habilidades algorítmicas. También brinda la oportunidad de interactuar con una comunidad activa de programadores y compartir conocimientos. Es una herramienta invaluable para aquellos que desean desarrollar sus habilidades de programación y participar en desafíos emocionantes.</p>
+            </div>
+        </div>
+        <!-- Agrega más tarjetas de recursos aquí -->
+        <div class="resource-card" onclick="location.href='https://atcoder.jp/';">
+            <div class="resource-img">
+                <img src="/static/images/atcoder.png" alt="atcoder Logo">
+            </div>
+            <div class="resource-info">
+                <h3>Atcoder</h3>
+                <p>AtCoder es una plataforma de programación en línea que ofrece una amplia variedad de problemas de programación clasificados por dificultad, lo que permite a los participantes mejorar sus habilidades en diferentes áreas. AtCoder también organiza competiciones en línea y ofrece un sistema de clasificación para medir el rendimiento de los participantes. Es una plataforma popular y desafiante para aquellos que buscan perfeccionar sus habilidades de programación y participar en competencias emocionantes.</p>
+            </div>
+        </div>
+        <div class="resource-card" onclick="location.href='https://vjudge.net/';">
+            <div class="resource-img">
+                <img src="/static/images/vjudge.png" alt="vjudge Logo">
+            </div>
+            <div class="resource-info">
+                <h3>Vjudge</h3>
+                <p>VJudge es una plataforma en línea que reúne y centraliza problemas y competiciones de programación de diversas plataformas populares, también ofrece características como el seguimiento del progreso y la participación en concursos virtuales. Es una herramienta conveniente para los entusiastas de la programación que desean acceder a una variedad de problemas y mejorar sus habilidades a través de la práctica y la competición.</p>
+            </div>
+        </div>
+
+    </div>
 {%endblock%}
-
+{% block extra_js %}
+<script src="/static/styles/js/resources.js" defer></script>
+{% endblock %}
