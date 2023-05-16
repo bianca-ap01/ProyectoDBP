@@ -527,7 +527,7 @@ def profile_edit():
         return render_template('profile_edit.html')
 
 
-@app.route('/profile/<string:_nickname>', methods=['GET'])
+@app.route('/profile/<_nickname>', methods=['GET'])
 def profile_user(_nickname):
     _user = User.query.filter_by(nickname=_nickname).first()
 
