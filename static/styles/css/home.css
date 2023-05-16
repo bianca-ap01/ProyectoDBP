@@ -251,3 +251,16 @@ body {
   margin-bottom: 20px;
   transform: translateY(-20px);
 }
+
+#cursor {
+  animation: blink .75s step-end infinite;
+}
+
+@keyframes blink {
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: black;
+  }
+}
