@@ -51,9 +51,7 @@ current_user = {
     'codeforces_handle': '',
     'atcoder_handle': '',
     'vjudge_handle': '',
-    'created_at': '',
-    'modified_at': '',
-    'role': ''
+    'role': list()
 
 }   # Current User
 
@@ -304,6 +302,7 @@ def unauthorized():
     flash('Debes iniciar sesión para acceder a esta página')
     return redirect(url_for('login'))
 
+@login_manager.unauthorized_handler
 def admin_required(route_function):
     @wraps(route_function)
     def wrapper(*args, **kwargs):
@@ -313,6 +312,7 @@ def admin_required(route_function):
         return route_function(*args, **kwargs)
     return wrapper
 
+@login_manager.unauthorized_handler
 def memmber_required(route_function):
     @wraps(route_function)
     def wrapper(*args, **kwargs):
@@ -366,32 +366,25 @@ def login():
         if user:
             if check_password_hash(user.hpassword, request.form['user_password']):
 
-                # Check if user is a board member
-                board = Board.query.filter_by(member_id=user.id).first()
-                member = Member.query.filter_by(m_id=user.id).first()
-
                 # check if user wants to be remembered
-                print(request.form.get('remember'))
-                if request.form.get('remember'):
-                    if board:
-                        login_user(board, remember=True,
-                                   duration=timedelta(days=5))
-                    elif member:
-                        login_user(member, remember=True,
-                                   duration=timedelta(days=5))
-                    else:
-                        login_user(user, remember=True,
-                                   duration=timedelta(days=5))
-                else:
-                    if board:
-                        login_user(board, remember=False,
-                                   duration=timedelta(days=1))
-                    elif member:
-                        login_user(member, remember=False,
-                                   duration=timedelta(days=1))
-                    else:
-                        login_user(user, remember=False,
-                                   duration=timedelta(days=1))
+                #print(request.form.get('remember'))
+                login_user(user, remember=request.form.get('remember'))
+                board = Board.query.filter_by(member_id=user.id).first()
+                member = Member.query.filter_by(user_id=user.id).first()
+
+                if board != None:
+                    session['role'].append('admin')
+                    session['board_since'] = board.board_since
+
+                if member != None:
+                    session['role'].append('member')
+                    session['member_since'] = member.member_since
+                    session['comp_status'] = member.comp_status
+                    session['status'] = member.status
+                
+                session['role'].append('user')
+
+                print(session)
 
                 flash('Has iniciado sesión correctamente')
                 return redirect(url_for('home'), 200)
