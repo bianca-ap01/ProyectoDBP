@@ -527,12 +527,10 @@ def profile_edit():
         return render_template('profile_edit.html')
 
 
-@app.route('/profile/<int:id>', methods=['GET'])
-def profile_id(_id):
-    if _id == '':
-        _id = current_user.id
-    _user = User.query.filter_by(id=_id).first()
-    return render_template('perfil.html', user=_user.serialize())
+@app.route('/profile/<string:nickname>', methods=['GET'])
+def profile_id(_nickname):
+    _user = User.query.filter_by(nickname=_nickname).first()
+    return render_template('profile.html', user=_user.serialize())
 
 
 @app.route('/lectures', methods=['GET'])
