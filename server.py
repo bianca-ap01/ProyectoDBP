@@ -25,7 +25,6 @@ from flask_login import (
     logout_user,
     UserMixin,
 )
-from flask_user import roles_required
 from functools import wraps
 
 # Configuration
