@@ -347,27 +347,33 @@ def login():
 
         if user:
             if check_password_hash(user.hpassword, request.form['user_password']):
-                
-                #Check if user is a board member
+
+                # Check if user is a board member
                 board = Board.query.filter_by(member_id=user.id).first()
                 member = Member.query.filter_by(m_id=user.id).first()
 
-                #check if user wants to be remembered
+                # check if user wants to be remembered
                 print(request.form.get('remember'))
-                if request.form.get('remember') :
+                if request.form.get('remember'):
                     if board:
-                        login_user(board, remember=True, duration=timedelta(days=5))
+                        login_user(board, remember=True,
+                                   duration=timedelta(days=5))
                     elif member:
-                        login_user(member, remember=True, duration=timedelta(days=5))
+                        login_user(member, remember=True,
+                                   duration=timedelta(days=5))
                     else:
-                        login_user(user, remember=True, duration=timedelta(days=5))
+                        login_user(user, remember=True,
+                                   duration=timedelta(days=5))
                 else:
                     if board:
-                        login_user(board, remember=False, duration=timedelta(days=1))
+                        login_user(board, remember=False,
+                                   duration=timedelta(days=1))
                     elif member:
-                        login_user(member, remember=False, duration=timedelta(days=1))
+                        login_user(member, remember=False,
+                                   duration=timedelta(days=1))
                     else:
-                        login_user(user, remember=False, duration=timedelta(days=1))
+                        login_user(user, remember=False,
+                                   duration=timedelta(days=1))
 
                 flash('Has iniciado sesión correctamente')
                 return redirect(url_for('home'), 200)
@@ -432,6 +438,7 @@ def signup():
             upload_folder = os.path.join(cwd, users_dir)
             _image.save(os.path.join(upload_folder, _image.filename))
 
+            user.image = _image.filename
             db.session.commit()
 
             flash('El usuario ha sido registrado exitosamente')

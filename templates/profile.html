@@ -1,16 +1,12 @@
 {%extends "home.html" %}
     {%block profile%}
-    
+    <link rel="stylesheet" href="/static/styles/css/profile.css">
     <!-- Display user profile information here. -->
-
     <h1>Profile</h1>
     <h2>{{user.nickname}}</h2>
     <h2>{{user.email}}</h2>
     <h2>{{user.codeforces_handle}}</h2>
     <h2>{{user.atcoder_handle}}</h2>
     <h2>{{user.vjudge_handle}}</h2>
-    <img src='/static/images/users/%{{user.id}}$/${{user.image}}$' alt="Profile Picture">
-    <h2>{{user.date}}</h2>
-
+    <img src='/static/users/{{user.id}}/{{user.image}}' alt="Current profile picture">
 {% endblock %}
-
