@@ -1,6 +1,5 @@
 {%extends "home.html"%}
 {%block resources%}
-    <script src="/static/styles/js/resources.js" defer></script>
     <h1>Recursos de aprendizaje</h1>
     <p>Esta sección tiene como objetivo brindar recursos para iniciarse en programación competitiva. Se encontrán breves artículos sobre los siguientes temas: </p>
     <ul>
@@ -43,4 +42,7 @@
 
     </div>
 {%endblock%}
+{% block extra_js %}
+<script src="/static/styles/js/resources.js" defer></script>
+{% endblock %}
 
