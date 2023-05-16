@@ -11,14 +11,14 @@ navCloseBtn.addEventListener("click", () => {
   nav.classList.remove("openNav");
 });
 
+// Verifica el desplazamiento vertical
+window.addEventListener("scroll", () => {
+  const navbar = document.getElementById("navbar");
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-var prevScrollpos = window.pageYOffset;
-window.onscroll = function() {
-  var currentScrollPos = window.pageYOffset;
-  if (prevScrollpos > currentScrollPos) {
-    document.getElementById("navbar").style.top = "0";
+  if (scrollTop > 0) {
+    navbar.classList.add("fixed-nav");
   } else {
-    document.getElementById("navbar").style.top = "-80px";
+    navbar.classList.remove("fixed-nav");
   }
-  prevScrollpos = currentScrollPos;
-}
+});
