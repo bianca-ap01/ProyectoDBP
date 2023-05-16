@@ -51,7 +51,7 @@ current_user = {
     'codeforces_handle': '',
     'atcoder_handle': '',
     'vjudge_handle': '',
-    'role': list()
+    'role': ''
 
 }   # Current User
 
@@ -295,7 +295,7 @@ class Video(db.Model):
 # Routes
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(user_id)
+    return session.get(user_id)
 
 
 @login_manager.unauthorized_handler
@@ -308,7 +308,7 @@ def unauthorized():
 def admin_required(route_function):
     @wraps(route_function)
     def wrapper(*args, **kwargs):
-        if 'admin' in current_user.role:
+        if current_user.role != 'admin':
             flash('No tienes permiso para acceder a esta página')
             return redirect(url_for('home'))
         return route_function(*args, **kwargs)
@@ -319,7 +319,7 @@ def admin_required(route_function):
 def member_required(route_function):
     @wraps(route_function)
     def wrapper(*args, **kwargs):
-        if 'member' in current_user.role:
+        if current_user.role != 'member' or current_user.role != 'admin':
             flash('No tienes permiso para acceder a esta página')
             return redirect(url_for('home'))
         return route_function(*args, **kwargs)
@@ -357,35 +357,46 @@ def faq():
     return render_template('faq.html')
 
 
+def log_current_user(user):
+    current_user['id'] = user.id
+    current_user['nickname'] = user.nickname
+    current_user['email'] = user.email
+    current_user['image'] = user.image
+    current_user['codeforces_handle'] = user.codeforces_handle
+    current_user['atcoder_handle'] = user.atcoder_handle
+    current_user['vjudge_handle'] = user.vjudge_handle
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         _input = request.form['user_nickname']
         if '@' in _input:
-            user = User.query.filter_by(email=_input).first()
+            _user = User.query.filter_by(email=_input).first()
         else:
-            user = User.query.filter_by(nickname=_input).first()
+            _user = User.query.filter_by(nickname=_input).first()
 
-        if user:
-            if check_password_hash(user.hpassword, request.form['user_password']):
+        if _user:
+            if check_password_hash(_user.hpassword, request.form['user_password']):
 
                 # check if user wants to be remembered
                 # print(request.form.get('remember'))
-                login_user(user, remember=request.form.get('remember'))
-                board = Board.query.filter_by(member_id=user.id).first()
-                member = Member.query.filter_by(user_id=user.id).first()
-
-                if board != None:
-                    current_user['role'].append('admin')
-                    current_user['board_since'] = board.board_since
+                login_user(_user, remember=request.form.get('remember'))
+                log_current_user(user=_user)
+                member = Member.query.filter_by(user_id=_user.id).first()
+                board = None
+                current_user['role'] = 'user'
 
                 if member != None:
-                    current_user['role'].append('member')
+                    current_user['role'] = 'member'
                     current_user['member_since'] = member.member_since
                     current_user['comp_status'] = member.comp_status
                     current_user['status'] = member.status
+                    board = Board.query.filter_by(member_id=member.id).first()
 
-                current_user['role'].append('user')
+                if board != None:
+                    current_user['role'] = 'admin'
+                    current_user['board_since'] = board.board_since
 
                 print(current_user)
 
