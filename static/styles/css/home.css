@@ -208,3 +208,15 @@ body {
 .resource-info p {
   margin: 10px 0 0;
 }
+
+.error.display-error {
+  display: block;
+  margin-bottom: 20px;
+  transform: translateY(-20px);
+}
+
+.success.display-success {
+  display: block;
+  margin-bottom: 20px;
+  transform: translateY(-20px);
+}
