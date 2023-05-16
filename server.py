@@ -100,6 +100,7 @@ class User(db.Model, UserMixin):
             'modified_at': self.modified_at
         }
 
+
 class Member(db.Model):
     __tablename__ = 'members'
     m_id = db.Column(db.String(36), nullable=False,
@@ -302,21 +303,23 @@ def unauthorized():
     flash('Debes iniciar sesión para acceder a esta página')
     return redirect(url_for('login'))
 
+
 @login_manager.unauthorized_handler
 def admin_required(route_function):
     @wraps(route_function)
     def wrapper(*args, **kwargs):
-        if current_user.role != 'admin':
+        if 'admin' in current_user.role:
             flash('No tienes permiso para acceder a esta página')
             return redirect(url_for('home'))
         return route_function(*args, **kwargs)
     return wrapper
 
+
 @login_manager.unauthorized_handler
-def memmber_required(route_function):
+def member_required(route_function):
     @wraps(route_function)
     def wrapper(*args, **kwargs):
-        if current_user.role != 'member':
+        if 'member' in current_user.role:
             flash('No tienes permiso para acceder a esta página')
             return redirect(url_for('home'))
         return route_function(*args, **kwargs)
@@ -367,7 +370,7 @@ def login():
             if check_password_hash(user.hpassword, request.form['user_password']):
 
                 # check if user wants to be remembered
-                #print(request.form.get('remember'))
+                # print(request.form.get('remember'))
                 login_user(user, remember=request.form.get('remember'))
                 board = Board.query.filter_by(member_id=user.id).first()
                 member = Member.query.filter_by(user_id=user.id).first()
@@ -381,7 +384,7 @@ def login():
                     session['member_since'] = member.member_since
                     session['comp_status'] = member.comp_status
                     session['status'] = member.status
-                
+
                 session['role'].append('user')
 
                 print(session)
@@ -623,6 +626,8 @@ def new_lecture():
 @login_required
 def pendings():
     pass
+
+
 session
 
 # Run the app
