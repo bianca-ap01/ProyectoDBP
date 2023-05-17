@@ -19,6 +19,7 @@
                     <i class="uil uil-times navCloseBtn"></i>
                     <li><a href="/aboutus">About us</a></li>
                     <li><a href="/events">Events</a></li>
+                    <li><a href="/faq">FAQ</a></li>
 
                     {%if current_user == 'admin'%}
                     <li><a href="/members">Members</a></li>
@@ -32,7 +33,6 @@
                     {%endif%}
 
                     {%if current_user.role == ''%}
-                    <li><a href="/faq">FAQ</a></li>
                     <li><a href="/signup" class="SignUp">Sign Up</a></li>
                     <li><a href="/login" class="LogIn">Log In</a></li>
                     {%endif%}
@@ -80,7 +80,7 @@
             <img src="/static/images/interfaz.jpg" alt="Imagen grande" id="big-image">
         </div>
     </div>
-{% endblock %}
+
 {% block page_specific_scripts %}
 <script src="/static/styles/js/interfaz.js" defer></script>
 {% endblock %}
