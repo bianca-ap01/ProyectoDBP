@@ -233,10 +233,11 @@ class Problem(db.Model):
     contest = db.relationship(
         'Contest', backref='problems', lazy=True, secondary=contest_problem)
 
-    def __init__(self, title, link, platform):
+    def __init__(self, title, link, platform, contest_id):
         self.title = title
         self.link = link
         self.platform = platform
+        self.contest_id = contest_id
 
     def __repr__(self):
         return f"<Problem: {self.title}>"
@@ -669,7 +670,41 @@ def new_contest():
 @login_required
 @admin_required
 def new_problem():
-    pass
+    if request.method == 'POST':
+        try:
+            _title = request.form['title']
+            _link = request.form['link']
+            _contest = request.form['contest']
+
+            if _title == '' or _link == '' or _contest == '':
+                flash('Faltan campos por llenar')
+                return redirect(url_for('new_problem'), 400)
+
+            if Problem.query.filter_by(title=_title).first() != None:
+                flash('Ya existe un problema con ese nombre!')
+                return redirect(url_for('new_problem'), 400)
+            
+            contest = Contest.query.filter_by(title=_contest).first()
+            if contest == None:
+                flash('No existe un contest con ese nombre!')
+                return redirect(url_for('new_problem'), 400)
+            
+            problem = Problem(
+                title=_title,
+                link=_link,
+                platform=contest.platform,
+                contest_id=contest.id
+            )
+
+            db.session.add(problem)
+            db.session.commit()
+            flash('Se ha creado el problema correctamente')
+            return redirect(url_for('problems'), 200)
+        except:
+            flash('Ha ocurrido un error')
+            return redirect(url_for('problems'), 500)
+    else:
+        return render_template('new_problem.html')
 
 @app.route('/pendings', methods=['GET'])
 @login_required
