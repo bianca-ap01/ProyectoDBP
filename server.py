@@ -43,6 +43,9 @@ with app.app_context():
     # Convertir el modelo en una tabla
     db.create_all()
 
+session = {}
+
+
 current_user = {
     'id': '',
     'nickname': '',
@@ -295,7 +298,7 @@ class Video(db.Model):
 # Routes
 @login_manager.user_loader
 def load_user(user_id):
-    return session.get(user_id)
+    return User.query.get(user_id)
 
 
 @login_manager.unauthorized_handler
@@ -310,7 +313,7 @@ def allowed_file(filename):
 
 @app.route('/', methods=['GET'])
 def home():
-    return render_template('interfaz.html')
+    return render_template('home.html', current_user=current_user)
 
 
 @app.route('/resources', methods=['GET'])
