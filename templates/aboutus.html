@@ -1,4 +1,4 @@
-{% extends "home.html" %}
+{% extends "base.html" %}
 
 {% block page_specific_styles %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flickity/2.2.2/flickity.min.css" />
@@ -41,7 +41,7 @@
 
 {% endblock %}
 
-{% block extra_js %}
+{% block page_specific_scripts %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flickity/2.2.2/flickity.pkgd.min.js"></script>
 <script src="/static/styles/js/about.js" defer></script>
 {% endblock %}
