@@ -26,6 +26,9 @@ from flask_login import (
     UserMixin,
 )
 from functools import wraps
+list_of_members = ["member1@utec.edu.pe", "member2@utec.edu.pe",
+                   "member3@utec.edu.pe", "member4@utec.edu.pe"]
+list_of_board = ["member1@utec.edu.pe", "member3@utec.edu.pe"]
 
 # Configuration
 app = Flask(__name__)
@@ -54,8 +57,8 @@ current_user = {
     'codeforces_handle': '',
     'atcoder_handle': '',
     'vjudge_handle': '',
+    'status': '',
     'role': ''
-
 }   # Current User
 
 
@@ -70,6 +73,7 @@ class User(db.Model, UserMixin):
     vjudge_handle = db.Column(db.String(30), nullable=True, unique=False)
     image = db.Column(db.String(500), nullable=True)
     hpassword = db.Column(db.String(1000), nullable=False, unique=False)
+    status = db.Column(db.Boolean(), nullable=False, default=True)
 
     created_at = db.Column(db.DateTime(timezone=True),
                            nullable=False, server_default=db.text("now()"))
@@ -121,7 +125,7 @@ class Member(db.Model):
     #     self.member_since = datetime.utcnow()
 
     def __repr__(self):
-        return f"<Member {self.m_id}>"
+        return f"<Member {self.user_id}>"
 
 
 class Professor(db.Model):
@@ -247,15 +251,15 @@ class Board(db.Model):
     __tablename__ = 'board'
     id = db.Column(db.String(36), nullable=False,
                    default=lambda: str(uuid.uuid4()), primary_key=True)
-    role = db.Column(db.String(50), nullable=False)
+    role = db.Column(db.String(50), nullable=True)
     status = db.Column(db.Boolean(), default=True, nullable=False)
     board_since = db.Column(db.DateTime(timezone=True),
                             nullable=False, server_default=db.text("now()"))
     member_id = db.Column(db.String(36), db.ForeignKey(
         'members.m_id'), nullable=False)
 
-    def __init__(self):
-        self.board_since = datetime.utcnow()
+    # def __init__(self):
+    #     self.board_since = datetime.utcnow()
 
     def __repr__(self):
         return f"<Role: {self.role}>"
@@ -307,23 +311,27 @@ def unauthorized():
     flash('Debes iniciar sesión para acceder a esta página')
     return redirect(url_for('login'))
 
+
 def member_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if (current_user.role != 'member' or current_user != 'admin') and current_user.status == False:
+        if (current_user["role"] != 'member' or current_user["role"] != 'admin') and current_user["status"] == False:
             flash('No tienes permiso para acceder a esta página')
             return redirect(url_for('home'))
         return f(*args, **kwargs)
     return decorated_function
 
+
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if current_user.role != 'admin' and current_user.status == False:
+        # and current_user["status"] == False:
+        if current_user["role"] != 'admin' and current_user["status"] == False:
             flash('No tienes permiso para acceder a esta página')
             return redirect(url_for('home'))
         return f(*args, **kwargs)
     return decorated_function
+
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -364,6 +372,7 @@ def log_current_user(user):
     current_user['codeforces_handle'] = user.codeforces_handle
     current_user['atcoder_handle'] = user.atcoder_handle
     current_user['vjudge_handle'] = user.vjudge_handle
+    current_user['status'] = user.status
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -383,24 +392,23 @@ def login():
                 login_user(_user, remember=request.form.get('remember'))
                 log_current_user(user=_user)
                 member = Member.query.filter_by(user_id=_user.id).first()
-                board = None
+                board = Board.query.filter_by(member_id=member.m_id).first()
                 current_user['role'] = 'user'
 
                 if member != None:
                     current_user['role'] = 'member'
-                    current_user['member_since'] = member.member_since
-                    current_user['comp_status'] = member.comp_status
-                    current_user['status'] = member.status
-                    board = Board.query.filter_by(member_id=member.id).first()
+                    current_user['status'] = member.member_status
+                    # board = Board.query.filter_by(
+                    #     member_id=member.m_id).first()
 
                 if board != None:
                     current_user['role'] = 'admin'
-                    current_user['board_since'] = board.board_since
+                    current_user['status'] = board.status
 
                 print(current_user)
 
                 flash('Has iniciado sesión correctamente')
-                return redirect(url_for('home'), 200)
+                return render_template("home.html", current_user=current_user)
             else:
                 flash('Contraseña incorrecta')
                 return redirect(url_for('login'), 401)
@@ -455,6 +463,18 @@ def signup():
             db.session.add(user)
             db.session.commit()
 
+            if user.email in list_of_members:
+                member = Member(users=user)
+                member.member_since = datetime.utcnow()
+                db.session.add(member)
+                db.session.commit()
+
+            if user.email in list_of_board:
+                board = Board(members=member)
+                board.board_since = datetime.utcnow()
+                db.session.add(board)
+                db.session.commit()
+
             cwd = os.getcwd()
             users_dir = os.path.join(app.config['UPLOAD_FOLDER'], user.id)
             os.makedirs(users_dir, exist_ok=True)
@@ -481,32 +501,32 @@ def signup():
         return render_template('signup.html')
 
 
-@app.route('/signup/member', methods=['POST', 'GET'])
-def signup_member():
-    if request.method == 'POST':
-        try:
-            _mail = request.form['member_email']
-            if _mail.split('@')[1] != 'utec.edu.pe':
-                flash('El email no es válido')
-                return jsonify({'error': 'El email no es válido'}), 401
-            if User.query.filter_by(email=_mail).first() == None:
-                flash('El email no está registrado')
-                return jsonify({'error': 'El email no está registrado'}), 401
-            user = User.query.filter_by(email=_mail).first()
+# @app.route('/signup/member', methods=['POST', 'GET'])
+# def signup_member():
+#     if request.method == 'POST':
+#         try:
+#             _mail = request.form['member_email']
+#             if _mail.split('@')[1] != 'utec.edu.pe':
+#                 flash('El email no es válido')
+#                 return jsonify({'error': 'El email no es válido'}), 401
+#             if User.query.filter_by(email=_mail).first() == None:
+#                 flash('El email no está registrado')
+#                 return jsonify({'error': 'El email no está registrado'}), 401
+#             user = User.query.filter_by(email=_mail).first()
 
-            # Inherits from User
-            member = Member(user)
+#             # Inherits from User
+#             member = Member(user)
 
-            db.session.add(member)
-            db.session.commit()
-            flash('El miembro ha sido registrado exitosamente')
-            return jsonify({'success': 'El miembro ha sido registrado exitosamente'}), 200
-        except:
-            flash("Ha ocurrido un error")
-            db.session.rollback()
-            return jsonify({'error': 'Ha ocurrido un error'}), 500
-        finally:
-            db.session.close()
+#             db.session.add(member)
+#             db.session.commit()
+#             flash('El miembro ha sido registrado exitosamente')
+#             return jsonify({'success': 'El miembro ha sido registrado exitosamente'}), 200
+#         except:
+#             flash("Ha ocurrido un error")
+#             db.session.rollback()
+#             return jsonify({'error': 'Ha ocurrido un error'}), 500
+#         finally:
+#             db.session.close()
 
 
 @app.route('/members', methods=['PATCH', 'GET'])
@@ -515,8 +535,12 @@ def signup_member():
 def members():
     if request.method == 'GET':
         try:
-            members = Member.query.all()
-            return jsonify([member.serialize() for member in members]), 200
+            _members = Member.query.all()
+            param = []
+            for member in _members:
+                param.append(User.query.get(member.user_id))
+
+            return render_template("members.html", members=param)
         except:
             flash("Ha ocurrido un error")
             db.session.rollback()
@@ -656,9 +680,9 @@ def contest(_title):
     if object == None:
         flash('El contest no existe')
         return redirect(url_for('home'), 404)
-    
+
     problems = Problem.query.filter_by(contest_id=object.id).all()
-    
+
     return render_template('constest.html', jsonify([problem.serialize() for problem in problems]))
 
 
@@ -676,11 +700,11 @@ def new_contest():
             if _title == '' or _link == '' or _platform == '' or _num_prob == '':
                 flash('Faltan campos por llenar')
                 return redirect(url_for('new_contest'), 400)
-            
+
             if Contest.query.filter_by(title=_title).first() != None:
                 flash('Ya existe un contest con ese nombre!')
                 return redirect(url_for('new_contest'), 400)
-            
+
             contest = Contest(
                 title=_title,
                 link=_link,
@@ -716,12 +740,12 @@ def new_problem():
             if Problem.query.filter_by(title=_title).first() != None:
                 flash('Ya existe un problema con ese nombre!')
                 return redirect(url_for('new_problem'), 400)
-            
+
             contest = Contest.query.filter_by(title=_contest).first()
             if contest == None:
                 flash('No existe un contest con ese nombre!')
                 return redirect(url_for('new_problem'), 400)
-            
+
             problem = Problem(
                 title=_title,
                 link=_link,
