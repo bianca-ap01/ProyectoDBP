@@ -306,6 +306,24 @@ def unauthorized():
     flash('Debes iniciar sesión para acceder a esta página')
     return redirect(url_for('login'))
 
+def member_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if (current_user.role != 'member' or current_user != 'admin') and current_user.status == False:
+            flash('No tienes permiso para acceder a esta página')
+            return redirect(url_for('home'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.role != 'admin' and current_user.status == False:
+            flash('No tienes permiso para acceder a esta página')
+            return redirect(url_for('home'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
