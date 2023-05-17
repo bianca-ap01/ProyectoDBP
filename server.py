@@ -751,7 +751,7 @@ def new_problem():
 def problems():
     _problems = Problem.query.all()
     sorted(_problems, key=lambda problem: problem.contest_id)
-    return render_template('problems.html', problems=_problems.serialize())
+    return render_template('problems.html', problems=_problems)
 
 
 def insert_new_problem(_title, _link, _plataforma, _contest) -> int:
