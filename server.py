@@ -754,6 +754,46 @@ def problems():
     return render_template('problems.html', problems=_problems)
 
 
+@app.route('/newProblem', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def newProblem():
+    if request.method == 'POST':
+        try:
+            _title = request.form['title']
+            _link = request.form['link']
+            _contest = request.form['contest']
+
+            if _title == '' or _link == '' or _contest == '':
+                flash('Faltan campos por llenar')
+                return redirect(url_for('newProblem'), 400)
+
+            if Problem.query.filter_by(title=_title).first() != None:
+                flash('Ya existe un problema con ese nombre!')
+                return redirect(url_for('newProblem'), 400)
+
+            contest = Contest.query.filter_by(title=_contest).first()
+            if contest == None:
+                flash('No existe un contest con ese nombre!')
+                return redirect(url_for('newProblem'), 400)
+
+            problem = Problem(
+                title=_title,
+                link=_link,
+                platform=contest.platform,
+                contest_id=contest.id
+            )
+
+            db.session.add(problem)
+            db.session.commit()
+            flash('Se ha creado el problema correctamente')
+            return redirect(url_for('problems'), 200)
+        except:
+            flash('Ha ocurrido un error')
+            return redirect(url_for('problems'), 500)
+    else:
+        return render_template('newProblem.html')
+
 def insert_new_problem(_title, _link, _plataforma, _contest) -> int:
 
     contest = Contest.query.filter_by(title=_contest).first()
