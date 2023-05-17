@@ -303,29 +303,6 @@ def unauthorized():
     flash('Debes iniciar sesión para acceder a esta página')
     return redirect(url_for('login'))
 
-
-@login_manager.unauthorized_handler
-def admin_required(route_function):
-    @wraps(route_function)
-    def wrapper(*args, **kwargs):
-        if current_user.role != 'admin':
-            flash('No tienes permiso para acceder a esta página')
-            return redirect(url_for('home'))
-        return route_function(*args, **kwargs)
-    return wrapper
-
-
-@login_manager.unauthorized_handler
-def member_required(route_function):
-    @wraps(route_function)
-    def wrapper(*args, **kwargs):
-        if current_user.role != 'member' or current_user.role != 'admin':
-            flash('No tienes permiso para acceder a esta página')
-            return redirect(url_for('home'))
-        return route_function(*args, **kwargs)
-    return wrapper
-
-
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -483,7 +460,6 @@ def signup():
 
 
 @app.route('/signup/member', methods=['POST', 'GET'])
-@admin_required
 def signup_member():
     if request.method == 'POST':
         try:
