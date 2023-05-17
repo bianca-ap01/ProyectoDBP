@@ -336,7 +336,7 @@ def allowed_file(filename):
 
 @app.route('/', methods=['GET'])
 def home():
-    return render_template('home.html', current_user=current_user)
+    return render_template('interfaz.html', current_user=current_user)
 
 
 @app.route('/resources', methods=['GET'])
@@ -794,6 +794,7 @@ def newProblem():
     else:
         return render_template('newProblem.html')
 
+
 def insert_new_problem(_title, _link, _plataforma, _contest) -> int:
 
     contest = Contest.query.filter_by(title=_contest).first()
@@ -840,8 +841,6 @@ def problem_edit(_id):
 def pendings():
     pass
 
-
-session
 
 # Run the app
 if __name__ == '__main__':
