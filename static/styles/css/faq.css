@@ -1,0 +1,29 @@
+
+.faq-item {
+    border: 1px solid #ddd;
+    margin-bottom: 1em;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.faq-question {
+    background: #f7f7f7;
+    padding: 1em;
+    cursor: pointer;
+}
+
+.faq-answer {
+    padding: 1em;
+    display: none;
+}
+
+.arrow {
+    display: inline-block;
+    transition: transform 0.1s ease-in-out;
+    font-size: 34px; 
+    font-weight: bold; 
+}
+
+.expanded .arrow {
+    transform: rotate(90deg);
+}
