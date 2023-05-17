@@ -630,6 +630,18 @@ def new_lecture():
     else:
         return render_template('new_lecture.html')
 
+@app.route('/contests/<_title>', methods=['GET'])
+def contest(_title):
+    object = Contest.query.filter_by(title=_title).first()
+    if object == None:
+        flash('El contest no existe')
+        return redirect(url_for('home'), 404)
+    
+    problems = Problem.query.filter_by(contest_id=object.id).all()
+    
+    return render_template('constest.html', jsonify([problem.serialize() for problem in problems]))
+
+
 @app.route('/contests/new', methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -665,6 +677,7 @@ def new_contest():
             return redirect(url_for('contests'), 500)
     else:
         return render_template('new_contest.html')
+
 
 @app.route('/problems/new', methods=['GET', 'POST'])
 @login_required
