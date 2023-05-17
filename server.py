@@ -747,6 +747,52 @@ def new_problem():
     else:
         return render_template('new_problem.html')
 
+@app.route('/problems', methods=['GET'])
+@login_required
+def problems():
+    _problems = Problem.query.all()
+    sorted(_problems, key=lambda problem: problem.contest_id)
+    return render_template('problems.html', problems=_problems.serialize())
+
+def insert_new_problem(_title, _link, _plataforma, _contest) ->  int:
+
+    constest = Contest.query.filter_by(title=_contest).first()
+    
+    new_problem = Problem(
+        title=_title,
+        link=_link,
+        platform=_plataforma,
+        contest_id=contest.id
+    )
+    db.session.add(new_problem)
+    db.session.commit()
+
+    return int(new_problem.id)
+
+def update_problem_entry(_id, _title, _link, _plataforma, _contest) -> None:
+    pass
+
+
+def remove_problem_by_id(_id) -> None:
+    problem = Problem.query.filter_by(id=_id).first()
+    db.session.delete(problem)
+    db.session.commit()
+
+
+@app.route("/problems/create", methods=["POST"])
+@login_required
+def create_problem():
+    data = request.get_json()
+    insert_new_problem(data['description'])
+    result = {'success': True, 'response': 'Done'}
+    return jsonify(result)
+
+
+@app.route("problems/edit/<int:id>", methods=["POST"])
+@login_required
+def problem_edit(_id):
+    pass
+
 
 @app.route('/pendings', methods=['GET'])
 @login_required

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+problem.js
+<html>
+    <head>
+        <title>Problem dashboard</title>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" 
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles/problems.css') }}">
+
+    </head>
+
+    <body>
+
+    <main role="main" class="container extra-bottom">
+      <h1 class="mt-5">List of Problems</h1>
+      <p><mark>:0</mark></p>
+    </main>
+    
+
+    <div class="container">    
+        
+        <!-- Button trigger problem -->
+        <div style="text-align: right;">
+        <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="problem" data-bs-target="#task-problem" data-source="New Problem">Add Problem</button>
+        </div>
+
+        
+        <div class="problem fade" id="task-problem" tabindex="-1" aria-labelledby="Label" aria-hidden="true">
+        <div class="problem-dialog">
+            <div class="problem-content">
+            <div class="problem-header">
+                <h5 class="problem-title" id="Label">New Problem</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="problem" aria-label="Close"></button>
+            </div>
+
+            <div class="problem-body">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="task-form-display">Título</span>
+                    <input type="text" class="form-control" placeholder="Nombre" aria-label="task-name" aria-describedby="basic-addon1">
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="task-form-display">Link</span>
+                    <input type="link" class="form-control" placeholder="Link del problema" aria-label="task-name" aria-describedby="basic-addon1">
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="task-form-display">Plataforma</span>
+                    <input type="text" class="form-control" placeholder="Juez del problema" aria-label="task-name" aria-describedby="basic-addon1">
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="task-form-display">Contest</span>
+                    <input type="text" class="form-control" placeholder="Nombre del contest asociado" aria-label="task-name" aria-describedby="basic-addon1">
+                </div>
+            </div>
+            <div class="problem-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="problem">Cerrar</button>
+                <button id="submit-task" type="button" class="btn btn-primary">Guardar cambios</button>
+            </div>
+            </div>
+        </div>
+        </div>
+
+    </div>
+
+    <!--Todo Table-->
+    <div class="container table-responsive">          
+    <table class="table">
+        <thead>
+        <tr>
+            <th class="task-id">ID</th>
+            <th class="task-contest-id">Contest ID</th>
+            <th class="task">Problem Name</th>
+            <th class="status">Juez</th>
+            <th class="update">Edit</th>
+            <th class="update">Remove</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for item in problems %}
+            <tr>
+                <td>{{item.id}}</td>
+                <td>{{item.contest_id}}</td>
+                <td>{{item.title}}</td>
+
+                <!-- If click redirect to link (Not implemented) -->
+                <td><button type="button" class="btn btn-outline-warning btn-sm state" data-source="{{item.id}}" >{{item.platform}}</button></td>
+                                
+                <td><button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="problem" data-bs-target="#task-problem" data-source="{{item.id}}" data-content="{{item.title}}"><i class="fa fa-pen fa-1" aria-hidden="true"></i></button></td>
+
+                <td><button class="btn btn-outline-secondary btn-sm remove" data-source="{{item.id}}" type="button"><i class="fa fa-trash fa-1" aria-hidden="true"></i></button></td>
+            </tr>
+        {% endfor %}
+        
+        </tbody>
+    </table>
+    </div>
+
+  </body>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='styles/js/problems.js') }}"></script>
+
+</html>
