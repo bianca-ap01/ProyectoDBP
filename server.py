@@ -509,6 +509,24 @@ def signup_member():
             db.session.close()
 
 
+@app.route('/members', methods=['PATCH', 'GET'])
+@login_required
+@admin_required
+def members():
+    if request.method == 'GET':
+        try:
+            members = Member.query.all()
+            return jsonify([member.serialize() for member in members]), 200
+        except:
+            flash("Ha ocurrido un error")
+            db.session.rollback()
+            return jsonify({'error': 'Ha ocurrido un error'}), 500
+        finally:
+            db.session.close()
+    else:
+        pass
+
+
 @app.route('/logout')
 @login_required
 def logout():
@@ -630,7 +648,9 @@ def new_lecture():
     else:
         return render_template('new_lecture.html')
 
+
 @app.route('/contests/<_title>', methods=['GET'])
+@login_required
 def contest(_title):
     object = Contest.query.filter_by(title=_title).first()
     if object == None:
@@ -718,6 +738,7 @@ def new_problem():
             return redirect(url_for('problems'), 500)
     else:
         return render_template('new_problem.html')
+
 
 @app.route('/pendings', methods=['GET'])
 @login_required
