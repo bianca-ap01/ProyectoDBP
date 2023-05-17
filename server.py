@@ -444,27 +444,27 @@ def signup():
 
             if _password != _confirm_password:
                 flash('Las contraseñas no coinciden')
-                return jsonify({'error': 'Las contraseñas no coinciden'}), 401
+                return redirect(url_for('signup'))
 
             if len(User.query.all()) != 0 and User.query.filter_by(nickname=_nickname).first() != None:
                 flash('El nickname ya está registrado')
-                return jsonify({'error': 'El nickname ya está registrado'}), 401
+                return redirect(url_for('signup'))
 
             if len(User.query.all()) != 0 and User.query.filter_by(email=_email).first() != None:
                 flash('El email ya está registrado')
-                return jsonify({'error': 'El email ya está registrado'}), 401
+                return redirect(url_for('signup'))
 
             if _email.split('@')[1] != 'utec.edu.pe':
                 flash('El email no es válido')
-                return jsonify({'error': 'El email no es válido'}), 401
+                return redirect(url_for('signup'))
 
             if _image.filename == "":
                 flash("No ha seleccionado una imagen")
-                return jsonify({'error': 'No ha seleccionado una imagen'}), 401
+                return redirect(url_for('signup'))
 
             if not allowed_file(_image.filename):
                 flash("El formato de la imagen no es válido")
-                return jsonify({'error': 'El formato de la imagen no es válido'}), 401
+                return redirect(url_for('signup'))
 
             user = User(nickname=_nickname, email=_email, codeforces_handle=_codeforces_handle,
                         atcoder_handle=_atcoder_handle, vjudge_handle=_vjudge_handle, key=generate_password_hash(_password))
@@ -496,7 +496,7 @@ def signup():
 
             flash('El usuario ha sido registrado exitosamente')
 
-            return jsonify({'success': 'El usuario ha sido registrado exitosamente'}), 200
+            return redirect(url_for('login'))
 
         except:
             flash("Ha ocurrido un error")
