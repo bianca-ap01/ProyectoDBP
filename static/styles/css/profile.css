@@ -1,0 +1,9 @@
+li {
+    display: block;
+    list-style: none;
+}
+
+ li > img {
+    width: 20%;
+    height: auto;
+ }
