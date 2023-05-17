@@ -5,7 +5,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="/static/styles/css/home.css">
         {% block page_specific_styles %}{% endblock %}
-        <script src="/static/styles/js/interfaz.js" defer></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <title>Club de Programación Competitiva</title>
         <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" />
@@ -17,11 +16,13 @@
                 <a href="/"><img src="/static/images/globos.jpg" alt="logo" class="logo"></a>
                 <ul class="nav-links">
                     <i class="uil uil-times navCloseBtn"></i>
-
-
+                    <li><a href="/aboutus">About us</a></li>
+                    <li><a href="/faq">FAQ</a></li>
+                    <li><a href="/events">Events</a></li>
+            
                     {%if current_user.role != ''%}
-                    {%if current_user == 'admin'%}
-                    <li><a href="/members">Members</a></li>
+                    {%if current_user.role == 'admin'%}
+                    <li><a href="members">Members</a></li>
                     <li><a href="/users">Users</a></li>
                     {%endif%}
                     <li><a href="/resources">Resources</a></li>
@@ -30,31 +31,30 @@
                     {%endif%}
 
                     {%if current_user.role == ''%}
-                    <li><a href="/aboutus">About us</a></li>
-                    <li><a href="/events">Events</a></li>
-                    <li><a href="/faq">FAQ</a></li>
                     <li><a href="/signup" class="SignUp">Sign Up</a></li>
                     <li><a href="/login" class="LogIn">Log In</a></li>
                     {%endif%}
                 </ul>
             </nav>
         </nav>
-        
+
         <div class="content">
-        
+        {%block home%}
+        {%endblock%}
+
         {%block signup%}
         {%endblock%}
 
         {%block login%}
         {%endblock%}
-        
+
         {%block resources%}
         {%endblock%}
 
-        {%block aboutus%}
-        {%endblock%}
-        
         {%block faq%}
+        {%endblock%}
+
+        {%block aboutus%}
         {%endblock%}
 
         {%block events%}
@@ -64,32 +64,15 @@
         {%endblock%}
 
         {%block interfaz%}
-         <link rel="stylesheet" href="/static/styles/css/interfaz.css">
-<div id="interfaz-content">
-    <div id="text-content">
-        <h1>Bienvenido al Club de Programación Competitiva UTEC!</h1>
-        <div>
-            <span id="typed-text"></span><span id="cursor">|</span>
-        </div>
-        <p>¡Somos el Club de Programación Competitiva CPC de UTEC!</p>
-        <p>¡Aprende sobre algoritmos y estructuras de datos, y aplica tus conocimientos en divertidas competencias!</p>
-        <a href="/aboutus" class="info-button">Más información</a>
-    </div>
-    <div id="image-content">
-        <img src="/static/images/interfaz.jpg" alt="Imagen grande" id="big-image">
-    </div>
-</div>   
         {%endblock%}
 
         {%block profile%}
         {%endblock%}
-        
+
         {%block members%}
         {%endblock%}
+        </div>
 
-        {%block users%}
-        {%endblock%}
-            
         <footer>
             <div class="footer-left">
                 <img src="/static/images/globos.jpg" alt="logo" class="footer-logo">
@@ -116,9 +99,6 @@
         </footer>
 
         {% block page_specific_scripts %}
-        <script src="/static/styles/js/interfaz.js" defer></script>
         {% endblock %}
-        </div>
-     </body>
+    </body>
 </html>
-
