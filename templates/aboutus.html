@@ -7,21 +7,41 @@
 
 {% block aboutus %}
   <div id="aboutus-content">
-    <h1>About us</h1>
+    <h1>A cerca de nosotros</h1>
 
-    <h2>Acerca de Nosotros</h2>
-    <p>El club se creó en 2020</p>
+    <h2>Nuestra misión</h2>
+    <p>Somos un grupo de estudiantes de la Universidad de Ingeniería y Tecnología (UTEC). Nuestro objetivo es crear un entorno en el que los estudiantes puedan perfeccionar su velocidad y precisión para resolver problemas desafiantes, aprender nuevos conceptos de programación y prepararse para concursos y entrevistas.</p>
+
+    <div class="carousel">
+      <div class="carousel-cell"><img src="/static/images/imagen1.jpg" alt="Imagen 1"></div>
+      <div class="carousel-cell"><img src="/static/images/imagen2.jpg" alt="Imagen 2"></div>
+      <div class="carousel-cell"><img src="/static/images/imagen3.jpg" alt="Imagen 3"></div>
+    </div>
+
+    <h2>¿Por qué unirse?</h2>
+<div class="info-grid">
+  <div class="info-item image1">
+    <h3>Colaboración</h3>
+    <p>Brindamos sesiones para que los miembros se ayuden mutuamente a superar los problemas más difíciles a los que se enfrentan.</p>
+  </div>
+  <div class="info-item image2">
+    <h3>Clases</h3>
+    <p>Nuestras clases están a cargo de miembros experimentados donde nos sumergimos en temas desafiantes de computer science.</p>
+  </div>
+  <div class="info-item image3">
+    <h3>Concursos</h3>
+    <p>Organizamos concursos de práctica donde los miembros principiantes y los miembros experimentados pueden competir en diferentes niveles.</p>
+  </div>
+  <div class="info-item image4">
+    <h3>Eventos</h3>
+    <p>Se programan seminarios, conferencias y reuniones para interactuar con la comunidad de computer science más amplia.</p>
+  </div>
+</div>
   </div>
 
-  <div class="carousel">
-    <div class="carousel-cell"><img src="/static/images/imagen1.jpg" alt="Imagen 1"></div>
-    <div class="carousel-cell"><img src="/static/images/imagen2.jpg" alt="Imagen 2"></div>
-    <div class="carousel-cell"><img src="/static/images/imagen3.jpg" alt="Imagen 3"></div>
-  </div>
 {% endblock %}
 
 {% block extra_js %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flickity/2.2.2/flickity.pkgd.min.js"></script>
 <script src="/static/styles/js/about.js" defer></script>
 {% endblock %}
-
