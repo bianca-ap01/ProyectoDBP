@@ -121,11 +121,8 @@ class Member(db.Model):
     board = db.relationship('Board', backref='members',
                             lazy='joined', uselist=False)
 
-    # def __init__(self):
-    #     self.member_since = datetime.utcnow()
-
     def __repr__(self):
-        return f"<Member {self.user_id}>"
+        return f"<Member {self.m_id}>"
 
 
 class Professor(db.Model):
@@ -262,7 +259,7 @@ class Board(db.Model):
     #     self.board_since = datetime.utcnow()
 
     def __repr__(self):
-        return f"<Role: {self.role}>"
+        return f"<Member id: {self.member_id}>"
 
 
 professor_video = db.Table('professor_video', db.Column('video_id', db.String(36), db.ForeignKey(
@@ -309,7 +306,7 @@ def load_user(user_id):
 @login_manager.unauthorized_handler
 def unauthorized():
     flash('Debes iniciar sesión para acceder a esta página')
-    return redirect(url_for('login'))
+    return redirect(url_for('home'))
 
 
 def member_required(f):
@@ -317,7 +314,7 @@ def member_required(f):
     def decorated_function(*args, **kwargs):
         if (current_user["role"] != 'member' or current_user["role"] != 'admin') and current_user["status"] == False:
             flash('No tienes permiso para acceder a esta página')
-            return redirect(url_for('home'))
+            return render_template('home')
         return f(*args, **kwargs)
     return decorated_function
 
@@ -325,8 +322,7 @@ def member_required(f):
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        # and current_user["status"] == False:
-        if current_user["role"] != 'admin' and current_user["status"] == False:
+        if (current_user["role"] == 'admin' and current_user["status"] == False) or current_user['role'] != 'admin':
             flash('No tienes permiso para acceder a esta página')
             return redirect(url_for('home'))
         return f(*args, **kwargs)
@@ -375,6 +371,18 @@ def log_current_user(user):
     current_user['status'] = user.status
 
 
+def logout_current_user():
+    current_user['id'] = ''
+    current_user['nickname'] = ''
+    current_user['email'] = ''
+    current_user['image'] = ''
+    current_user['codeforces_handle'] = ''
+    current_user['atcoder_handle'] = ''
+    current_user['vjudge_handle'] = ''
+    current_user['status'] = ''
+    current_user['role'] = ''
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -395,29 +403,30 @@ def login():
                 board = Board.query.filter_by(member_id=member.m_id).first()
                 current_user['role'] = 'user'
 
-                if member != None:
+                print(member)
+                print(board)
+
+                if _user.email in list_of_members:
                     current_user['role'] = 'member'
                     current_user['status'] = member.member_status
-                    # board = Board.query.filter_by(
-                    #     member_id=member.m_id).first()
 
-                if board != None:
+                if _user.email in list_of_board:
                     current_user['role'] = 'admin'
-                    current_user['status'] = board.status
+                    # current_user['status'] = board.status
 
-                print(current_user)
+                print(current_user['role'])
 
                 flash('Has iniciado sesión correctamente')
                 return render_template("home.html", current_user=current_user)
             else:
                 flash('Contraseña incorrecta')
-                return redirect(url_for('login'), 401)
+                return render_template("login.html", current_user=current_user)
         else:
             flash('Usuario no encontrado')
-            return redirect(url_for('login'), 401)
+            return render_template("login.html", current_user=current_user)
 
     else:
-        return render_template('login.html')
+        return render_template('login.html', current_user=current_user)
 
 
 @app.route('/signup/', methods=['POST', 'GET'])
@@ -498,35 +507,7 @@ def signup():
             db.session.close()
 
     else:
-        return render_template('signup.html')
-
-
-# @app.route('/signup/member', methods=['POST', 'GET'])
-# def signup_member():
-#     if request.method == 'POST':
-#         try:
-#             _mail = request.form['member_email']
-#             if _mail.split('@')[1] != 'utec.edu.pe':
-#                 flash('El email no es válido')
-#                 return jsonify({'error': 'El email no es válido'}), 401
-#             if User.query.filter_by(email=_mail).first() == None:
-#                 flash('El email no está registrado')
-#                 return jsonify({'error': 'El email no está registrado'}), 401
-#             user = User.query.filter_by(email=_mail).first()
-
-#             # Inherits from User
-#             member = Member(user)
-
-#             db.session.add(member)
-#             db.session.commit()
-#             flash('El miembro ha sido registrado exitosamente')
-#             return jsonify({'success': 'El miembro ha sido registrado exitosamente'}), 200
-#         except:
-#             flash("Ha ocurrido un error")
-#             db.session.rollback()
-#             return jsonify({'error': 'Ha ocurrido un error'}), 500
-#         finally:
-#             db.session.close()
+        return render_template('signup.html', current_user=current_user)
 
 
 @app.route('/members', methods=['PATCH', 'GET'])
@@ -555,8 +536,9 @@ def members():
 @login_required
 def logout():
     logout_user()
+    logout_current_user()
     flash('Has cerrado sesión correctamente')
-    return redirect(url_for('home'), 200)
+    return redirect(url_for("home"))
 
 
 @app.route('/profile/edit/', methods=['GET', 'POST'])

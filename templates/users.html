@@ -3,15 +3,15 @@
 <table class="table">
     <tr>
         <th>Email</th>
-        <th>Compete</th>
+        <th>Nickname</th>
         <th>Status</th>
     </tr>
 
-    {% for member in members %}
+    {% for user in users %}
     <tr>
-        <td>{{ member.email }}</td>
-        <td>${{ member.comp_status }}</td>
-        <td>{{ member.is_active }}</td>
+        <td>{{ user.email }}</td>
+        <td>${{ user.nickname }}</td>
+        <td>{{ user.active }}</td>
     </tr>
     {% endfor %}
 </table>
