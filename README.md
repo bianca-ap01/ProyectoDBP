@@ -5,7 +5,7 @@
 - Bladimir Alferez
 - Bianca Aguinaga
 - Alvaro García
-- 
+- Mateo Llallire
 
 ### Descripción del proyecto
 
