@@ -1,32 +1,37 @@
 {%extends "base.html"%}
+{% block page_specific_styles %}
+<link rel="stylesheet" href="/static/styles/css/events.css">
+{% endblock %}
 {%block events%}
-    <div style="text-align: center; font-family: Arial, sans-serif; color: #333;">
-        <h1 style="margin-bottom: 50px;">Eventos regulares</h1>
-        <div style="background-color: #f2f2f2; padding: 20px; margin-bottom: 20px; border-radius: 5px;">
-            <p style="font-size: 20px;">Feria de organizaciones estudiantiles</p>
-            <p style="font-size: 16px; color: #666;">Hola utecsinos, estamos emocionados de contarles que este miércoles 19 de abril se dará la feria de organizaciones estudiantiles 😄📚
-
-En ella podrás conocer muchos clubs, entre ellos el nuestro. Te invitamos a que conozcas el club de programación competitiva y participar de actividades divertidas! 😎💻🤓
-
-Nos vemos pronto 🫶🏼
--CPC</p>
-            <img src="/static/images/Evento1.png" alt="Descripción de la imagen" style="max-width: 100%; height: auto;">
+    <div class="events-container">
+        <h1>Eventos</h1>
+        <div class="event">
+            <img class="event-image" src="/static/images/Evento1.png" alt="Descripción de la imagen">
+            <div class="event-text">
+                <p class="title">FERIA DE ORGANIZACIONES ESTUDIANTILES</p>
+                <p class="description">Hola utecsinos, estamos emocionados de contarles que este miércoles 19 de abril se dará la feria de organizaciones estudiantiles 😄📚
+                En ella podrás conocer muchos clubs, entre ellos el nuestro. Te invitamos a que conozcas el club de programación competitiva y participar de actividades divertidas! 😎💻🤓
+                Nos vemos pronto 🫶🏼
+                -CPC</p>
+            </div>
         </div>
-
-        <div style="background-color: #f2f2f2; padding: 20px; margin-bottom: 20px; border-radius: 5px;">
-            <p style="font-size: 20px;">Entrenamiento para principiantes</p>
-            <p style="font-size: 16px; color: #666;">Hola estudiantes, les anunciamos que nuestro club empezará las clases para el entrenamiento a principiantes dirigidas a estudiantes de UTEC 💻👩🏻‍💻
+        <div class="event">
+            <img class="event-image" src="/static/images/Evento2.png" alt="Descripción de la imagen">
+            <div class="event-text">
+                <p class="title">ENTRENAMIENTO PARA PRINCIPIANTES</p>
+                <p class="description">Hola estudiantes, les anunciamos que nuestro club empezará las clases para el entrenamiento a principiantes dirigidas a estudiantes de UTEC 💻👩🏻‍💻
 
 Estas clases consistirán en aprender las bases de programación competitiva y muchas otras cosas. Al terminar las clases, si cumples con ciertos requisitos y términos, podrás pertenecer al club. 🥳🤩
 
 Si estás interesado en recibir información acerca de lo mencionado, inscríbete en el forms ⬇️⬇️⬇️
-
-https://forms.gle/rLThRNzapM8uifQt7</p>
-            <img src="/static/images/Evento2.png" alt="Descripción de la imagen" style="max-width: 100%; height: auto;">
+                -CPC</p>
+            </div>
         </div>
-    <div style="background-color: #f2f2f2; padding: 20px; margin-bottom: 20px; border-radius: 5px;">
-            <p style="font-size: 20px;">Concurso de programacion</p>
-            <p style="font-size: 16px; color: #666;">Hola comunidad utecsina
+        <div class="event">
+            <img class="event-image" src="/static/images/Evento3.png" alt="Descripción de la imagen">
+            <div class="event-text">
+                <p class="title">CONCURSO DE PROGRAMACIÓN</p>
+                <p class="description">Hola comunidad utecsina
 Mediante la presente queremos informar el concurso de programación en colaboración con ACM-CPC.🎈👩🏻‍💻
 
 Esta es tu oportunidad para demostrar tus habilidades y conocimientos. Además habrán varios premios, entre ellos: Discord nitro, certificado de participación y un premio sorpresa 🥇👾👀
@@ -34,14 +39,20 @@ Esta es tu oportunidad para demostrar tus habilidades y conocimientos. Además h
 El costo es de 5 soles por individual y 8 soles entre dos personas si desean competir como dúo.
 
 Anímense a la competencia y podrás ganar premios increíbles 😎
-Link de inscripción: https://forms.gle/oLwWc38roJwzWnoC7</p>
-            <img src="/static/images/Evento3.png" alt="Descripción de la imagen" style="max-width: 100%; height: auto;">
+                -CPC</p>
+            </div>
         </div>
-    <div style="background-color: #f2f2f2; padding: 20px; margin-bottom: 20px; border-radius: 5px;">
-            <p style="font-size: 20px;">¿Quieres trabajar en un gran empresa de nivel mundial?</p>
-            <p style="font-size: 16px; color: #666;">¡Somos el Club de Programación Competitiva UTEC! 😎
-Preparen sus mentes y sus teclados pues... ¡Se viene un súper charla con invitados especiales! 🧐</p>
-            <img src="/static/images/Evento4.png" alt="Descripción de la imagen" style="max-width: 100%; height: auto;">
+        <div class="event">
+            <img class="event-image" src="/static/images/Evento4.png" alt="Descripción de la imagen">
+            <div class="event-text">
+                <p class="title">¿QUIERES TRABAJAR EN UNA GRAN EMPRESA DE NIVEL MUNDIAL</p>
+                <p class="description">¡Somos el Club de Programación Competitiva UTEC! 😎 Preparen sus mentes y sus teclados pues... ¡Se viene un súper charla con invitados especiales!
+                -CPC</p>
+            </div>
         </div>
     </div>
 {%endblock%}
+
+
+
+
