@@ -17,12 +17,13 @@
                 <a href="/"><img src="/static/images/globos.jpg" alt="logo" class="logo"></a>
                 <ul class="nav-links">
                     <i class="uil uil-times navCloseBtn"></i>
+
+
+                    {%if current_user.role != ''%}
                     {%if current_user == 'admin'%}
                     <li><a href="/members">Members</a></li>
                     <li><a href="/users">Users</a></li>
                     {%endif%}
-
-                    {%if current_user.role != ''%}
                     <li><a href="/resources">Resources</a></li>
                     <li><a href="/profile">Profile</a></li>
                     <li><a href="/logout">LogOut</a></li>
