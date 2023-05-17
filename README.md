@@ -27,15 +27,11 @@ Se espera que esta página sea tomada como versión beta de la que se desarrolla
 
 ### Recursos adicionales empleados (front-end, back-end, base de datos)
 
-Flask==2.2.3
-Flask-Admin==1.6.1
-flask-babel==3.1.0
-Flask-Login==0.6.2
-Flask-Mail==0.9.1
-Flask-Migrate==4.0.4
-Flask-Principal==0.4.0
-Flask-SQLAlchemy==3.0.3
-
+- Flask-Admin
+- Flask-Login
+- Flask-SQLAlchemy
+- Flask-Migrate
+- Werkzeug
 
 ### Ejecución (script, host, etc)
 
