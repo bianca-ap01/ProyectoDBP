@@ -1,0 +1,40 @@
+.events-container {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+h1 {
+    margin-bottom: 50px;
+}
+
+.event {
+    background-color: #f2f2f2;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title {
+        font-size: 24px;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.description {
+    font-size: 20px;
+    color: #666;
+}
+
+.event-text {
+    width: 60%;
+}
+
+.event-image {
+    max-width: 30%;
+    height: auto;
+    margin-right: 20px;
+}
