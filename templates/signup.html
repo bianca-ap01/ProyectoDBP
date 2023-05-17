@@ -1,55 +1,60 @@
-{%extends "base.html"%}
-{%block signup%}
+{% extends "base.html" %}
+{% block page_specific_styles %}
+<link rel="stylesheet" href="/static/styles/css/singup.css">
+{% endblock %}
+{% block signup %}
 <script src="/static/styles/js/signup.js" defer></script>
 
-<div class="login-container">
-  <form id="formSignUp" action="/signup" method="POST" enctype="multipart/form-data">
-    <h2>Sign Up</h2>
-    <ul>
-        <li id="get_nickname">
-            <label for="nickname">Nombre de usuario<span aria-label="required">*</span></label>
-            <input type="text" name="user_nickname" id="nickname" placeholder="Nombre de usuario" required>
-        </li>
+<div class="form-container">
+    <form id="formSignUp" action="/signup" method="POST" enctype="multipart/form-data">
+        <h2>Sign Up</h2>
+        <ul>
+            <li>
+                <label for="nickname">Nombre de usuario<span aria-label="required">*</span></label>
+                <input type="text" name="user_nickname" id="nickname" placeholder="Nombre de usuario" required>
+            </li>
 
-        <li id="get_email">
-            <label for="email">Correo electrónico<span aria-label="required">*</span></label>
-            <input type="email" name="user_email" id="email" placeholder="Correo electrónico" required>
-        </li>
+            <li>
+                <label for="email">Correo electrónico<span aria-label="required">*</span></label>
+                <input type="email" name="user_email" id="email" placeholder="Correo electrónico" required>
+            </li>
 
-        <li id="get_codeforces">
-            <label for="codeforces_handle">Usuario de codeforces</label>
-            <input type="text" name="user_codeforces_handle" id="codeforces_handle" placeholder="Codeforces Handle">
-        </li>
-        <li id="get_atcoder">
-            <label for="atcoder_handle">Usuario de AtCoder</label>
-            <input type="text" name="user_atcoder_handle" id="atcoder_handle" placeholder="AtCoder Handle">
-        </li>
-        <li id="get_vjudge">
-            <label for="vjudge_handle">Usuario de VJudge</label>
-            <input type="text" name="user_vjudge_handle" id="vjudge_handle" placeholder="VJudge Handle">
-        </li>
+            <li>
+                <label for="codeforces_handle">Usuario de codeforces</label>
+                <input type="text" name="user_codeforces_handle" id="codeforces_handle" placeholder="Codeforces Handle">
+            </li>
+            <li>
+                <label for="atcoder_handle">Usuario de AtCoder</label>
+                <input type="text" name="user_atcoder_handle" id="atcoder_handle" placeholder="AtCoder Handle">
+            </li>
+            <li>
+                <label for="vjudge_handle">Usuario de VJudge</label>
+                <input type="text" name="user_vjudge_handle" id="vjudge_handle" placeholder="VJudge Handle">
+            </li>
 
-        <li id="get_password">
-            <label for="password" >Contraseña<span aria-label="required">*</span></label>
-            <input type="password" name="user_password" placeholder="Contraseña" required>
-        </li>
+            <li>
+                <label for="password">Contraseña<span aria-label="required">*</span></label>
+                <input type="password" name="user_password" id="password" placeholder="Contraseña" required>
+            </li>
 
-        <li id="get_passwordconf">
-            <label for="confirmation">Confirmar contraseña<span aria-label="required">*</span></label>
-            <input type="password" name="user_confirmation" id="confirmation" placeholder="Confirmar contraseña" required>
-        </li>
+            <li>
+                <label for="confirmation">Confirmar contraseña<span aria-label="required">*</span></label>
+                <input type="password" name="user_confirmation" id="confirmation" placeholder="Confirmar contraseña" required>
+            </li>
 
-        <li id="get_image">
-            <label for="image">Foto de perfil<span aria-label="required">*</span></label>
-            <input type="file" name="user_image" id="image" accept="image/*" required>
-        </li>
+            <li>
+                <label for="image">Foto de perfil<span aria-label="required">*</span></label>
+                <input type="file" name="user_image" id="image" accept="image/*" required>
+            </li>
 
-        <li>
-            <button type="submit">Crear cuenta</button>
-        </li>
-    </ul>
-    <p>¿Ya tienes una cuenta? <a href="/login">Iniciar sesión</a></p>
-  </form>
+            <li>
+                <button type="submit">Crear cuenta</button>
+            </li>
+        </ul>
+        <p>¿Ya tienes una cuenta? <a href="/login">Iniciar sesión</a></p>
+    </form>
 </div>
-
-{%endblock%}
+{% block page_specific_scripts %}
+<script src="/static/styles/js/signup.js" defer></script>
+{% endblock %}
+{% endblock %}
