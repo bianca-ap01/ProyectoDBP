@@ -342,22 +342,22 @@ def home():
 @app.route('/resources', methods=['GET'])
 @login_required
 def resources():
-    return render_template('resources.html')
+    return render_template('resources.html', current_user=current_user)
 
 
 @app.route('/aboutus', methods=['GET'])
 def aboutus():
-    return render_template('aboutus.html')
+    return render_template('aboutus.html', current_user=current_user)
 
 
 @app.route('/events', methods=['GET'])
 def events():
-    return render_template('events.html')
+    return render_template('events.html', current_user=current_user)
 
 
 @app.route('/faq', methods=['GET'])
 def faq():
-    return render_template('faq.html')
+    return render_template('faq.html', current_user=current_user)
 
 
 def log_current_user(user):
@@ -389,8 +389,10 @@ def login():
         _input = request.form['user_nickname']
         if '@' in _input:
             _user = User.query.filter_by(email=_input).first()
+            user = User.query.filter_by(email=_input).first()
         else:
             _user = User.query.filter_by(nickname=_input).first()
+            user = User.query.filter_by(nickname=_input).first()
 
         if _user:
             if check_password_hash(_user.hpassword, request.form['user_password']):
@@ -399,7 +401,7 @@ def login():
                 # print(request.form.get('remember'))
                 login_user(_user, remember=request.form.get('remember'))
                 log_current_user(user=_user)
-                member = Member.query.filter_by(user_id=_user.id).first()
+                member = Member.query.filter_by(user_id=user.id).first()
                 board = Board.query.filter_by(member_id=member.m_id).first()
                 current_user['role'] = 'user'
 

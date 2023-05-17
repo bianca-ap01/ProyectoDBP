@@ -17,22 +17,21 @@
                 <a href="/"><img src="/static/images/globos.jpg" alt="logo" class="logo"></a>
                 <ul class="nav-links">
                     <i class="uil uil-times navCloseBtn"></i>
-                    <li><a href="/aboutus">About us</a></li>
-                    <li><a href="/events">Events</a></li>
-                    <li><a href="/faq">FAQ</a></li>
-
                     {%if current_user == 'admin'%}
                     <li><a href="/members">Members</a></li>
                     <li><a href="/users">Users</a></li>
                     {%endif%}
 
-                    {%if current_user.role == "user" or current_user.role == "member" or current_user.role == "admin"%}
+                    {%if current_user.role != ''%}
                     <li><a href="/resources">Resources</a></li>
                     <li><a href="/profile">Profile</a></li>
                     <li><a href="/logout">LogOut</a></li>
                     {%endif%}
 
                     {%if current_user.role == ''%}
+                    <li><a href="/aboutus">About us</a></li>
+                    <li><a href="/events">Events</a></li>
+                    <li><a href="/faq">FAQ</a></li>
                     <li><a href="/signup" class="SignUp">Sign Up</a></li>
                     <li><a href="/login" class="LogIn">Log In</a></li>
                     {%endif%}
@@ -41,7 +40,7 @@
         </nav>
         
         <div class="content">
-            
+        
         {%block signup%}
         {%endblock%}
 
@@ -50,11 +49,11 @@
         
         {%block resources%}
         {%endblock%}
-        
-        {%block faq%}
-        {%endblock%}
 
         {%block aboutus%}
+        {%endblock%}
+        
+        {%block faq%}
         {%endblock%}
 
         {%block events%}
