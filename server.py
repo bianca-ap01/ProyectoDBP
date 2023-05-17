@@ -666,7 +666,7 @@ def new_contest():
     else:
         return render_template('new_contest.html')
 
-@app.route('problems/new', methods=['GET', 'POST'])
+@app.route('/problems/new', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def new_problem():
