@@ -401,18 +401,16 @@ def login():
                 # print(request.form.get('remember'))
                 login_user(_user, remember=request.form.get('remember'))
                 log_current_user(user=_user)
-                member = Member.query.filter_by(user_id=user.id).first()
-                board = Board.query.filter_by(member_id=member.m_id).first()
                 current_user['role'] = 'user'
 
-                print(member)
-                print(board)
-
                 if _user.email in list_of_members:
+                    member = Member.query.filter_by(user_id=user.id).first()
                     current_user['role'] = 'member'
                     current_user['status'] = member.member_status
 
                 if _user.email in list_of_board:
+                    # board = Board.query.filter_by(
+                    # member_id=member.m_id).first()
                     current_user['role'] = 'admin'
                     # current_user['status'] = board.status
 
@@ -667,7 +665,7 @@ def contest(_title):
 
     problems = Problem.query.filter_by(contest_id=object.id).all()
 
-    return render_template('constest.html', jsonify([problem.serialize() for problem in problems]))
+    return render_template('contest.html', jsonify([problem.serialize() for problem in problems]))
 
 
 @app.route('/contests/new', methods=['GET', 'POST'])
@@ -747,6 +745,7 @@ def new_problem():
     else:
         return render_template('new_problem.html')
 
+
 @app.route('/problems', methods=['GET'])
 @login_required
 def problems():
@@ -754,10 +753,11 @@ def problems():
     sorted(_problems, key=lambda problem: problem.contest_id)
     return render_template('problems.html', problems=_problems.serialize())
 
-def insert_new_problem(_title, _link, _plataforma, _contest) ->  int:
 
-    constest = Contest.query.filter_by(title=_contest).first()
-    
+def insert_new_problem(_title, _link, _plataforma, _contest) -> int:
+
+    contest = Contest.query.filter_by(title=_contest).first()
+
     new_problem = Problem(
         title=_title,
         link=_link,
@@ -768,6 +768,7 @@ def insert_new_problem(_title, _link, _plataforma, _contest) ->  int:
     db.session.commit()
 
     return int(new_problem.id)
+
 
 def update_problem_entry(_id, _title, _link, _plataforma, _contest) -> None:
     pass
@@ -788,7 +789,7 @@ def create_problem():
     return jsonify(result)
 
 
-@app.route("problems/edit/<int:id>", methods=["POST"])
+@app.route("/problems/edit/<int:id>", methods=["POST"])
 @login_required
 def problem_edit(_id):
     pass

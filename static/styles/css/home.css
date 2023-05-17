@@ -24,17 +24,29 @@ body {
   border: 1px solid#fed010;
   width: 80px;
   margin-left: 0px;
-  color:#ffffff;
 }
 
 .LogIn{
   border-radius:10px;
   border-radius: 12px;
   padding: 10px;
-  border: 3px solid#fed010;
+  border: 1px solid#fed010;
   background-color: rgba(254, 208, 16, 0.2) ;
   margin-left: 0px;
   width: 80px;
+}
+
+.LogOut{
+  border-radius:10px;
+  border-radius: 12px;
+  padding: 10px;
+  border: 1px solid#5973b8;
+  margin-left: 0px;
+  width: 80px;
+}
+
+.LogOut:hover{
+  background-color: #5973b8;
 }
 
 #navbar{
@@ -166,11 +178,10 @@ body {
     }
   }
 
-
 .faq-answer {
   display: none;
 }
-.resource-card {
+/* .resource-card {
   display: flex;
   background-color: #fed010;
   margin: 20px;
@@ -207,7 +218,7 @@ body {
 
 .resource-info p {
   margin: 10px 0 0;
-}
+} */
 
 .success.register-success {
   display: block;

@@ -55,3 +55,8 @@
 #typed-text {
     font-size: 2em; 
 }
+
+#interfaz-content .info-button:hover {
+    background-color: #62C2E2;
+    color: black;
+}
