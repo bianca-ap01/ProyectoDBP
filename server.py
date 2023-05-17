@@ -203,10 +203,10 @@ class Contest(db.Model):
     # user = db.relationship(
     #     'User', backref='users', lazy=True, secondary=user_contest)
 
-    def __init__(self, title, link, platorm, num_prob):
+    def __init__(self, title, link, platform, num_prob):
         self.title = title
         self.link = link
-        self.platform = platorm
+        self.platform = platform
         self.num_prob = num_prob
 
     def __repr__(self):
@@ -629,6 +629,47 @@ def new_lecture():
     else:
         return render_template('new_lecture.html')
 
+@app.route('/contests/new', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def new_contest():
+    if request.method == 'POST':
+        try:
+            _title = request.form['title']
+            _link = request.form['link']
+            _platform = request.form['platform']
+            _num_prob = request.form['num_prob']
+
+            if _title == '' or _link == '' or _platform == '' or _num_prob == '':
+                flash('Faltan campos por llenar')
+                return redirect(url_for('new_contest'), 400)
+            
+            if Contest.query.filter_by(title=_title).first() != None:
+                flash('Ya existe un contest con ese nombre!')
+                return redirect(url_for('new_contest'), 400)
+            
+            contest = Contest(
+                title=_title,
+                link=_link,
+                platform=_platform,
+                num_prob=_num_prob
+            )
+
+            db.session.add(contest)
+            db.session.commit()
+            flash('Se ha creado el contest correctamente')
+            return redirect(url_for('contests'), 200)
+        except:
+            flash('Ha ocurrido un error')
+            return redirect(url_for('contests'), 500)
+    else:
+        return render_template('new_contest.html')
+
+@app.route('problems/new', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def new_problem():
+    pass
 
 @app.route('/pendings', methods=['GET'])
 @login_required
