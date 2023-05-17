@@ -1,96 +1,23 @@
-<!DOCTYPE html>
-<html lang="es">
-    <head>
-        <meta http-equiv="content-type" content="text/html">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="/static/styles/css/home.css">
-        {% block page_specific_styles %}{% endblock %}
-        <script src="/static/styles/js/interfaz.js" defer></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <title>Club de Programación Competitiva</title>
-        <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" />
-    </head>
-    <body>
-        <nav>
-            <nav class="nav" id="navbar">
-                <i class="uil uil-bars navOpenBtn"></i>
-                <a href="/"><img src="/static/images/globos.jpg" alt="logo" class="logo"></a>
-                <ul class="nav-links">
-                    <i class="uil uil-times navCloseBtn"></i>
-                    <li><a href="/aboutus">About us</a></li>
-                    <li><a href="/faq">FAQ</a></li>
-                    {%if current_user.role == 'user' or current_user.role == 'member' or current_user.role == 'admin'%}
-                    <li><a href="/resources">Resources</a></li>
-                    <li><a href="members">Members</a></li>
-                    {%endif%}
-                    <li><a href="/events">Events</a></li>
-                    <li><a href="/signup" class="SignUp">Sign Up</a></li>
-                    <li><a href="/login" class="LogIn">Log In</a></li>
-                </ul>
-            </nav>
-        </nav>
-        
-        <div class="content">
-            
-        {%block signup%}
-        {%endblock%}
-
-        {%block login%}
-        {%endblock%}
-        
-        {%if current_user.role is defined %}
-            {%block resources%}
-            {%endblock%}
-        {%endif%}
-
-        {%block faq%}
-        {%endblock%}
-
-        {%block aboutus%}
-        {%endblock%}
-
-        {%block events%}
-        {%endblock%}
-        
-        {%block extra_js%}
-        {%endblock%}
-
-        {%block interfaz%}
-        {%endblock%}
-
-        {%block profile%}
-        {%endblock%}
-        
-        {%block members%}
-        {%endblock%}
-        
+{% extends "base.html" %}
+{% block page_specific_styles %}
+    <link rel="stylesheet" href="/static/styles/css/interfaz.css">
+{% endblock %}
+{% block home %}
+    <div id="interfaz-content">
+        <div id="text-content">
+            <h1>Bienvenido al Club de Programación Competitiva UTEC!</h1>
+            <div>
+                <span id="typed-text"></span><span id="cursor">|</span>
+            </div>
+            <p>¡Somos el Club de Programación Competitiva CPC de UTEC!</p>
+            <p>¡Aprende sobre algoritmos y estructuras de datos, y aplica tus conocimientos en divertidas competencias!</p>
+            <a href="/aboutus" class="info-button">Más información</a>
         </div>
-        
-        {%block footer%}
-        <footer>
-            <div class="footer-left">
-                <img src="/static/images/globos.jpg" alt="logo" class="footer-logo">
-                <div class="footer-text">
-                    <p>Club de Programación</p>
-                    <p>Competitiva UTEC</p>
-                </div>
-            </div>
-            <div class="footer-center">
-                <ul>
-                    <li><a href="/aboutus">Acerca de nosotros</a></li>
-                    <li><a href="/signup">Regístrate</a></li>
-                    <li><a href="/login">Inicia sesión</a></li>
-                    <li><a href="/events">Eventos</a></li>
-                    <li><a href="/faq">Preguntas frecuentes</a></li>
-                    <li><a href="/">Home</a></li>
-                </ul>
-            </div>
-            <div class="footer-right">
-                <a href="https://github.com/CPC-UTEC"><img src="/static/images/github.png" alt="Github"></a>
-                <a href="https://www.facebook.com/CPC.UTEC"><img src="/static/images/facebook.png" alt="Facebook"></a>
-                <a href="https://www.instagram.com/cpc.utec/"><img src="/static/images/instagram.png" alt="Instagram"></a>
-            </div>
-        </footer>
-        {%endblock%}
-    </body>
-</html>
+        <div id="image-content">
+            <img src="/static/images/interfaz.jpg" alt="Imagen grande" id="big-image">
+        </div>
+    </div>
+{% endblock %}
+{% block page_specific_scripts %}
+<script src="/static/styles/js/interfaz.js" defer></script>
+{% endblock %}
