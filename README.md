@@ -35,7 +35,7 @@ Se espera que esta página sea tomada como versión beta de la que se desarrolla
 
 - Base de datos:
 
-Sistema de gestión: ![https://github.com/bianca-ap01/ProyectoDBP.git](Postgresql)
+Sistema de gestión: [https://github.com/bianca-ap01/ProyectoDBP.git](Postgresql)
 
 ```
     psql

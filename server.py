@@ -132,7 +132,7 @@ class Professor(db.Model):
     name = db.Column(db.String(50), nullable=False)
     lastname = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(100), nullable=False)
-    status = db.Column(db.Boolean(), nullable=False, default=False)
+    status = db.Column(db.Boolean(), nullable=False, default=True)
     created_at = db.Column(db.DateTime(timezone=True),
                            nullable=False, server_default=db.text("now()"))
     modified_at = db.Column(db.DateTime(timezone=True),
@@ -835,6 +835,8 @@ def board():
 
 
 @app.route("/professors", methods=['GET'])
+@login_required
+@admin_required
 def professors():
     _professors = Professor.query.all()
     return render_template("professors.html", professors=_professors, current_user=current_user)
