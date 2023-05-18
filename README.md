@@ -27,11 +27,9 @@ Se espera que esta página sea tomada como versión beta de la que se desarrolla
 
 ### Recursos adicionales empleados (front-end, back-end, base de datos)
 
-- Flask-Admin
-- Flask-Login
-- Flask-SQLAlchemy
-- Flask-Migrate
-- Werkzeug
+- Flask-Admin: 
+- Flask-Login: empleado para manejar las sesiones de los usuarios. Se usan funciones que indican las rutas a las que puede acceder un usuario
+- Werkzeug: se emplea para encriptar las contraseñas de los usuarios
 
 ### Ejecución (script, host, etc)
 
@@ -60,7 +58,8 @@ Sistema de gestión: ![https://github.com/bianca-ap01/ProyectoDBP.git](Postgresq
 
 3. Installar las dependencias en el ambiente virtual
 
-```pip install -r requerimientos.txt
+```
+    pip install -r requerimientos.txt
 ```
 
 4. Correr la aplicación
@@ -89,4 +88,10 @@ Codeforces API: Codeforces es una de las pataformas más grandes de programació
 
 ### Manejo de errores
 
-No implementado en su totalidad.
+
+200: Caso exitoso
+400: Error en el ingreso de datos del formulario
+401: Contraseña incorrecta
+404: Not Found
+500: Error del servidor
+
