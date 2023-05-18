@@ -515,19 +515,13 @@ def signup():
 @admin_required
 def members():
     _members = Member.query.all()
-    #Add the name of the user to the member
+    # Add the name of the user to the member
     for member in _members:
         user = User.query.filter_by(id=member.user_id).first()
         member.user_name = user.nickname
-        #Limits the date to the day, month and year
-        member.member_since = member.member_since.strftime("%d/%m/%Y")
-
-        #Add the image linked to the user
-        cwd = os.getcwd()
-        users_dir = os.path.join(app.config['UPLOAD_FOLDER'], member.user_id)
-        upload_folder = os.path.join(cwd, users_dir)
-        member.image = os.path.join(upload_folder, user.image)
-
+        member.email = user.email
+        # Limits the date to the day, month and year
+        member.m_since = member.member_since.strftime("%d/%m/%Y")
     return render_template("members.html", _members=_members, current_user=current_user)
 
 
@@ -814,6 +808,75 @@ def problem_edit(_id):
 @login_required
 def pendings():
     pass
+
+
+@app.route("/users", methods=['GET'])
+@admin_required
+@login_required
+def users():
+    _users = User.query.all()
+    # Add the name of the user to the member
+    for user in _users:
+        # Limits the date to the day, month and year
+        user.u_since = user.created_at.strftime("%d/%m/%Y")
+    return render_template("users.html", users=_users, current_user=current_user)
+
+
+@app.route("/board", methods=['GET'])
+@login_required
+@admin_required
+def board():
+    _board = Board.query.all()
+    for member in _board:
+        user = User.query.filter_by(id=member.user_id).first()
+        member.nickname = user.nickname
+        member.email = user.email
+    return render_template("board.html", board=_board, current_user=current_user)
+
+
+@app.route("/professors", methods=['GET'])
+def professors():
+    _professors = Professor.query.all()
+    return render_template("professors.html", professors=_professors, current_user=current_user)
+
+
+@app.route('/professors/new', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def new_professor():
+    if request.method == 'POST':
+        try:
+            _name = request.form['prof_name']
+            _lastname = request.form['prof_lastname']
+            _email = request.form['prof_email']
+
+            if _name == '' or _lastname == '' or _email == '':
+                flash('Faltan campos por llenar')
+                return redirect(url_for('new_professor'), 400)
+
+            if _email.split('@')[1] != 'utec.edu.pe':
+                flash('El email no es válido')
+                return redirect(url_for('new_professor'))
+
+            if Professor.query.filter_by(email=_email).first() != None:
+                flash('El profesor ya se encuentra resgistrado')
+                return redirect(url_for('new_professor'), 400)
+
+            profesor = Professor(
+                name=_name,
+                lastname=_lastname,
+                email=_email,
+            )
+
+            db.session.add(profesor)
+            db.session.commit()
+            flash('Se ha registrado al profesor correctamente')
+            return redirect(url_for('professors'), 200)
+        except:
+            flash('Ha ocurrido un error')
+            return redirect(url_for('professors'), 500)
+    else:
+        return render_template('new_professor.html', current_user=current_user)
 
 
 # Run the app

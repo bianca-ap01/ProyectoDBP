@@ -1,0 +1,29 @@
+{%extends "home.html"%}
+    {%block new_professor%}
+    <script src="/static/styles/js/login.js" defer></script> 
+    <link rel="stylesheet" href="static/styles/css/login.css">
+        <form id="newProfessort" action="/professors/new" method="post">
+            <h2>Nuevo profesor</h2>
+            <!-- <p class="error confirm-password-error"></p> -->
+            <ul>
+                <li>
+                    <label for="name">Nombre </label>
+                    <input type="text" id="name" name="prof_name" placeholder="Nombre" required>
+                </li>
+
+                <li>
+                    <label for="lastname">Apellido </label>
+                    <input type="text" id="lastname" name="prof_lastname" placeholder="Apellido" required>
+                </li>
+                
+                <li>
+                    <label for="email">Email </label>
+                    <input type="text" id="email" name="prof_email" placeholder="Email" required>
+                </li>
+
+                    <button type="submit">Agregar profesor</button>
+                </li>
+            </ul>
+        </form>
+
+{%endblock%}

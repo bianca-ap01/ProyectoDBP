@@ -14,7 +14,7 @@
     <table class="table">
         <thead>
         <tr>
-            <th class="task-id">Foto</th>
+            <th>Email</th>
             <th class="task-name">Nombre</th>
             <th class="link">¿Compite?</th>
             <th class="status">Entrada</th>
@@ -28,12 +28,10 @@
         <tbody>
         {% for item in _members%}
             <tr>
-                <td>
-                    <img src="{{item.image}}">
-                </td>
+                <td>{{item.email}}</td>
                 <td>{{item.user_name}}</td>
                 <td>{{item.comp_status}}</td>
-                <td>{{item.member_since}}</td>
+                <td>{{item.m_since}}</td>
                 {%if current_user.role == 'admin'%}             
                 <td><button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="problem" data-bs-target="#task-problem" data-source="{{item.id}}" data-content="{{item.title}}"><i class="fa fa-pen fa-1" aria-hidden="true"></i></button></td>
                 <td><button class="btn btn-outline-secondary btn-sm remove" data-source="{{item.id}}" type="button"><i class="fa fa-trash fa-1" aria-hidden="true"></i></button></td>

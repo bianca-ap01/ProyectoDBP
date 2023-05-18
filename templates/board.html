@@ -1,5 +1,5 @@
 {%extends "home.html"%}
-{%block users%}
+{%block board%}
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" 
 integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
@@ -17,6 +17,7 @@ integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOn
     <th>Email</th>
     <th class="task-name">Nombre</th>
     <th class="status">Entrada</th>
+    <th>Role</th>
     {%if current_user.role == 'admin'%}
     <th class="update">Edit</th>
     <th class="update">Remove</th>
@@ -25,11 +26,12 @@ integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOn
 </thead>
 
 <tbody>
-{% for item in users%}
+{% for item in board%}
     <tr>
         <td>{{item.email}}</td>
         <td>{{item.nickname}}</td>
-        <td>{{item.u_since}}</td>
+        <td>{{item.board_since}}</td>
+        <td>{{item.role}}</td>
         {%if current_user.role == 'admin'%}             
         <td><button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="problem" data-bs-target="#task-problem" data-source="{{item.id}}" data-content="{{item.title}}"><i class="fa fa-pen fa-1" aria-hidden="true"></i></button></td>
         <td><button class="btn btn-outline-secondary btn-sm remove" data-source="{{item.id}}" type="button"><i class="fa fa-trash fa-1" aria-hidden="true"></i></button></td>
