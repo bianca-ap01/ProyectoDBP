@@ -10,7 +10,8 @@
 ### Descripción del proyecto
 
 Se trata de una aplicación web en la que se manejarán los datos del Club de Programación Competitiva de la universidad. Se incluye el registro de usuarios interesados, miembros e información sobre el club.
- 
+
+El proyecto contiene en total 24 endpoints y 8 modelos.
 
 
 ### Objetivos principales
