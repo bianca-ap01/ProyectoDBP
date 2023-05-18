@@ -589,7 +589,7 @@ def profile_user():
         flash('El usuario no existe')
         return redirect(url_for('home'), 404)
     else:
-        return render_template('profile.html', user=_user)
+        return render_template('profile.html', user=_user, current_user=current_user)
 
 
 @app.route('/lectures', methods=['GET'])
@@ -666,7 +666,7 @@ def contest(_title):
 
     problems = Problem.query.filter_by(contest_id=object.id).all()
 
-    return render_template('contest.html', jsonify([problem.serialize() for problem in problems]))
+    return render_template('contests.html', jsonify([problem.serialize() for problem in problems]))
 
 
 @app.route('/contests', methods=['GET'])
@@ -683,7 +683,7 @@ def contests():
 def new_contest():
     if request.method == 'POST':
         try:
-            _title = request.form['title']
+            _title = request.form['contest_name']
             _link = request.form['link']
             _platform = request.form['platform']
             _num_prob = request.form['num_prob']
@@ -714,47 +714,6 @@ def new_contest():
         return render_template('new_contest.html', current_user=current_user)
 
 
-@app.route('/problems/new', methods=['GET', 'POST'])
-@login_required
-@admin_required
-def new_problem():
-    if request.method == 'POST':
-        try:
-            _title = request.form['title']
-            _link = request.form['link']
-            _contest = request.form['contest']
-
-            if _title == '' or _link == '' or _contest == '':
-                flash('Faltan campos por llenar')
-                return redirect(url_for('new_problem'), 400)
-
-            if Problem.query.filter_by(title=_title).first() != None:
-                flash('Ya existe un problema con ese nombre!')
-                return redirect(url_for('new_problem'), 400)
-
-            contest = Contest.query.filter_by(title=_contest).first()
-            if contest == None:
-                flash('No existe un contest con ese nombre!')
-                return redirect(url_for('new_problem'), 400)
-
-            problem = Problem(
-                title=_title,
-                link=_link,
-                platform=contest.platform,
-                contest_id=contest.id
-            )
-
-            db.session.add(problem)
-            db.session.commit()
-            flash('Se ha creado el problema correctamente')
-            return redirect(url_for('problems'), 200)
-        except:
-            flash('Ha ocurrido un error')
-            return redirect(url_for('problems'), 500)
-    else:
-        return render_template('new_problem.html', current_user=current_user)
-
-
 @app.route('/problems', methods=['GET'])
 @login_required
 @admin_required
@@ -764,7 +723,7 @@ def problems():
     return render_template('problems.html', problems=_problems, current_user=current_user)
 
 
-@app.route('/newProblem', methods=['GET', 'POST'])
+@app.route('/problems/new', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def newProblem():

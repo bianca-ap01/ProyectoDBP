@@ -2,13 +2,18 @@
     {%block newContest%}
     <script src="/static/styles/js/login.js" defer></script> 
     <link rel="stylesheet" href="static/styles/css/login.css">
-        <form id="newProblem" action="/newProblem" method="post">
+        <form id="newProblem" action="/contests/new" method="post">
             <h2>Nuevo contest</h2>
             <!-- <p class="error confirm-password-error"></p> -->
             <ul>
                 <li>
-                    <label for="title">Title </label>
-                    <input type="text" id="title" name="title" placeholder="Nombre" required>
+                    <label for="contest">Contest name </label>
+                    <input type="text" id="contest" name="contest_name" placeholder="Nombre" required>
+                </li>
+
+                <li>
+                    <label for="platform">Plataforma </label>
+                    <input type="text" id="platform" name="platform" placeholder="Plataforma" required>
                 </li>
 
                 <li>
@@ -16,11 +21,6 @@
                     <input type="text" id="link" name="link" placeholder="Link" required>
                 </li>
 
-                <li>
-                    <label for="contest">Contest name </label>
-                    <input type="text" id="platform" name="contest" placeholder="Plataforma" required>
-                </li>
-                
                 <li>
                     <label for="num_prob">Numero de problemas </label>
                     <input type="number" id="num_prob" name="num_prob" placeholder="Numero de problemas" required>
