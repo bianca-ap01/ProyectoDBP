@@ -1,21 +1,48 @@
 {%extends "home.html"%}
-{block members}
-<table class="table">
-    <tr>
-        <!-- <th>Email</th> -->
-        <th>Compete</th>
-        <th>Status</th>
-    </tr>
+{%block members%}
 
-    {% for member in members %}
-    <tr>
-        <!-- <td>{{ member.email }}</td> -->
-        <td>${{ member.comp_status }}</td>
-        <td>{{ member.is_active }}</td>
-    </tr>
-    {% endfor %}
-</table>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" 
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
 
-<button>Save changes</button>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.css"> 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
 
+     
+    <div class="container table-responsive">          
+    <table class="table">
+        <thead>
+        <tr>
+            <th class="task-id">Foto</th>
+            <th class="task-name">Nombre</th>
+            <th class="link">¿Compite?</th>
+            <th class="status">Entrada</th>
+            {%if current_user.role == 'admin'%}
+            <th class="update">Edit</th>
+            <th class="update">Remove</th>
+            {%endif%}
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for item in _members%}
+            <tr>
+                <td>
+                    <img src="{{item.image}}">
+                </td>
+                <td>{{item.user_name}}</td>
+                <td>{{item.comp_status}}</td>
+                <td>{{item.member_since}}</td>
+                {%if current_user.role == 'admin'%}             
+                <td><button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="problem" data-bs-target="#task-problem" data-source="{{item.id}}" data-content="{{item.title}}"><i class="fa fa-pen fa-1" aria-hidden="true"></i></button></td>
+                <td><button class="btn btn-outline-secondary btn-sm remove" data-source="{{item.id}}" type="button"><i class="fa fa-trash fa-1" aria-hidden="true"></i></button></td>
+                {%endif%}
+            </tr>
+        {% endfor %}
+        
+        </tbody>
+    </table>
+    </div>
+    
 {%endblock%}

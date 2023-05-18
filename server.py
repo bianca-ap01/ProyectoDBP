@@ -510,22 +510,25 @@ def signup():
         return render_template('signup.html', current_user=current_user)
 
 
-@app.route('/members', methods=['PATCH', 'GET'])
+@app.route('/members', methods=['POST', 'GET'])
 @login_required
 @admin_required
 def members():
-    if request.method == 'GET':
-        try:
-            _members = Member.query.all()
-            return render_template("members.html", members=_members, current_user=current_user)
-        except:
-            flash("Ha ocurrido un error")
-            db.session.rollback()
-            return jsonify({'error': 'Ha ocurrido un error'}), 500
-        finally:
-            db.session.close()
-    else:
-        pass
+    _members = Member.query.all()
+    #Add the name of the user to the member
+    for member in _members:
+        user = User.query.filter_by(id=member.user_id).first()
+        member.user_name = user.nickname
+        #Limits the date to the day, month and year
+        member.member_since = member.member_since.strftime("%d/%m/%Y")
+
+        #Add the image linked to the user
+        cwd = os.getcwd()
+        users_dir = os.path.join(app.config['UPLOAD_FOLDER'], member.user_id)
+        upload_folder = os.path.join(cwd, users_dir)
+        member.image = os.path.join(upload_folder, user.image)
+
+    return render_template("members.html", _members=_members, current_user=current_user)
 
 
 @app.route('/logout')
