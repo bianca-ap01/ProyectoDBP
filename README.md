@@ -80,7 +80,7 @@ Sistema de gestión: Postgresql
     > exit
 ```
 
-### API Endpoints
+### Endpoints
 
 | Método | Endpoint            | Descripción |
 |--------|---------------------|-------------|
