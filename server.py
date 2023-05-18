@@ -667,7 +667,8 @@ def contest(_title):
 
     return render_template('contest.html', jsonify([problem.serialize() for problem in problems]))
 
-@app.route('contests', methods=['GET'])
+
+@app.route('/contests', methods=['GET'])
 @login_required
 def contests():
     _contests = Contest.query.all()
