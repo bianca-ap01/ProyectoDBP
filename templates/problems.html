@@ -1,32 +1,32 @@
 {%extends "home.html"%}
 {%block problems%}
-<html>
+<!-- <html>
     <head>
         <title>Problem dashboard</title>
 
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1"> -->
 
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" 
         integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.css">
 
-    </head>
+    <!-- </head> -->
 
-    <body>
+    <!-- <body>
 
     <main role="main" class="container extra-bottom">
       <h1 class="mt-5">List of Problems</h1>
       <p><mark>:0</mark></p>
     </main>
-    
+     -->
 
     <div class="container">    
         
         <!-- Button trigger problem -->
         <div style="text-align: right;">
-        <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="problem" data-bs-target="#task-problem" data-source="New Problem">Add Problem</button>
+        <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="problem" data-bs-target="#task-problem" data-source="New Problem" onclick="window.location.href = 'newProblem';">Add Problem</button>
         </div>
 
         
@@ -107,6 +107,6 @@
         integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
     <script src="/static/styles/js/problems.js"></script>
 
-</html>
+<!-- </html> -->
 
 {%endblock%}
