@@ -10,6 +10,33 @@
 ### Descripción del proyecto
 
 Se trata de una aplicación web en la que se manejarán los datos del Club de Programación Competitiva de la universidad. Se incluye el registro de usuarios interesados, miembros e información sobre el club.
+ 
+ El proyecto contiene los siguientes endpoints:
+ GET - '/'
+GET - '/resources'
+GET - '/aboutus'
+GET - '/events'
+GET - '/faq'
+GET, POST - '/login'
+POST - '/signup/'
+PATCH, GET - '/members'
+GET - '/logout'
+GET, POST - '/profile/edit/'
+GET - '/profile'
+GET - '/lectures'
+GET - '/lectures/int:id'
+GET, POST - '/lectures/int:id/edit'
+GET, POST - '/lectures/new'
+GET - '/contests/<_title>'
+GET - '/contests'
+GET, POST - '/contests/new'
+GET, POST - '/problems/new'
+GET - '/problems'
+GET, POST - '/newProblem'
+POST - '/problems/create'
+POST - '/problems/edit/int:id'
+GET - '/pendings'
+En total, hay 24 endpoints.
 
 ### Objetivos principales
 
