@@ -27,7 +27,7 @@ Se espera que esta página sea tomada como versión beta de la que se desarrolla
 
 #### Vista de como se ve la página web
 
-![Diagrama del proyecto](static/imagenes/home.png)
+![Diagrama del proyecto](static/images/home.png)
 
 
 ### Recursos adicionales empleados (front-end, back-end, base de datos)
