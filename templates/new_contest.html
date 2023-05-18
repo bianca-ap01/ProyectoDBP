@@ -2,7 +2,7 @@
     {%block newContest%}
     <script src="/static/styles/js/login.js" defer></script> 
     <link rel="stylesheet" href="static/styles/css/login.css">
-        <form id="newProblem" action="/contests/new" method="post">
+        <form id="newContest" action="/contests/new" method="post">
             <h2>Nuevo contest</h2>
             <!-- <p class="error confirm-password-error"></p> -->
             <ul>
@@ -13,7 +13,11 @@
 
                 <li>
                     <label for="platform">Plataforma </label>
-                    <input type="text" id="platform" name="platform" placeholder="Plataforma" required>
+                    <select name="platform" id="platform">
+                        <option value="Codeforces">Codeforces</option>
+                        <option value="AtCoder">AtCoder</option>
+                        <option value="VJudge">VJudge</option>
+                    </select>
                 </li>
 
                 <li>

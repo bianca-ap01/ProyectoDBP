@@ -720,6 +720,9 @@ def new_contest():
 def problems():
     _problems = Problem.query.all()
     sorted(_problems, key=lambda problem: problem.contest_id)
+    #Add contest name to each problem
+    for problem in _problems:
+        problem.contest_name = Contest.query.filter_by(id=problem.contest_id).first().title
     return render_template('problems.html', problems=_problems, current_user=current_user)
 
 

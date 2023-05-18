@@ -61,11 +61,11 @@
     <table class="table">
         <thead>
         <tr>
-            <th class="task-id">ID</th>
-            <th class="task-contest-id">Contest ID</th>
+            <th class="task-id">Contest</th>
             <th class="task">Name</th>
-            <th class="status">Juez</th>
             <th class="link">Link</th>
+            <th class="status">Juez</th>
+            
             <th class="update">Edit</th>
             <th class="update">Remove</th>
         </tr>
@@ -74,7 +74,7 @@
         <tbody>
         {% for item in problems%}
             <tr>
-                <td>{{item.contest_id}}</td>
+                <td>{{item.contest_name}}</td>
                 <td>{{item.title}}</td>
                 <td><a href="{{item.link}}">{{item.link}}</a></td>
                 <td>{{item.platform}}</td>
