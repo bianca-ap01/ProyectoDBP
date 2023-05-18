@@ -81,6 +81,8 @@ class User(db.Model, UserMixin):
                             nullable=False, server_default=db.text("now()"))
     member = db.relationship('Member', backref='users',
                              lazy='joined', uselist=False)
+    board = db.relationship('Board', backref='users',
+                            lazy='joined', uselist=False)
 
     def __init__(self, nickname, email, codeforces_handle, atcoder_handle, vjudge_handle, key):
         self.nickname = nickname
@@ -110,19 +112,17 @@ class User(db.Model, UserMixin):
 
 class Member(db.Model):
     __tablename__ = 'members'
-    m_id = db.Column(db.String(36), nullable=False,
-                     default=lambda: str(uuid.uuid4()), primary_key=True)
+    id = db.Column(db.String(36), nullable=False,
+                   default=lambda: str(uuid.uuid4()), primary_key=True)
     member_since = db.Column(db.DateTime(timezone=True),
                              nullable=False, server_default=db.text("now()"))
     comp_status = db.Column(db.Boolean(), default=True, nullable=False)
     member_status = db.Column(db.Boolean(), default=True, nullable=False)
     user_id = db.Column(db.String(36), db.ForeignKey(
         'users.id'), unique=True, nullable=False)
-    board = db.relationship('Board', backref='members',
-                            lazy='joined', uselist=False)
 
     def __repr__(self):
-        return f"<Member {self.m_id}>"
+        return f"<Member {self.id}>"
 
 
 class Professor(db.Model):
@@ -252,8 +252,8 @@ class Board(db.Model):
     status = db.Column(db.Boolean(), default=True, nullable=False)
     board_since = db.Column(db.DateTime(timezone=True),
                             nullable=False, server_default=db.text("now()"))
-    member_id = db.Column(db.String(36), db.ForeignKey(
-        'members.m_id'), nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey(
+        'users.id'), nullable=False)
 
     # def __init__(self):
     #     self.board_since = datetime.utcnow()
@@ -389,10 +389,10 @@ def login():
         _input = request.form['user_nickname']
         if '@' in _input:
             _user = User.query.filter_by(email=_input).first()
-            user = User.query.filter_by(email=_input).first()
+            # user = User.query.filter_by(email=_input).first()
         else:
             _user = User.query.filter_by(nickname=_input).first()
-            user = User.query.filter_by(nickname=_input).first()
+            # user = User.query.filter_by(nickname=_input).first()
 
         if _user:
             if check_password_hash(_user.hpassword, request.form['user_password']):
@@ -404,15 +404,15 @@ def login():
                 current_user['role'] = 'user'
 
                 if _user.email in list_of_members:
-                    member = Member.query.filter_by(user_id=user.id).first()
+                    member = Member.query.filter_by(user_id=_user.id).first()
                     current_user['role'] = 'member'
                     current_user['status'] = member.member_status
 
                 if _user.email in list_of_board:
-                    # board = Board.query.filter_by(
-                    # member_id=member.m_id).first()
+                    board = Board.query.filter_by(
+                        user_id=_user.id).first()
                     current_user['role'] = 'admin'
-                    # current_user['status'] = board.status
+                    current_user['status'] = board.status
 
                 print(current_user['role'])
 
@@ -479,7 +479,7 @@ def signup():
                 db.session.commit()
 
             if user.email in list_of_board:
-                board = Board(members=member)
+                board = Board(users=user)
                 board.board_since = datetime.utcnow()
                 db.session.add(board)
                 db.session.commit()
@@ -581,15 +581,15 @@ def profile_edit():
         return render_template('profile_edit.html', current_user=current_user)
 
 
-@app.route('/profile/<string:_nickname>', methods=['GET'])
+@app.route('/profile', methods=['GET'])
 @login_required
-def profile_user(_nickname):
-    _user = User.query.filter_by(nickname=_nickname).first()
+def profile_user():
+    _user = User.query.filter_by(nickname=current_user['nickname']).first()
     if _user == None:
         flash('El usuario no existe')
-        return redirect(url_for('interfaz'), 404)
+        return redirect(url_for('home'), 404)
     else:
-        return render_template('profile.html', _nickname=_user.nickname, user=_user)
+        return render_template('profile.html', user=_user)
 
 
 @app.route('/lectures', methods=['GET'])

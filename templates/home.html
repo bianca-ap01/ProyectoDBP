@@ -23,12 +23,15 @@
                     <li><a href="/events">Events</a></li>
             
                     {%if current_user.role != ''%}
+                    {%if current_user.role == 'member' or current_user.role == 'admin'%}
+                    <li><a href="/teams">Teams</a></li>
+                    <li><a href="/pendings">Pendings</a></li>
+                    {%endif%}
                     {%if current_user.role == 'admin'%}
                     <li><a href="members">Members</a></li>
                     <li><a href="/users">Users</a></li>
                     <li><a href="/problems">Problems</a></li>
                     <li><a href="/contests">Contests</a></li>
-
                     {%endif%}
                     <li><a href="/resources">Resources</a></li>
                     <li><a href="/profile">Profile</a></li>
