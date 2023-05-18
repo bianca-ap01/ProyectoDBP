@@ -521,7 +521,7 @@ def members():
             for member in _members:
                 param.append(User.query.get(member.user_id))
 
-            return render_template("members.html", members=param)
+            return render_template("members.html", members=param, current_user=current_user)
         except:
             flash("Ha ocurrido un error")
             db.session.rollback()
@@ -578,7 +578,7 @@ def profile_edit():
             return redirect(url_for('profile/edit/'), 500)
 
     else:
-        return render_template('profile_edit.html')
+        return render_template('profile_edit.html', current_user=current_user)
 
 
 @app.route('/profile/<_nickname>', methods=['GET'])
@@ -652,11 +652,12 @@ def new_lecture():
             flash('Ha ocurrido un error')
             return redirect(url_for('lectures'), 500)
     else:
-        return render_template('new_lecture.html')
+        return render_template('new_lecture.html', current_user=current_user)
 
 
 @app.route('/contests/<_title>', methods=['GET'])
 @login_required
+@admin_required
 def contest(_title):
     object = Contest.query.filter_by(title=_title).first()
     if object == None:
@@ -670,9 +671,10 @@ def contest(_title):
 
 @app.route('/contests', methods=['GET'])
 @login_required
+@admin_required
 def contests():
     _contests = Contest.query.all()
-    return render_template('contests.html', contests=_contests)
+    return render_template('contests.html', contests=_contests, current_user=current_user)
 
 
 @app.route('/contests/new', methods=['GET', 'POST'])
@@ -709,7 +711,7 @@ def new_contest():
             flash('Ha ocurrido un error')
             return redirect(url_for('contests'), 500)
     else:
-        return render_template('new_contest.html')
+        return render_template('new_contest.html', current_user=current_user)
 
 
 @app.route('/problems/new', methods=['GET', 'POST'])
@@ -750,15 +752,16 @@ def new_problem():
             flash('Ha ocurrido un error')
             return redirect(url_for('problems'), 500)
     else:
-        return render_template('new_problem.html')
+        return render_template('new_problem.html', current_user=current_user)
 
 
 @app.route('/problems', methods=['GET'])
 @login_required
+@admin_required
 def problems():
     _problems = Problem.query.all()
     sorted(_problems, key=lambda problem: problem.contest_id)
-    return render_template('problems.html', problems=_problems)
+    return render_template('problems.html', problems=_problems, current_user=current_user)
 
 
 @app.route('/newProblem', methods=['GET', 'POST'])
@@ -799,7 +802,7 @@ def newProblem():
             flash('Ha ocurrido un error')
             return redirect(url_for('problems'), 500)
     else:
-        return render_template('newProblem.html')
+        return render_template('newProblem.html', current_user=current_user)
 
 
 def insert_new_problem(_title, _link, _plataforma, _contest) -> int:
@@ -830,6 +833,7 @@ def remove_problem_by_id(_id) -> None:
 
 @app.route("/problems/create", methods=["POST"])
 @login_required
+@admin_required
 def create_problem():
     data = request.get_json()
     insert_new_problem(data['description'])
@@ -839,6 +843,7 @@ def create_problem():
 
 @app.route("/problems/edit/<int:id>", methods=["POST"])
 @login_required
+@admin_required
 def problem_edit(_id):
     pass
 
