@@ -1,0 +1,19 @@
+{%extends "home.html"%}
+    {%block newProblem%}
+    
+    <tr>
+        <th>Nombre</th>
+        <th>Link</th>
+        <th>Plataforma</th>
+        <th>Numero de problemas</th>
+    </tr>
+    {%for contest in contests%}
+    <tr>
+        <td>{{contest.title}}</td>
+        <td>{{contest.link}}</td>
+        <td>{{contest.platform}}</td>
+        <td>{{contest.num_prob}}</td>
+    </tr>
+    {%endfor%}
+    
+{%endblock%}
