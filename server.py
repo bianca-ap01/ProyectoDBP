@@ -672,7 +672,7 @@ def contest(_title):
 @login_required
 def contests():
     _contests = Contest.query.all()
-    return render_template('contests.html', contests=_contests.serialize())
+    return render_template('contests.html', contests=_contests)
 
 
 @app.route('/contests/new', methods=['GET', 'POST'])
