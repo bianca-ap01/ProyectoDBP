@@ -25,6 +25,10 @@ Crear una aplicación web interactiva que permita el registro de usuarios, equip
 
 Se espera que esta página sea tomada como versión beta de la que se desarrollará próximamente para el club.
 
+#### Vista de como se ve la página web
+
+
+
 ### Recursos adicionales empleados (front-end, back-end, base de datos)
 
 - Flask-Admin
