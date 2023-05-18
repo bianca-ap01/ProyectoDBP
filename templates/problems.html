@@ -15,10 +15,11 @@
  
     <div class="container">    
         
-    
+        {%if current_user.role == 'admin'%}
         <div style="text-align: right;">
         <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="problem" data-bs-target="#task-problem" data-source="New Problem" onclick="window.location.href = '/problems/new';">Add Problem</button>
         </div>
+        {%endif%}
 
         <div class="problem fade" id="task-problem" tabindex="-1" aria-labelledby="Label" aria-hidden="true">
         <div class="problem-dialog">
@@ -65,9 +66,10 @@
             <th class="task">Name</th>
             <th class="link">Link</th>
             <th class="status">Juez</th>
-            
+            {%if current_user.role == 'admin'%}
             <th class="update">Edit</th>
             <th class="update">Remove</th>
+            {%endif%}
         </tr>
         </thead>
 
@@ -78,10 +80,10 @@
                 <td>{{item.title}}</td>
                 <td><a href="{{item.link}}">{{item.link}}</a></td>
                 <td>{{item.platform}}</td>
-                                
+                {%if current_user.role == 'admin'%}             
                 <td><button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="problem" data-bs-target="#task-problem" data-source="{{item.id}}" data-content="{{item.title}}"><i class="fa fa-pen fa-1" aria-hidden="true"></i></button></td>
-
                 <td><button class="btn btn-outline-secondary btn-sm remove" data-source="{{item.id}}" type="button"><i class="fa fa-trash fa-1" aria-hidden="true"></i></button></td>
+                {%endif%}
             </tr>
         {% endfor %}
         

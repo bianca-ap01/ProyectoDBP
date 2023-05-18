@@ -517,11 +517,7 @@ def members():
     if request.method == 'GET':
         try:
             _members = Member.query.all()
-            param = []
-            for member in _members:
-                param.append(User.query.get(member.user_id))
-
-            return render_template("members.html", members=param, current_user=current_user)
+            return render_template("members.html", members=_members, current_user=current_user)
         except:
             flash("Ha ocurrido un error")
             db.session.rollback()
@@ -593,6 +589,7 @@ def profile_user():
 
 
 @app.route('/lectures', methods=['GET'])
+@login_required
 def lectures():
     _lectures = Video.query.all()
     return render_template('lectures.html', lectures=_lectures.serialize())
@@ -607,6 +604,7 @@ def lecture(id):
 
 @app.route('/lectures/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def edit_lecture(_id):
     _lecture = Video.query.filter_by(id=_id).first()
     if request.method == 'POST':
@@ -633,6 +631,7 @@ def edit_lecture(_id):
 
 @app.route('/lectures/new', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def new_lecture():
     if request.method == 'POST':
         try:
@@ -657,7 +656,6 @@ def new_lecture():
 
 @app.route('/contests/<_title>', methods=['GET'])
 @login_required
-@admin_required
 def contest(_title):
     object = Contest.query.filter_by(title=_title).first()
     if object == None:
@@ -671,7 +669,6 @@ def contest(_title):
 
 @app.route('/contests', methods=['GET'])
 @login_required
-@admin_required
 def contests():
     _contests = Contest.query.all()
     return render_template('contests.html', contests=_contests, current_user=current_user)
@@ -716,13 +713,13 @@ def new_contest():
 
 @app.route('/problems', methods=['GET'])
 @login_required
-@admin_required
 def problems():
     _problems = Problem.query.all()
     sorted(_problems, key=lambda problem: problem.contest_id)
-    #Add contest name to each problem
+    # Add contest name to each problem
     for problem in _problems:
-        problem.contest_name = Contest.query.filter_by(id=problem.contest_id).first().title
+        problem.contest_name = Contest.query.filter_by(
+            id=problem.contest_id).first().title
     return render_template('problems.html', problems=_problems, current_user=current_user)
 
 

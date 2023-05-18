@@ -65,8 +65,11 @@
         <th class="task-contest-id">Link</th>
         <th class="task">Plataforma</th>
         <th class="status">Número de problemas</th>
+
+        {%if current_user.role == 'admin'%}
         <th class="update">Edit</th>
         <th class="update">Remove</th>
+        {%endif%}
     </tr>
     </thead>
 
@@ -79,10 +82,10 @@
             <td>{{contest.num_prob}}</td>
 
             <!-- <td><button type="button" class="btn btn-outline-warning btn-sm state" data-source="{{contest.id}}">{{contest.platform}}</button></td> -->
-                            
+            {%if current_user.role == 'admin'%}           
             <td><button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="problem" data-bs-target="#task-problem" data-source="{{contest.id}}" data-content="{{contest.title}}"><i class="fa fa-pen fa-1" aria-hidden="true"></i></button></td>
-
             <td><button class="btn btn-outline-secondary btn-sm remove" data-source="{{contest.id}}" type="button"><i class="fa fa-trash fa-1" aria-hidden="true"></i></button></td>
+            {%endif%}
         </tr>
     {% endfor %}
     
