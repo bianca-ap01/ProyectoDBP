@@ -1,0 +1,41 @@
+{%extends "home.html"%}
+    {%block newContest%}
+    <script src="/static/styles/js/login.js" defer></script> 
+    <link rel="stylesheet" href="static/styles/css/login.css">
+        <form id="newProblem" action="/newProblem" method="post">
+            <h2>Log In</h2>
+            <!-- <p class="error confirm-password-error"></p> -->
+            <ul>
+                <li>
+                    <label for="title">Title </label>
+                    <input type="text" id="title" name="title" placeholder="Nombre" required>
+                </li>
+
+                <li>
+                    <label for="link">Link </label>
+                    <input type="text" id="link" name="link" placeholder="Link" required>
+                </li>
+
+                <li>
+                    <label for="contest">Contest name </label>
+                    <input type="text" id="platform" name="contest" placeholder="Plataforma" required>
+                </li>
+                
+                <li>
+                    <label for="num_prob">Numero de problemas </label>
+                    <input type="number" id="num_prob" name="num_prob" placeholder="Numero de problemas" required>
+
+                <li>
+                    <button type="submit">Nuevo Contest</button>
+                </li>
+                <p>¿Ya tienes un contest? <a href="/newProblem">Nuevo Problema</a></p>
+            </ul>
+
+        </form>
+
+        _title = request.form['title']
+            _link = request.form['link']
+            _platform = request.form['platform']
+            _num_prob = request.form['num_prob']
+
+{%endblock%}
