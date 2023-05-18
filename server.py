@@ -306,7 +306,7 @@ def load_user(user_id):
 @login_manager.unauthorized_handler
 def unauthorized():
     flash('Debes iniciar sesión para acceder a esta página')
-    return redirect(url_for('home'))
+    return redirect(url_for('interfaz'))
 
 
 def member_required(f):
@@ -314,7 +314,7 @@ def member_required(f):
     def decorated_function(*args, **kwargs):
         if (current_user["role"] != 'member' or current_user["role"] != 'admin') and current_user["status"] == False:
             flash('No tienes permiso para acceder a esta página')
-            return render_template('home')
+            return render_template('interfaz')
         return f(*args, **kwargs)
     return decorated_function
 
@@ -417,7 +417,7 @@ def login():
                 print(current_user['role'])
 
                 flash('Has iniciado sesión correctamente')
-                return render_template("home.html", current_user=current_user)
+                return render_template("interfaz.html", current_user=current_user)
             else:
                 flash('Contraseña incorrecta')
                 return render_template("login.html", current_user=current_user)
@@ -581,15 +581,15 @@ def profile_edit():
         return render_template('profile_edit.html', current_user=current_user)
 
 
-@app.route('/profile/<_nickname>', methods=['GET'])
+@app.route('/profile/<string:_nickname>', methods=['GET'])
+@login_required
 def profile_user(_nickname):
     _user = User.query.filter_by(nickname=_nickname).first()
-
     if _user == None:
         flash('El usuario no existe')
-        return redirect(url_for('home'), 404)
+        return redirect(url_for('interfaz'), 404)
     else:
-        return render_template('profile.html', user=_user.serialize())
+        return render_template('profile.html', _nickname=_user.nickname, user=_user)
 
 
 @app.route('/lectures', methods=['GET'])
@@ -662,7 +662,7 @@ def contest(_title):
     object = Contest.query.filter_by(title=_title).first()
     if object == None:
         flash('El contest no existe')
-        return redirect(url_for('home'), 404)
+        return redirect(url_for('interfaz'), 404)
 
     problems = Problem.query.filter_by(contest_id=object.id).all()
 
