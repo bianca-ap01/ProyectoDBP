@@ -80,13 +80,37 @@ Sistema de gestión: Postgresql
     > exit
 ```
 
-### API, requests and responses
+### API Endpoints
 
-Se emplean requests para solicitar información ingresada en el formulario.
+| Método | Endpoint            | Descripción |
+|--------|---------------------|-------------|
+| GET    | /members            | Retorna una lista de todos los miembros junto con su información de usuario.|
+| POST   | /members            | No implementado en el código proporcionado. |
+| GET    | /logout             | Cierra la sesión del usuario actualmente conectado y redirige a la página de inicio. |
+| GET    | /profile/edit/      | Retorna la página para editar el perfil del usuario actualmente conectado. |
+| POST   | /profile/edit/      | Acepta los datos del formulario para actualizar el perfil del usuario actualmente conectado. |
+| GET    | /profile            | Retorna la página de perfil del usuario actualmente conectado. |
+| GET    | /lectures           | Retorna una lista de todas las lecturas. |
+| GET    | /lectures/<int:id>  | Retorna la página de una lectura específica. |
+| GET    | /lectures/<int:id>/edit | Retorna la página para editar una lectura específica. |
+| POST   | /lectures/<int:id>/edit | Acepta los datos del formulario para actualizar una lectura específica. |
+| GET    | /lectures/new       | Retorna la página para crear una nueva lectura. |
+| POST   | /lectures/new       | Acepta los datos del formulario para crear una nueva lectura. |
+| GET    | /contests/<_title>  | Retorna la página de un concurso específico. |
+| GET    | /contests           | Retorna una lista de todos los concursos. |
+| GET    | /contests/new       | Retorna la página para crear un nuevo concurso. |
+| POST   | /contests/new       | Acepta los datos del formulario para crear un nuevo concurso. |
+| GET    | /problems           | Retorna una lista de todos los problemas. |
+| GET    | /problems/new       | Retorna la página para crear un nuevo problema. |
+| POST   | /problems/new       | Acepta los datos del formulario para crear un nuevo problema. |
+| POST   | /problems/create    | Crea un nuevo problema basado en los datos enviados en formato JSON. |
+| GET    | /pendings           | No implementado en el código proporcionado. |
+| GET    | /users              | Retorna una lista de todos los usuarios. |
+| GET    | /board              | Retorna una lista de todos los miembros del consejo. |
+| GET    | /professors         | Retorna una lista de todos los profesores. |
+| GET    | /professors/new     | Retorna la página para registrar un nuevo profesor. |
+| POST   | /professors/new     | Acepta los datos del formulario para registrar un nuevo profesor. |
 
-Por implementar:
-
-Codeforces API: Codeforces es una de las pataformas más grandes de programación competitiva que tiene su propio API, el cual proporciona a la app la oportunidad de validar el usuario ingresado, conectar a problemas ya existentes, etc.
 
 ### Manejo de errores
 
