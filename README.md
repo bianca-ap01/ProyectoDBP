@@ -36,11 +36,15 @@ Se espera que esta página sea tomada como versión beta de la que se desarrolla
 ### Ejecución (script, host, etc)
 
 Nombre de la base de datos: dbCPC
-Para ejecutar, correr el siguiente comando en la terminal habiendo instalado las dependencias en requerimientos.txt `python server.py`
+Para ejecutar, correr el siguiente comando en la terminal:
+- pip install -r requerimientos.txt
+- `python server.py`
 
 ### API, requests and responses
 
 Se emplean requests para solicitar información ingresada en el formulario.
+
+Codeforces API: Codeforces es una de las pataformas más grandes de programación competitiva que tiene su propio API, el cual proporciona a la app la oportunidad de validar el usuario ingresado, conectar a problemas ya existentes, etc.
 
 ### Manejo de errores
 
