@@ -39,6 +39,7 @@ Sistema de gestión: Postgresql
 
 ```
     psql
+    > CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
     > create database "dbCPC";
     > \c dbCPC
 ```
