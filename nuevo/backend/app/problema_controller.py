@@ -31,6 +31,11 @@ def crear_problema():
             error_list.append('Cuestionario requerido')
         else:
             id_cuestionario = body.get('id_cuestionario')
+        
+        if 'respuesta' not in body:
+            error_list.append('Respuesta requerida')
+        else:
+            respuesta = body.get('respuesta')
 
         problema_db = Problema.query.filter(Problema.descripcion==descripcion).first()
 
@@ -38,25 +43,32 @@ def crear_problema():
             if problema_db.descripcion == descripcion:
                 error_list.append('Ya existe un problema con esta descripción')
         else:
-            problema = Problema(descripcion=descripcion, id_cuestionario=id_cuestionario)
-            problema.insert()
+            problema = Problema(descripcion=descripcion, id_cuestionario=id_cuestionario, answer = respuesta)
+            problema_id  = problema.insert()
+            
+        token = jwt.encode({
+                'problem_created_id': problema_id,
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)
+            }, config['SECRET_KEY'], config['ALGORYTHM'])        
     except Exception as e:
         print(e)
         error_list.append('Error al crear el problema')
         return_code = 500
-    finally:
-        if len(error_list) > 0:
-            return jsonify({
-                'success': False,
-                'error': return_code,
-                'message': error_list
-            }), return_code
-        else:
-            return jsonify({
-                'success': True,
-                'error': return_code,
-                'message': 'Problema creado exitosamente'
-            }), return_code
+
+    if len(error_list) > 0:
+        return jsonify({
+            'success': False,
+            'error': error_list,
+            'message': 'Error creando el problema'
+        })
+    elif return_code != 201:
+            abort(return_code)
+    else:
+        return jsonify({
+            'success': True,
+            'token': token,
+            'user_created_id': problema_id,
+        })
 
 
         

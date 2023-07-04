@@ -32,33 +32,35 @@ def crear_opcion():
         else:
             id_problema = body.get('id_problema')
 
-        if 'es_correcta' not in body:
-            error_list.append('Es correcta requerido')
-        else:
-            es_correcta = body.get('es_correcta')
-
         opcion_db = Opcion.query.filter(Opcion.descripcion==descripcion).first()
 
         if opcion_db is not None :
             if opcion_db.descripcion == descripcion:
-                error_list.append('Ya existe una opción con esta descripción')
+                error_list.append('Ya existe esta opción')
         else:
-            opcion = Opcion(descripcion=descripcion, id_problema=id_problema, answer=es_correcta)
-            opcion.insert()
+            opcion = Opcion(descripcion=descripcion, id_problema=id_problema)
+            opcion_id = opcion.insert()
+
+            token = jwt.encode({
+                'option_created_id': opcion_id,
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)
+            }, config['SECRET_KEY'], config['ALGORYTHM'])
     except Exception as e:
         print(e)
         error_list.append('Error al crear la opción')
         return_code = 500
-    finally:
-        if len(error_list) > 0:
-            return jsonify({
-                'success': False,
-                'error': return_code,
-                'message': error_list
-            }), return_code
-        else:
-            return jsonify({
-                'success': True,
-                'error': return_code,
-                'message': 'Opción creada exitosamente'
-            }), return_code
+
+    if len(error_list) > 0:
+        return jsonify({
+            'success': False,
+            'error': error_list,
+            'message': 'Error creando la opcion'
+        })
+    elif return_code != 201:
+            abort(return_code)
+    else:
+        return jsonify({
+            'success': True,
+            'token': token,
+            'user_created_id': opcion_id,
+        })

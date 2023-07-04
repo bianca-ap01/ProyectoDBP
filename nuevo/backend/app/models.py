@@ -152,6 +152,7 @@ class Problema(db.Model):
     cuestionario_id = db.Column(db.String(36), db.ForeignKey(
         'cuestionario.id'), nullable=False)
     statement = db.Column(db.String(500), nullable=False)
+    answer = db.Column(db.String(500), nullable=False)
     created_at = db.Column(db.DateTime(timezone=True),
                            nullable=False, server_default=db.text("now()"))
     modified_at = db.Column(db.DateTime(timezone=True),
@@ -164,7 +165,7 @@ class Problema(db.Model):
         self.statement = statement
 
     def __repr__(self):
-        return f"<Problema: {self.title}>"
+        return f"<Problema: {self.statement}>"
     
     def serialize(self):
         return {
@@ -203,32 +204,29 @@ class Opcion(db.Model):
     __tablename__ = 'opciones'
     id = db.Column(db.String(36), nullable=False,
                    default=lambda: str(uuid.uuid4()), primary_key=True)
-    problema_id= db.Column(db.String(36), db.ForeignKey(
-        'problema.id'), nullable=False)
-    descripction = db.Column(db.String(500), nullable=False)
-    answer = db.Column(db.Boolean(), default=False, nullable=False)
+    description = db.Column(db.String(500), nullable=False)
     created_at = db.Column(db.DateTime(timezone=True),
                            nullable=False, server_default=db.text("now()"))
     modified_at = db.Column(db.DateTime(timezone=True),
                             nullable=False, server_default=db.text("now()"))
-    cuestionario = db.relationship(
+    problema = db.relationship(
         'Problema', backref='opciones', lazy=True, secondary=problema_opcion)
 
     def __init__(self, description, problema_id, answer):
         self.problema_id = problema_id,
-        self.descripction = description,
+        self.description = description,
         self.answer = answer,
         self.created_at = datetime.utcnow(),
         self.modified_at = datetime.utcnow()
 
     def __repr__(self):
-        return f"<Opcion: {self.descripction}>"
+        return f"<Opcion: {self.description}>"
     
     def serialize(self):
         return {
             'id': self.id,
-            'descripction': self.descripction,
-            'answer': self.answer,
+            'description': self.description,
+            'problema': self.problema,
             'created_at': self.created_at,
             'modified_at': self.modified_at
         }
