@@ -27,6 +27,11 @@ def crear_cuestionario():
         else:
             title = body.get('title')
 
+        if 'num_prob' not in body:
+            error_list.append('Número de problemas requerido')
+        else:
+            num_prob = body.get('num_prob')
+
         cuestionario_db = Cuestionario.query.filter(Cuestionario.title==title).first()
 
         if cuestionario_db is not None :
@@ -36,7 +41,7 @@ def crear_cuestionario():
         if len(error_list) > 0:
             return_code = 400
         else:
-            cuestionario = Cuestionario(title=title)
+            cuestionario = Cuestionario(title=title, num_prob=num_prob)
             new_created_id= cuestionario.insert()
 
             token = jwt.encode({
@@ -105,7 +110,6 @@ def editar_cuestionario(_id):
 
 @cuestionario_bp.route('/cuestionarios', methods = ['GET'])
 def obtener_cuestionario():
-    error_list = []
     return_code = 201
     try:
         search_query = request.args.get('search', None)
@@ -120,7 +124,6 @@ def obtener_cuestionario():
 
         if not lista_cuestionarios:
             return_code = 404
-            error_list.append('No se encontraron cuestionarios')
 
     except Exception as e:
         print('e: ', e)
@@ -134,8 +137,40 @@ def obtener_cuestionario():
             'success': True,
             'cuestionarios': lista_cuestionarios 
         }), return_code
+    
 
+@cuestionario_bp.route('/cuestionarios/<_id>', methods = ['GET'])
+def obtener_cuestionario_id(_id):
+    return_code = 201
+    error_list = []
+    try:
+        cuestionario = Cuestionario.query.get(_id)
         
+        if cuestionario is None:
+            return_code = 404
+            error_list.append('Cuestionario inexistente')
+
+        if len(error_list) > 0:
+            return_code = 400
+
+    except Exception as e:
+        print('e: ', e)
+        return_code = 500
+
+    if return_code == 400:
+        return jsonify({
+            'success': False,
+            'errors': error_list,
+            'message': 'Error buscando el cuestionario'
+        })
+    elif return_code != 201:
+        abort(return_code)
+    else:
+        return jsonify({
+            'success': True,
+            'cuestionario': cuestionario
+        }), return_code
+
 
 
 
