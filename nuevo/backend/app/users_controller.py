@@ -21,4 +21,3 @@ def crear_usuario():
     return_code = 201
     try:
         body = request.get_json()
-
