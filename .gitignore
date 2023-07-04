@@ -9998,3 +9998,6 @@ nuevo/frontend/node_modules/css-minimizer-webpack-plugin/node_modules/ajv-keywor
 nuevo/frontend/node_modules/css-minimizer-webpack-plugin/node_modules/ajv-keywords/dist/keywords/instanceof.js
 nuevo/frontend/node_modules/css-minimizer-webpack-plugin/node_modules/ajv-keywords/dist/keywords/instanceof.js.map
 nuevo/frontend/node_modules/css-minimizer-webpack-plugin/node_modules/ajv-keywords/dist/keywords/oneRequired.d.ts
+virtual
+__pycache__
+.gitignore
