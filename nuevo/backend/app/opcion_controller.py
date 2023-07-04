@@ -40,12 +40,7 @@ def crear_opcion():
                 error_list.append('Ya existe esta opción')
         else:
             opcion = Opcion(descripcion=descripcion, id_problema=id_problema)
-            opcion_id = opcion.insert()
 
-            token = jwt.encode({
-                'option_created_id': opcion_id,
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)
-            }, config['SECRET_KEY'], config['ALGORYTHM'])
     except Exception as e:
         print(e)
         error_list.append('Error al crear la opción')
@@ -56,12 +51,9 @@ def crear_opcion():
             'success': False,
             'error': error_list,
             'message': 'Error creando la opcion'
-        })
+        }), return_code
     elif return_code != 201:
             abort(return_code)
     else:
-        return jsonify({
-            'success': True,
-            'token': token,
-            'user_created_id': opcion_id,
-        })
+        return jsonify({'id': opcion.id, 'success': True, 'message': 'Opcion creada satisfactoriamente'}), return_code
+

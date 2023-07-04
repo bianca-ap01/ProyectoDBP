@@ -44,12 +44,7 @@ def crear_problema():
                 error_list.append('Ya existe un problema con esta descripción')
         else:
             problema = Problema(descripcion=descripcion, id_cuestionario=id_cuestionario, answer = respuesta)
-            problema_id  = problema.insert()
-            
-        token = jwt.encode({
-                'problem_created_id': problema_id,
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)
-            }, config['SECRET_KEY'], config['ALGORYTHM'])        
+                 
     except Exception as e:
         print(e)
         error_list.append('Error al crear el problema')
@@ -60,15 +55,11 @@ def crear_problema():
             'success': False,
             'error': error_list,
             'message': 'Error creando el problema'
-        })
+        }), return_code
     elif return_code != 201:
             abort(return_code)
     else:
-        return jsonify({
-            'success': True,
-            'token': token,
-            'user_created_id': problema_id,
-        })
+        return jsonify({'id': problema.id, 'success': True, 'message': 'Problema creado satisfactoriamente'}), return_code
 
 
         

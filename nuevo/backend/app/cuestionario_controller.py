@@ -42,12 +42,7 @@ def crear_cuestionario():
             return_code = 400
         else:
             cuestionario = Cuestionario(title=title, num_prob=num_prob)
-            new_created_id= cuestionario.insert()
 
-            token = jwt.encode({
-                'user_created_id': new_created_id,
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)
-            }, config['SECRET_KEY'], config['ALGORYTHM'])
     except Exception as e:
         print('e: ', e)
         return_code = 500
@@ -57,15 +52,12 @@ def crear_cuestionario():
             'success': False,
             'errors': error_list,
             'message': 'Error creando el nuevo cuestionario'
-        })
+        }), return_code
     elif return_code != 201:
         abort(return_code)
     else:
-        return jsonify({
-            'success': True,
-            'token': token,
-            'user_created_id': new_created_id,
-        })
+        return jsonify({'id': cuestionario.id, 'success': True, 'message': 'Cuestionario creado satisfactoriamente'}), return_code
+
 
       
 @cuestionario_bp.route('/cuestionarios/<_id>', methods = ['PATCH'])
@@ -99,13 +91,13 @@ def editar_cuestionario(_id):
             'success': False,
             'errors': error_list,
             'message': 'Error modificando el título del cuestionario'
-        })
+        }), return_code
     elif return_code != 201:
         abort(return_code)
     else:
         return jsonify({
-            'success': True
-        })
+            'success': True, 'message': 'Cuestionario actualizado satisfactoriamente',
+        }), return_code
     
 
 @cuestionario_bp.route('/cuestionarios', methods = ['GET'])
@@ -162,7 +154,7 @@ def obtener_cuestionario_id(_id):
             'success': False,
             'errors': error_list,
             'message': 'Error buscando el cuestionario'
-        })
+        }), return_code
     elif return_code != 201:
         abort(return_code)
     else:
