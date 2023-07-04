@@ -1,5 +1,5 @@
 config = {
     'DATABASE': 'postgresql://postgres@localhost:5432/proyectodbp',
-    'SECRET_KEY': 'prubea123',
+    'SECRET_KEY': 'prueba123',
     'ALGORYTHM': 'HS256'
 }

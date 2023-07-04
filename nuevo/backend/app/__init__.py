@@ -29,4 +29,5 @@ def create_app(test_config=None):
                              'GET,PATCH,POST,DELETE,OPTIONS')
         response.headers.add('Access-Control-Max-Age', '10')
         return response
+    
     return app
