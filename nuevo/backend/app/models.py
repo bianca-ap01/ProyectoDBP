@@ -156,7 +156,7 @@ class Problema(db.Model):
                            nullable=False, server_default=db.text("now()"))
     modified_at = db.Column(db.DateTime(timezone=True),
                             nullable=False, server_default=db.text("now()"))
-    contest = db.relationship(
+    cuestionario = db.relationship(
         'Cuestionario', backref='problemas', lazy=True, secondary=cuestionario_problema)
 
     def __init__(self, statement, cuestionario_id):
@@ -196,7 +196,8 @@ class Problema(db.Model):
             print('e: ', e)
             db.session.rollback()
     
-problema_opcion = db.Table('problema_opcion', db.Column('problema_id', db.String(36), db.ForeignKey(), nullable=False), db.Column('opcion_id', db.String(36), db.ForeignKey('opciones.id'), nullable=False))
+problema_opcion = db.Table('problema_opcion', db.Column('problema_id', db.String(36), db.ForeignKey('problema.id'), nullable=False),
+                            db.Column('opcion_id', db.String(36), db.ForeignKey('opciones.id'), nullable=False))
 
 class Opcion(db.Model):
     __tablename__ = 'opciones'
@@ -210,7 +211,7 @@ class Opcion(db.Model):
                            nullable=False, server_default=db.text("now()"))
     modified_at = db.Column(db.DateTime(timezone=True),
                             nullable=False, server_default=db.text("now()"))
-    contest = db.relationship(
+    cuestionario = db.relationship(
         'Problema', backref='opciones', lazy=True, secondary=problema_opcion)
 
     def __init__(self, description, problema_id, answer):
