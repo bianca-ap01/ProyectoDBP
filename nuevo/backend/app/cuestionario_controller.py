@@ -12,12 +12,11 @@ import datetime
 from .models import Cuestionario
 from config.local import config
 
-users_bp = Blueprint('/cuestionarios', __name__)
+cuestionario_bp = Blueprint('/cuestionarios', __name__)
 
 
-
-@users_bp.route('/cuestionarios', methods = ['POST'])
-def crear_usuario():
+@cuestionario_bp.route('/cuestionarios', methods = ['POST'])
+def crear_cuestionario():
     error_list = []
     return_code = 201
     try:
@@ -65,22 +64,25 @@ def crear_usuario():
         })
 
       
-@users_bp.route('/cuestionarios/<_id>', methods = ['PATCH'])
-def crear_usuario(_id):
+@cuestionario_bp.route('/cuestionarios/<_id>', methods = ['PATCH'])
+def editar_cuestionario(_id):
     error_list = []
     return_code = 201
     try:
         cuestionario_db = Cuestionario.query.filter(Cuestionario.id==_id).first()
-        body = request.get_json()
+
+        if cuestionario_db is None:
+            error_list.append('No existe el cuestionario')
+        else:
+            body = request.get_json()
 
         if 'title' in body:
             cuestionario_db.title = body.get('title')
 
-        if cuestionario_db is None:
-            error_list.append('No existe el cuestionario')
-
         if len(error_list) > 0:
             return_code = 400
+
+        cuestionario_db.update()
         
 
     except Exception as e:
@@ -102,8 +104,8 @@ def crear_usuario(_id):
         })
     
 
-@users_bp.route('/cuestionarios', methods = ['GET'])
-def crear_usuario():
+@cuestionario_bp.route('/cuestionarios', methods = ['GET'])
+def obtener_cuestionario():
     error_list = []
     return_code = 201
     try:

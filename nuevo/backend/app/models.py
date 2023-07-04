@@ -141,6 +141,15 @@ class Cuestionario(db.Model):
             'created_at': self.created_at,
             'modified_at': self.modified_at
         }
+    def update(self):
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(sys.exc_info())
+            print('e: ', e)
+            db.session.rollback()
+        finally:
+            db.session.close()
 
 cuestionario_problema = db.Table('cuestionario_problema', db.Column('cuestionario_id', db.String(36), db.ForeignKey(
     'cuestionario.id')), db.Column('problema_id', db.String(36), db.ForeignKey('problemas.id')))
