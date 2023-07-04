@@ -9,7 +9,8 @@ from flask_cors import CORS
 from .utilities import allowed_file
 from .users_controller import users_bp
 from .problema_controller import problemas_bp
-# from .cuestionario_controller import cuestionarios_bp
+from .cuestionario_controller import cuestionario_bp
+from .opcion_controller import opciones_bp
 
 # from .authentication import authorize
 
@@ -23,7 +24,8 @@ def create_app(test_config=None):
         app.config['UPLOAD_FOLDER'] = 'static/usuarios'
         app.register_blueprint(users_bp)
         app.register_blueprint(problemas_bp)
-        # app.register_blueprint(cuestionarios_bp)
+        app.register_blueprint(cuestionario_bp)
+        app.register_blueprint(opciones_bp)
         setup_db(app, test_config['database_path'] if test_config else None)
         CORS(app, origins=['http://localhost:8080'])
 

@@ -12,6 +12,7 @@ import datetime
 from .models import Opcion
 from config.local import config
 
+
 opciones_bp = Blueprint('/opciones', __name__)
 
 @opciones_bp.route('/opciones', methods = ['POST'])

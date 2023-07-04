@@ -9,11 +9,11 @@ import sys
 db = SQLAlchemy()
 
 def setup_db(app, database_path):
-    app.config["SQLALCHEMY_DATABASE_URI"] = config["DATABASE"] if database_path is None else database_path
+    app.config["SQLALCHEMY_DATABASE_URI"] = config['DATABASE_URI'] if database_path is None else database_path
     db.app = app
     db.init_app(app)
-    db.create_all
-
+    db.create_all()
+    
 class Usuario(db.Model):
     __tablename__ = 'usuarios'
     id = db.Column(db.String(36), nullable=False,
@@ -26,12 +26,13 @@ class Usuario(db.Model):
     image = db.Column(db.String(500), nullable=True)
     hpassword = db.Column(db.String(1000), nullable=False, unique=False)
     status = db.Column(db.Boolean(), nullable=False, default=True)
+    cuestionarios = db.relationship('Cuestionario', backref = 'usuarios')
 
     created_at = db.Column(db.DateTime(timezone=True),
                            nullable=False, server_default=db.text("now()"))
     modified_at = db.Column(db.DateTime(timezone=True),
                             nullable=False, server_default=db.text("now()"))
-    board = db.relationship('Admin', backref='usuarios',
+    admin = db.relationship('Admin', backref='usuarios',
                             lazy='joined', uselist=False)
 
     def __init__(self, nickname, email, codeforces_handle, atcoder_handle, vjudge_handle, key):
@@ -110,8 +111,8 @@ class Admin(db.Model):
         return f"<Usuario ID: {self.usuario_id}>"
 
 
-usuario_cuestionario = db.Table('usuario_cuestionario', db.Column('usuario_id', db.String(36), db.ForeignKey(
-    'usuario.id')), db.Column('cuestionario_id', db.String(36), db.ForeignKey('cuestionarios.id')))
+# usuario_cuestionario = db.Table('usuario_cuestionario', db.Column('usuario_id', db.String(36), db.ForeignKey(
+#     'usuario.id'), nullable = False), db.Column('cuestionario_id', db.String(36), db.ForeignKey('cuestionario.id'), nullable  = False))
 
 class Cuestionario(db.Model):
     __tablename__ = 'cuestionarios'
@@ -122,14 +123,16 @@ class Cuestionario(db.Model):
                            nullable=False, server_default=db.text("now()"))
     modified_at = db.Column(db.DateTime(timezone=True),
                             nullable=False, server_default=db.text("now()"))
-    user = db.relationship(
-         'Usuario', backref='usuarios', lazy=True, secondary=usuario_cuestionario)
+    # usuario = db.relationship(
+    #      'Usuario', backref='cuestionarios', lazy=True, secondary=usuario_cuestionario)
+    usuario_id = db.Column(db.String(36), db.ForeignKey('usuarios.id'), nullable = False)
+    problemas = db.relationship('Problema', primaryjoin = "Cuestionario.id == Problema.cuestionario_id")
 
-    def __init__(self, title, link, platform, num_prob):
+
+    def __init__(self, title):
         self.title = title
-        self.link = link
-        self.platform = platform
-        self.num_prob = num_prob
+        self.created_at = datetime.utcnow()
+
 
     def __repr__(self):
         return f"<Cuestionario {self.title}>"
@@ -151,8 +154,8 @@ class Cuestionario(db.Model):
         finally:
             db.session.close()
 
-cuestionario_problema = db.Table('cuestionario_problema', db.Column('cuestionario_id', db.String(36), db.ForeignKey(
-    'cuestionario.id')), db.Column('problema_id', db.String(36), db.ForeignKey('problemas.id')))
+# cuestionario_problema = db.Table('cuestionario_problema', db.Column('cuestionario_id', db.String(36), db.ForeignKey(
+#     'cuestionario.id'), nullable = False), db.Column('problema_id', db.String(36), db.ForeignKey('problemas.id'), nullable = False))
 
 class Problema(db.Model):
     __tablename__ = 'problemas'
@@ -166,8 +169,13 @@ class Problema(db.Model):
                            nullable=False, server_default=db.text("now()"))
     modified_at = db.Column(db.DateTime(timezone=True),
                             nullable=False, server_default=db.text("now()"))
-    cuestionario = db.relationship(
-        'Cuestionario', backref='problemas', lazy=True, secondary=cuestionario_problema)
+    # cuestionario = db.relationship(
+    #     'Cuestionario', backref='problemas', lazy=True, secondary=cuestionario_problema)
+    cuestionario_id = db.Column(db.String(36), db.ForeignKey('cuestionarios.id'), nullable = False)
+    opciones = db.relationship('Opcion', backref='problemas',
+                            lazy='joined', uselist=False)
+
+
 
     def __init__(self, statement, cuestionario_id):
         self.cuestionario_id = cuestionario_id,
@@ -206,8 +214,8 @@ class Problema(db.Model):
             print('e: ', e)
             db.session.rollback()
     
-problema_opcion = db.Table('problema_opcion', db.Column('problema_id', db.String(36), db.ForeignKey('problema.id'), nullable=False),
-                            db.Column('opcion_id', db.String(36), db.ForeignKey('opciones.id'), nullable=False))
+# problema_opcion = db.Table('problema_opcion', db.Column('problema_id', db.String(36), db.ForeignKey('problema.id'), nullable=False),
+#                             db.Column('opcion_id', db.String(36), db.ForeignKey('opciones.id'), nullable=False))
 
 class Opcion(db.Model):
     __tablename__ = 'opciones'
@@ -218,13 +226,15 @@ class Opcion(db.Model):
                            nullable=False, server_default=db.text("now()"))
     modified_at = db.Column(db.DateTime(timezone=True),
                             nullable=False, server_default=db.text("now()"))
-    problema = db.relationship(
-        'Problema', backref='opciones', lazy=True, secondary=problema_opcion)
+    # problema = db.relationship(
+    #     'Problema', backref='opciones', lazy=True, secondary=problema_opcion)
+    problema_id = db.Column(db.String(36), db.ForeignKey('problemas.id'), nullable = False)
 
-    def __init__(self, description, problema_id, answer):
+
+
+    def __init__(self, description, problema_id):
         self.problema_id = problema_id,
         self.description = description,
-        self.answer = answer,
         self.created_at = datetime.utcnow(),
         self.modified_at = datetime.utcnow()
 
@@ -235,7 +245,6 @@ class Opcion(db.Model):
         return {
             'id': self.id,
             'description': self.description,
-            'problema': self.problema,
             'created_at': self.created_at,
             'modified_at': self.modified_at
         }

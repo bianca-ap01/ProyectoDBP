@@ -46,7 +46,6 @@ def crear_cuestionario():
     except Exception as e:
         print('e: ', e)
         return_code = 500
-
     
     if return_code == 400:
         return jsonify({
@@ -110,9 +109,10 @@ def obtener_cuestionario():
     return_code = 201
     try:
         search_query = request.args.get('search', None)
-        if search_query:
-            cuestionarios = Cuestionario.query.filter(Cuestionario.title.like('%{}%'.format(search_query))).all()
 
+        if search_query:
+            cuestionarios = Cuestionario.query.filter(
+                Cuestionario.title.like('%{}%'.format(search_query))).all()
             lista_cuestionarios = [cuestionario.serialize() for cuestionario in cuestionarios]
         else:
             cuestionarios = Cuestionario.query.all()
@@ -127,15 +127,15 @@ def obtener_cuestionario():
         return_code = 500
 
     
-    if return_code == 400:
-        return jsonify({
-            'success': False,
-            'errors': error_list,
-            'message': 'Error creando el nuevo cuestionario'
-        })
-    elif return_code != 201:
+    if return_code == 500:
         abort(return_code)
     else:
         return jsonify({
-            'success': True
-        })
+            'success': True,
+            'cuestionarios': lista_cuestionarios 
+        }), return_code
+
+        
+
+
+
