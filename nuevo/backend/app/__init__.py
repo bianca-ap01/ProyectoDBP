@@ -17,7 +17,7 @@ import sys
 def create_app(test_config=None):
     app = Flask(__name__)
     with app.app_context():
-        app.config['UPLOAD_FOLDER'] = 'static/employees'
+        app.config['UPLOAD_FOLDER'] = 'static/usuarios'
         app.register_blueprint(users_bp)
         setup_db(app, test_config['database_path'] if test_config else None)
         CORS(app, origins=['http://localhost:8080'])
