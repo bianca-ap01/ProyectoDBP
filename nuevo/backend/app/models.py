@@ -205,7 +205,7 @@ class Opcion(db.Model):
     problema_id= db.Column(db.String(36), db.ForeignKey(
         'problema.id'), nullable=False)
     descripction = db.Column(db.String(500), nullable=False)
-    solution = db.Column(db.Boolean(), default=False, nullable=False)
+    answer = db.Column(db.Boolean(), default=False, nullable=False)
     created_at = db.Column(db.DateTime(timezone=True),
                            nullable=False, server_default=db.text("now()"))
     modified_at = db.Column(db.DateTime(timezone=True),
@@ -213,10 +213,10 @@ class Opcion(db.Model):
     contest = db.relationship(
         'Problema', backref='opciones', lazy=True, secondary=problema_opcion)
 
-    def __init__(self, description, problema_id, solution):
+    def __init__(self, description, problema_id, answer):
         self.problema_id = problema_id,
         self.descripction = description,
-        self.solution = solution,
+        self.answer = answer,
         self.created_at = datetime.utcnow(),
         self.modified_at = datetime.utcnow()
 
@@ -227,7 +227,7 @@ class Opcion(db.Model):
         return {
             'id': self.id,
             'descripction': self.descripction,
-            'solution': self.solution,
+            'answer': self.answer,
             'created_at': self.created_at,
             'modified_at': self.modified_at
         }

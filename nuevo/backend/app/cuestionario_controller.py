@@ -11,12 +11,11 @@ import datetime
 
 from .models import Cuestionario
 from config.local import config
-from .token_authentication import authorize
 
 users_bp = Blueprint('/cuestionarios', __name__)
 
 
-@authorize
+
 @users_bp.route('/cuestionarios', methods = ['POST'])
 def crear_usuario():
     error_list = []
@@ -65,8 +64,7 @@ def crear_usuario():
             'user_created_id': new_created_id,
         })
 
-
-@authorize        
+      
 @users_bp.route('/cuestionarios/<_id>', methods = ['PATCH'])
 def crear_usuario(_id):
     error_list = []
