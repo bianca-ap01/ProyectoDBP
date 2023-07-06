@@ -1,4 +1,4 @@
 
 config = {
-    'DATABASE': 'postgresql://postgres@localhost:5432/mainproyectodbp',
+    'DATABASE': 'postgresql://postgres:1234@localhost:5432/mainproyectodbp',
 }
