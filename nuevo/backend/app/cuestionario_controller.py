@@ -2,23 +2,20 @@ from flask import (
     Blueprint,
     request,
     jsonify,
-    abort,
-    Response
+    abort
 )
 
-import jwt
-import datetime
-
 from .models import Cuestionario
+from .extensions import db
 from config.local import config
 
-cuestionario_bp = Blueprint('/cuestionarios', __name__)
+cuestionario_bp = Blueprint('cuestionarios', __name__)
 
-
-@cuestionario_bp.route('/cuestionarios', methods = ['POST'])
+@cuestionario_bp.route('/cuestionarios', methods=['POST'])
 def crear_cuestionario():
     error_list = []
     return_code = 201
+    cuestionario = None
     try:
         body = request.get_json()
 
@@ -42,11 +39,13 @@ def crear_cuestionario():
             return_code = 400
         else:
             cuestionario = Cuestionario(title=title, num_prob=num_prob)
+            db.session.add(cuestionario)
+            db.session.commit()
 
     except Exception as e:
         print('e: ', e)
         return_code = 500
-    
+
     if return_code == 400:
         return jsonify({
             'success': False,
@@ -58,12 +57,10 @@ def crear_cuestionario():
     else:
         return jsonify({'id': cuestionario.id, 'success': True, 'message': 'Cuestionario creado satisfactoriamente'}), return_code
 
-
-      
-@cuestionario_bp.route('/cuestionarios/<_id>', methods = ['PATCH'])
+@cuestionario_bp.route('/cuestionarios/<_id>', methods=['PATCH'])
 def editar_cuestionario(_id):
     error_list = []
-    return_code = 201
+    return_code = 200
     try:
         cuestionario_db = Cuestionario.query.filter(Cuestionario.id==_id).first()
 
@@ -77,32 +74,30 @@ def editar_cuestionario(_id):
 
         if len(error_list) > 0:
             return_code = 400
-
-        cuestionario_db.update()
-        
+        else:
+            db.session.commit()
 
     except Exception as e:
         print('e: ', e)
         return_code = 500
 
-    
     if return_code == 400:
         return jsonify({
             'success': False,
             'errors': error_list,
             'message': 'Error modificando el título del cuestionario'
         }), return_code
-    elif return_code != 201:
+    elif return_code != 200:
         abort(return_code)
     else:
         return jsonify({
             'success': True, 'message': 'Cuestionario actualizado satisfactoriamente',
         }), return_code
-    
 
-@cuestionario_bp.route('/cuestionarios', methods = ['GET'])
+@cuestionario_bp.route('/cuestionarios', methods=['GET'])
 def obtener_cuestionario():
-    return_code = 201
+    return_code = 200
+    lista_cuestionarios = []
     try:
         search_query = request.args.get('search', None)
 
@@ -121,7 +116,6 @@ def obtener_cuestionario():
         print('e: ', e)
         return_code = 500
 
-    
     if return_code == 500:
         abort(return_code)
     else:
@@ -129,12 +123,12 @@ def obtener_cuestionario():
             'success': True,
             'cuestionarios': lista_cuestionarios 
         }), return_code
-    
 
-@cuestionario_bp.route('/cuestionarios/<_id>', methods = ['GET'])
+@cuestionario_bp.route('/cuestionarios/<_id>', methods=['GET'])
 def obtener_cuestionario_id(_id):
-    return_code = 201
+    return_code = 200
     error_list = []
+    cuestionario = None
     try:
         cuestionario = Cuestionario.query.get(_id)
         
@@ -155,14 +149,10 @@ def obtener_cuestionario_id(_id):
             'errors': error_list,
             'message': 'Error buscando el cuestionario'
         }), return_code
-    elif return_code != 201:
+    elif return_code != 200:
         abort(return_code)
     else:
         return jsonify({
             'success': True,
-            'cuestionario': cuestionario
+            'cuestionario': cuestionario.serialize()
         }), return_code
-
-
-
-
