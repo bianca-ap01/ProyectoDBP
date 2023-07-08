@@ -10,6 +10,7 @@ import jwt
 import datetime
 
 from .models import Problema
+from .models import db  
 from config.local import config
 
 problemas_bp = Blueprint('/problemas', __name__)
@@ -18,6 +19,7 @@ problemas_bp = Blueprint('/problemas', __name__)
 def crear_problema():
     error_list = []
     return_code = 201
+    problema = None 
 
     try:
         body = request.get_json()
@@ -42,9 +44,13 @@ def crear_problema():
         if problema_db is not None :
             if problema_db.descripcion == descripcion:
                 error_list.append('Ya existe un problema con esta descripción')
-        else:
-            problema = Problema(descripcion=descripcion, id_cuestionario=id_cuestionario, answer = respuesta)
-                 
+
+        # Crear el problema solo si no hay errores
+        if len(error_list) == 0:
+            problema = Problema(descripcion=descripcion, id_cuestionario=id_cuestionario, answer=respuesta)
+            db.session.add(problema)
+            db.session.commit()
+
     except Exception as e:
         print(e)
         error_list.append('Error al crear el problema')
@@ -56,10 +62,7 @@ def crear_problema():
             'error': error_list,
             'message': 'Error creando el problema'
         }), return_code
-    elif return_code != 201:
-            abort(return_code)
+    elif return_code != 201 or problema is None:
+        abort(return_code)
     else:
         return jsonify({'id': problema.id, 'success': True, 'message': 'Problema creado satisfactoriamente'}), return_code
-
-
-        
