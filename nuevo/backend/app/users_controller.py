@@ -76,7 +76,7 @@ def crear_usuario():
     else:
         return jsonify({
             'success': True,
-            'user_created_id': user_created_id,
+            'errors': [],
         })
 
 

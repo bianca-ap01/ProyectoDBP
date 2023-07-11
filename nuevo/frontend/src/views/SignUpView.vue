@@ -59,6 +59,7 @@ export default {
     async signUpEvent() {
       const { success, errors = [] } = await signUp(this.user);
       if (success) {
+        this.isUserSubmitted = true;
         setTimeout(() => {
           this.$router.push("/login");
         }, 2000);
