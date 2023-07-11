@@ -16,7 +16,7 @@ export const signUp = async (user) => {
 export const logIn = async (user) => {
   try {
     const { data } = await axios.post(
-      BASE_URL + "/login",
+      "http://127.0.0.1:5000/usuarios/login",
       user
     );
     console.log("data: ", data);

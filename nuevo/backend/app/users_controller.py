@@ -17,7 +17,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 users_bp = Blueprint('/usuarios', __name__)
 
-@users_bp.route('/usuarios/', methods = ['POST'])
+@users_bp.route('/usuarios', methods = ['POST'])
 def crear_usuario():
     error_list = []
     return_code = 201
