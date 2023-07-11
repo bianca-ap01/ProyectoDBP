@@ -28,9 +28,9 @@ class Usuario(db.Model):
     nickname = db.Column(db.String(30), nullable=False, unique=True)
     email = db.Column(db.String(100), nullable=False, unique=True)
 
-    codeforces_handle = db.Column(db.String(30), nullable=True, unique=True)
-    atcoder_handle = db.Column(db.String(30), nullable=True, unique=True)
-    vjudge_handle = db.Column(db.String(30), nullable=True, unique=True)
+    codeforces_handle = db.Column(db.String(30), nullable=True, unique=False)
+    atcoder_handle = db.Column(db.String(30), nullable=True, unique=False)
+    vjudge_handle = db.Column(db.String(30), nullable=True, unique=False)
     
     hpassword = db.Column(db.String(1000), nullable=False, unique=False)
     
@@ -83,14 +83,14 @@ class Usuario(db.Model):
         try:
             db.session.add(self)
             db.session.commit()
-            user_created_id = self.id
+            created_id = self.id
         except Exception as e:
             print(sys.exc_info())
             print('e: ', e)
             db.session.rollback()
         finally:
             db.session.close()
-        return user_created_id
+        return created_id
     
     def update(self):
         try:

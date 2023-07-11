@@ -1,12 +1,8 @@
 <template>
   <div>
-    <h1 class="title">Sign Up</h1>
-    <div v-if="!isUserSubmitted">
-      <form @submit.prevent.stop="signUpEvent" class="form">
-        <div class="form-group">
-          <label class="label">Nombre de usuario:</label>
-          <input type="text" v-model="user.nickname" class="input" />
-        </div>
+    <h1 class="title">Log In</h1>
+    <div v-if="!isLogged">
+      <form @submit.prevent.stop="logInEvent" class="form">
         <div class="form-group">
           <label class="label">Correo:</label>
           <input type="text" v-model="user.email" class="input" />
@@ -15,55 +11,46 @@
           <label class="label">Contraseña:</label>
           <input type="password" v-model="user.password" class="input" />
         </div>
-        <div class="form-group">
-          <label class="label">Confirmar Contraseña:</label>
-          <input
-            type="password"
-            v-model="user.confirmation_password"
-            class="input"
-          />
-        </div>
         <button class="submit-button" type="submit">Submit</button>
       </form>
 
-      <div class="user-message-errors" v-if="errorLists.length > 0">
+      <div class="user-message-errors" v-if="errorList.length > 0">
         <ul>
-          <li v-for="error in errorLists" :key="error">{{ error }}</li>
+          <li v-for="error in errorList" :key="error">{{ error }}</li>
         </ul>
       </div>
     </div>
     <div v-else>
-      <span class="user-message-success">Registro existoso</span>
+      <span class="user-message-success">Ingreso existoso</span>
     </div>
   </div>
 </template>
 
 <script>
-import { signUp } from "@/services/users.api";
-
+import { logIn } from "@/services/users.api";
 export default {
-  name: "SignUp",
+  name: "LogIn",
   data() {
     return {
       user: {
-        username: "",
         email: "",
         password: "",
-        confirmation_password: "",
       },
-      errorLists: [],
-      isUserSubmitted: false,
+      errorList: [],
+      isLogged: false,
     };
   },
   methods: {
-    async signUpEvent() {
-      const { success, errors = [] } = await signUp(this.user);
+    async logInEvent() {
+      const { success, token = null, errors = [] } = await logIn(this.user);
       if (success) {
+        this.isLogged = true;
+        localStorage.setItem("TOKEN", token);
         setTimeout(() => {
-          this.$router.push("/login");
+          this.$router.push("/");
         }, 2000);
       } else {
-        this.errorLists = errors;
+        this.errorList = errors;
       }
     },
   },

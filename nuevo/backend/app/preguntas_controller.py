@@ -16,14 +16,14 @@ from .authentication import authorize
 preguntas_bp = Blueprint('/preguntas', __name__)
 
 
-@preguntas_bp.route('/preguntas/<_id>', methods = ['GET'])
+@preguntas_bp.route('/preguntas', methods = ['GET'])
 def listar_preguntas(_id):
     error_list = []
     return_code = 201
 
     try:
         preguntas_list = []
-        preguntas = Pregunta.query.filter(Pregunta.quiz_id == _id)
+        preguntas = Pregunta.query.all() #filter(Pregunta.quiz_id == _id)
         preguntas_list = [pregunta.serialize() for pregunta in preguntas]
 
         if not preguntas_list:

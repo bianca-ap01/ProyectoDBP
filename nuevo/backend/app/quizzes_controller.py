@@ -40,7 +40,7 @@ def obtener_quiz():
 
     if len(error_list) > 0:
         return jsonify({
-            'success': True,
+            'success': False,
             'errors': error_list
         }), return_code
     elif return_code != 201 and return_code != 404:

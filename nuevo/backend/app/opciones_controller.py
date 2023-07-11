@@ -6,8 +6,6 @@ from flask import (
     Response
 )
 
-import jwt
-import datetime
 
 from .models import Opcion
 from config.local import config
@@ -16,14 +14,14 @@ from .authentication import authorize
 
 opciones_bp = Blueprint('/opciones', __name__)
 
-@opciones_bp.route('/opciones/<_id>', methods = ['GET'])
+@opciones_bp.route('/opciones', methods = ['GET'])
 def listar_opciones(_id):
     error_list = []
     return_code = 201
 
     try:
         opciones_list = []
-        opciones = Opcion.query.filter(Opcion.pregunta_id == _id)
+        opciones = Opcion.query.all()#filter(Opcion.pregunta_id == _id)
 
         opciones_list = [opcion.serialize() for opcion in opciones]
 
