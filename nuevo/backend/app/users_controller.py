@@ -14,13 +14,17 @@ from config.local import config
 
 users_bp = Blueprint('/usuarios', __name__)
 
-
 @users_bp.route('/usuarios', methods = ['POST'])
 def crear_usuario():
     error_list = []
     return_code = 201
     try:
         body = request.get_json()
+
+        if 'email' not in body:
+            error_list.append('Email requerido')
+        else:
+            email = body.get('email')
 
         if 'username' not in body:
             error_list.append('Nombre de usuario requerido')
@@ -52,18 +56,18 @@ def crear_usuario():
         if len(error_list) > 0:
             return_code = 400
         else:
-            user = Usuario(username=username, password=password)
+            user = Usuario(username=username, password=password, email=email)
             user_created_id = user.insert()
 
             token = jwt.encode({
                 'user_created_id': user_created_id,
                 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)
             }, config['SECRET_KEY'], config['ALGORYTHM'])
+
     except Exception as e:
         print('e: ', e)
         return_code = 500
 
-    
     if return_code == 400:
         return jsonify({
             'success': False,
