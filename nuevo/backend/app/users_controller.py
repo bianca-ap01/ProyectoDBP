@@ -88,9 +88,9 @@ def login():
     try:
         body = request.get_json()
 
-        email = body.get("email")
+        nickname = body.get("nickname")
 
-        user = Usuario.query.filter(Usuario.email == email).first()
+        user = Usuario.query.filter(Usuario.nickname == nickname).first()
 
         if user is None:
             error_list.append("El usuario no existe")
@@ -102,7 +102,7 @@ def login():
                 if not check_password_hash(user.hpassword, password):
                     error_list.append("Usuario o contraseña incorrectos")
 
-            user = Usuario.query.filter(Usuario.email == email).first()
+            user = Usuario.query.filter(Usuario.nickname == nickname).first()
 
             token = jwt.encode({
                     'user_id': user.id,
@@ -132,14 +132,6 @@ def login():
         }), returned_code           
 
 
-
-# @users_bp.route("/usuarios", methods=["GET"])
-# @authorize
-# def get_current_user(current_user):
-#     return jsonify({
-#         "message": "successfully retrieved user profile",
-#         "data": current_user
-#     })
 
 # @users_bp.route("/usuarios", methods = ["PATCH"])
 # @authorize

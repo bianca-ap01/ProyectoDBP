@@ -1,9 +1,21 @@
 import { createStore } from "vuex";
+import createPersistedState from "vuex-persistedstate";
 
 export default createStore({
-  state: {},
+  state: {
+    isLogged: false,
+    username: "",
+  },
   getters: {},
-  mutations: {},
+  mutations: {
+    isLogged(state) {
+      state.isLogged = true;
+    },
+    setUsername(state, username) {
+      state.username = username;
+    },
+  },
   actions: {},
   modules: {},
+  plugins: [createPersistedState()],
 });

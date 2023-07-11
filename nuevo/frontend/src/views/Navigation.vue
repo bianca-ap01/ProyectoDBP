@@ -10,9 +10,11 @@
       <ul id="menu">
         <li><router-link to="/">Home</router-link></li>
 
-        <li v-if="isLogged">Sign Out</li>
+        <li v-on:click="logout" v-if="this.$store.state.isLogged">Log Out</li>
         <li v-else><router-link to="/signup">Sign up</router-link></li>
-        <li v-if="!isLogged"><router-link to="/login">Log In</router-link></li>
+        <li v-if="this.$store.state.isLogged == false">
+          <router-link to="/login">Log In</router-link>
+        </li>
       </ul>
     </div>
   </nav>
@@ -28,6 +30,12 @@ export default {
   },
   mounted() {
     console.log(localStorage.getItem("TOKEN"));
+  },
+  methods: {
+    logout() {
+      localStorage.clear();
+      this.$router.push({ name: "home" });
+    },
   },
 };
 </script>

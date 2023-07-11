@@ -4,8 +4,8 @@
     <div v-if="!isLogged">
       <form @submit.prevent.stop="logInEvent" class="form">
         <div class="form-group">
-          <label class="label">Correo:</label>
-          <input type="text" v-model="user.email" class="input" />
+          <label class="label">Nombre de usuario:</label>
+          <input type="text" v-model="user.nickname" class="input" />
         </div>
         <div class="form-group">
           <label class="label">Contraseña:</label>
@@ -33,7 +33,7 @@ export default {
   data() {
     return {
       user: {
-        email: "",
+        nickname: "",
         password: "",
       },
       errorList: [],
@@ -44,7 +44,8 @@ export default {
     async logInEvent() {
       const { success, token = null, errors = [] } = await logIn(this.user);
       if (success) {
-        this.isLogged = true;
+        this.$store.commit("isLogged");
+        this.$store.commit("setUsername", this.user.nickname);
         localStorage.setItem("TOKEN", token);
         setTimeout(() => {
           this.$router.push("/");

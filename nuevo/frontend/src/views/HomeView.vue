@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!isLogged">
+  <div v-if="this.$store.state.isLogged == false">
     <h1>Placeholder</h1>
     <span
       >Por favor <router-link to="/signup">Regístrese</router-link> o
@@ -7,7 +7,7 @@
     >
   </div>
   <div v-else>
-    <h1>Bienvenido {falta poner esta Contraseña}</h1>
+    <h1>Bienvenido {{ this.$store.state.username }}</h1>
   </div>
 </template>
 
