@@ -9,7 +9,7 @@ export const createOption = async (payload) => {
 
     return data;
   } catch (error) {
-    console.log("Error here:", here);
+    console.log("Error here:", error);
   }
 };
 
@@ -20,7 +20,7 @@ export const getOptions = async (payload) => {
 
     return data;
   } catch (error) {
-    console.log("Error here:", here);
+    console.log("Error here:", error);
   }
 };
 

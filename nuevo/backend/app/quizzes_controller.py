@@ -51,6 +51,45 @@ def obtener_quiz():
             'quizzes': quizzes_list
         }), return_code
 
+@quizzes_bp.route('/quizzes/<_title>', methods = ['GET'])
+def obtener_quiz_por_title(_title):
+    return_code = 201
+    error_list = []
+    try:
+        quiz = Quiz.query.filter(Quiz.title == _title).first()
+
+        if quiz is None:
+            return_code = 404
+            error_list.append('Quiz inexistente')
+        else:
+            quiz = quiz.serialize()
+            preguntas = Pregunta.query.filter(Pregunta.quiz_id == quiz['id']).all()
+            preguntas_list = [pregunta.serialize() for pregunta in preguntas]
+            quiz['preguntas'] = preguntas_list
+
+            for pregunta in preguntas_list:
+                opciones = Opcion.query.filter(Opcion.pregunta_id == pregunta['id']).all()
+                opciones_list = [opcion.serialize() for opcion in opciones]
+                pregunta['opciones'] = opciones_list
+
+    except Exception as e:
+        print('e: ', e)
+        return_code = 500
+        error_list.append('Error del servidor')
+    
+    if len(error_list) > 0:
+        return jsonify({
+            'success': False,
+            'errors': error_list
+        }), return_code
+
+    else:
+        return jsonify({
+            'success': True,
+            'title': quiz['title'],
+            'preguntas': quiz['preguntas'],
+            'max_score': quiz['max_score']
+        }), return_code
 
 @quizzes_bp.route('/quizzes', methods = ['POST'])
 @authorize

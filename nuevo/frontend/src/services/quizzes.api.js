@@ -20,3 +20,15 @@ export const getAllQuizzes = async (payload) => {
   //     console.log("Error here:", error);
   //   }
 };
+
+export const getQuizByName = async (payload, name) => {
+  try {
+    const path = "http://127.0.0.1:5000/quizzes/" + name;
+    const { data } = await axios.get(path, payload);
+    console.log("data", data);
+
+    return data;
+  } catch (error) {
+    console.log("Error here:", error);
+  }
+};
