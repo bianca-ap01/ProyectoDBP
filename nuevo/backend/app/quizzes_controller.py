@@ -74,10 +74,10 @@ def obtener_quiz_por_title(_title):
                 opciones_list = []
                 for opcion in opciones:
                     serialize_opcion = opcion.serialize()
-                    opciones_list.append(serialize_opcion['statement'])
+                    opciones_list.append(serialize_opcion['description'])
                     if not flag:
                         answer += 1
-                    flag = flag or serialize_opcion['is_correct'] 
+                    flag = flag or serialize_opcion['answer'] 
                 pregunta['answer'] = answer
                 pregunta['opciones'] = opciones_list
 
@@ -97,7 +97,7 @@ def obtener_quiz_por_title(_title):
             'success': True,
             'title': quiz['title'],
             'preguntas': quiz['preguntas'],
-            'max_score': quiz['max_score']
+            'max_score': quiz['score']
         }), return_code
 
 @quizzes_bp.route('/quizzes', methods = ['POST'])

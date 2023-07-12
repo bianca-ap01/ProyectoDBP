@@ -58,69 +58,44 @@
 </template>
 
 <script>
-import { getQuizByName } from "@/services/quizzes.api";
-
 export default {
-  name: "QuizComponent",
-  data() {
-    return {
-      quiz: getQuizByName(this.$route.params.name),
-      title: null,
-      max_score: null,
-      questions: [],
-      quizCompleted: false,
-      currentQuestion: 0,
-    };
-  },
-  computed: {
-    score() {
-      let value = 0;
-      this.questions.forEach((q) => {
-        if (q.selected !== null && q.answer === q.selected) {
-          console.log("correct");
-          value++;
-        }
-      });
-      return value;
+  name: "SolveQuiz",
+  components: {},
+  props: {
+    title: {
+      type: String,
+      required: true,
     },
-    getCurrentQuestion() {
-      let question = this.questions[this.currentQuestion];
-      question.index = this.currentQuestion;
-      return question;
+    max_score: {
+      type: Number,
+      required: true,
+    },
+    questions: {
+      type: Array,
+      required: true,
+    },
+    quizCompleted: {
+      type: Boolean,
+      required: true,
+    },
+    currentQuestion: {
+      type: Number,
+      required: true,
     },
   },
   methods: {
-    setAnswer(e) {
-      this.questions[this.currentQuestion].selected = e.target.value;
-      e.target.value = null;
+    setAnswer() {
+      this.$emit("set-answer", this.currentQuestion);
     },
     nextQuestion() {
-      if (this.currentQuestion < this.questions.length - 1) {
-        this.currentQuestion++;
-      } else {
-        this.quizCompleted = true;
-      }
+      this.$emit("next-question");
     },
-  },
-  created() {
-    this.title = this.quiz.title;
-    this.max_score = this.quiz.max_score;
-
-    for (let i = 0; i < this.quiz.questions.length; i++) {
-      let temp = {};
-      temp.question = this.quiz.questions[i].question;
-      temp.answer = this.quiz.questions[i].answer;
-
-      let options = [];
-      for (let j = 0; j < this.quiz.questions[i].options.length; j++) {
-        options.push(this.quiz.questions[i].options[j].option);
-      }
-      temp.options = options;
-
-      temp.selected = null;
-
-      this.questions.push(temp);
-    }
+    getCurrentQuestion() {
+      return this.questions[this.currentQuestion];
+    },
+    score() {
+      return this.questions.filter((q) => q.answer == q.selected).length;
+    },
   },
 };
 </script>
