@@ -13,19 +13,19 @@
         <div class="tabs is-centered is-fullwidth is-large">
           <ul>
             <li :class="{ 'is-active': step == 'name' }" @click="step = 'name'">
-              <a>Name</a>
+              <a>Nombre</a>
             </li>
             <li
               :class="{ 'is-active': step == 'questions' }"
               @click="step = 'questions'"
             >
-              <a>Questions</a>
+              <a>Preguntas</a>
             </li>
             <li
               :class="{ 'is-active': step == 'review' }"
               @click="step = 'review'"
             >
-              <a>Review</a>
+              <a>Vista previa</a>
             </li>
           </ul>
         </div>

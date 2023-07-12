@@ -5,12 +5,18 @@ import CrearQuiz from "@/components/CrearQuiz";
 import SignUp from "../views/SignUpView.vue";
 import Login from "../views/LogInView.vue";
 import Profile from "../views/ProfileView.vue";
+import QuizHome from "@/components/QuizHome";
 
 const routes = [
   {
     path: "/",
     name: "Home",
     component: HomeView,
+  },
+  {
+    path: "/quizzes",
+    name: "Surveys",
+    component: QuizHome,
   },
   {
     path: "/quizzes/:id",
