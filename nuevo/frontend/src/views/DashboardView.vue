@@ -1,7 +1,9 @@
 <template>
   <div>
     <div v-for="quiz in allQuizzes" :key="quiz.id">
-      <div>{{ quiz.title }}</div>
+      <div>
+        <router-link to="/quizzes/{{ quiz.id }}">{{ quiz.name }}</router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -23,9 +25,13 @@ export default {
   },
   methods: {
     async loadQuizzes() {
-      const { success, quizzes } = await fetchSurveys();
+      const { success, quizzes, message } = await fetchSurveys();
       if (success) {
+        console.log(quizzes);
         this.allQuizzes = quizzes;
+        console.log(this.allQuizzes);
+      } else {
+        console.log(message);
       }
     },
   },

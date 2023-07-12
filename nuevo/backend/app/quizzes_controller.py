@@ -13,22 +13,26 @@ def fetch_quizzes():
     quizzes = Quiz.query.all()
     return_code = 200
     try:
-        res = jsonify([q.to_dict() for q in quizzes])
+        res = [q.to_dict() for q in quizzes]
     except Exception as e:
         print('e: ', e)
         return_code = 500
         res = jsonify({
             'success': False,
-            'errors': ['Error del servidor']
+            'message': "Error del servidor"
         })
-    return res, return_code
+    return jsonify({
+        "success": True,
+        "quizzes": res,
+        "message": "Éxito obtentiendo quizzes"
+    })
 
-@quizzes_bp.route('/quizzes/<int:id>', methods = ['GET'])
+@quizzes_bp.route('/quizzes/<id>', methods = ['GET'])
 def obtener_quiz_por_title(id):
     quiz = Quiz.query.get(id)
     return jsonify(quiz.to_dict())
 
-@quizzes_bp.route('/quizzes/<int:id>', methods = ['PUT'])
+@quizzes_bp.route('/quizzes/<id>', methods = ['PUT'])
 def actualizar_quiz(id):
     data = request.get_json()
     for q in data["questions"]:
@@ -44,16 +48,19 @@ def crear_quiz():
     return_code = 201
     try:
         data = request.get_json()
-        quiz = Quiz(name=data['name'])
+        quiz = Quiz(title=data['name'])
         questions = []
         for q in data['questions']:
             question = Pregunta(text=q['question'])
             question.opciones = [Opcion(text=c) for c in q['choices']]
             questions.append(question)
         quiz.preguntas = questions
-        quiz.insert()
+        quiz.insert()    
     except Exception as e:
         print(e)
         error_list.append('Error al crear el quiz')
         return_code = 500
+    
+    
     return jsonify(quiz.to_dict()), 201
+
