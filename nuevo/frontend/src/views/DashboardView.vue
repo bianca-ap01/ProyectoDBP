@@ -2,7 +2,7 @@
   <div>
     <div v-for="quiz in allQuizzes" :key="quiz.id">
       <div>
-        <router-link :to="{ path: '/quizzes/' + quiz.id }">{{
+        <router-link :to="{ path: '/quizzes/Vue' /* + quiz.id */ }">{{
           quiz.name
         }}</router-link>
       </div>

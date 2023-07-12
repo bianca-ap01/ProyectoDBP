@@ -6,6 +6,7 @@ import SignUp from "../views/SignUpView.vue";
 import Login from "../views/LogInView.vue";
 import Profile from "../views/ProfileView.vue";
 import QuizHome from "@/components/QuizHome";
+import VueQuiz from "@/components/QuizVue";
 
 const routes = [
   {
@@ -48,6 +49,11 @@ const routes = [
     path: "/profile",
     name: "profile",
     component: Profile,
+  },
+  {
+    path: "/quizzes/Vue",
+    name: "Vue Quiz",
+    component: VueQuiz,
   },
 ];
 
