@@ -121,25 +121,11 @@ class Quiz(db.Model):
     id = db.Column(db.String(36), nullable=False,
                    default=lambda: str(uuid.uuid4()), primary_key=True)
     title = db.Column(db.String(50), nullable=False)
-    num_preg = db.Column(db.Integer, nullable = False)
-    max_score = db.Column(db.Integer, nullable = False, default = 20)
-    score = db.Column(db.Integer, nullable = True, default = 0)
-
     created_at = db.Column(db.DateTime(timezone=True),
                            nullable=False, server_default=db.text("now()"))
     modified_at = db.Column(db.DateTime(timezone=True),
                             nullable=False, server_default=db.text("now()"))
-
-    preguntas = db.relationship('Pregunta', backref = 'quizzes')
-
-    def __init__(self, title, num_preg, max_score, score=0):
-        self.title = title
-        self.num_preg = num_preg
-        self.max_score = max_score
-        self.score = score
-        self.created_at = datetime.utcnow()
-        self.modified_at = datetime.utcnow()
-
+    preguntas = db.relationship('Pregunta', backref = 'quizzes', lazy=False)
 
     def __repr__(self):
         return f"<Quiz {self.title}>"
@@ -153,6 +139,12 @@ class Quiz(db.Model):
             'created_at': self.created_at,
             'modified_at': self.modified_at
         }
+
+    def to_dict(self):
+      return dict(id=self.id,
+                  name=self.title,
+                  created_at=self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                  questions=[question.to_dict() for question in self.preguntas])
     
     def insert(self):
         try:
@@ -166,64 +158,30 @@ class Quiz(db.Model):
         finally:
             db.session.close()
         return created_id
-    
-    def update(self):
-        try:
-            self.modified_at = datetime.utcnow()
-            db.session.commit()
-        except Exception as e:
-            print(sys.exc_info())
-            print('e: ', e)
-            db.session.rollback()
-        finally:
-            db.session.close()
-    
-    def delete(self):
-        try:
-            preguntas = Pregunta.query.filter(Pregunta.quiz_id == self.id)
-            
-            for pregunta in preguntas:
-                pregunta.delete()
-
-            db.session.delete(self)
-            db.session.commit()
-        except Exception as e:
-            print(sys.exc_info())
-            print('e', e)
-            db.session.rollback()
-        finally:
-            db.session.close()
-
 
 class Pregunta(db.Model):
     __tablename__ = 'preguntas'
     id = db.Column(db.String(36), nullable=False,
                    default=lambda: str(uuid.uuid4()), primary_key=True)
-    statement = db.Column(db.String(500), nullable=False)
-    
-    max_score = db.Column(db.Integer, nullable = False, default = 0)
-    score = db.Column(db.Integer, nullable = True, default = 0)
-
+    text = db.Column(db.String(500), nullable=False)
     created_at = db.Column(db.DateTime(timezone=True),
                            nullable=False, server_default=db.text("now()"))
     modified_at = db.Column(db.DateTime(timezone=True),
                             nullable=False, server_default=db.text("now()"))
     
     quiz_id = db.Column(db.String(36), db.ForeignKey('quizzes.id'))
-    opciones = db.relationship('Opcion', backref = "preguntas")
-
-
-    def __init__(self, statement, quiz_id, max_score, score):
-        self.quiz_id = quiz_id
-        self.statement = statement
-        self.max_score = max_score
-        self.score = score
-        self.created_at = datetime.utcnow()
-        self.modified_at_at = datetime.utcnow()
+    opciones = db.relationship('Opcion', backref = "preguntas", lazy=False)
 
     def __repr__(self):
         return f"<Pregunta: {self.statement}>"
     
+    def to_dict(self):
+        return dict(id=self.id,
+                    text=self.text,
+                    created_at=self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                    quiz_id=self.quiz_id,
+                    choices=[choice.to_dict() for choice in self.opciones])
+
     def serialize(self):
         return {
             'id': self.id,
@@ -245,57 +203,26 @@ class Pregunta(db.Model):
         finally:
             db.session.close()
         return created_id
-    
-    def update(self):
-        try:
-            self.modified_at = datetime.utcnow()
-            db.session.commit()
-        except Exception as e:
-            print(sys.exc_info())
-            print('e: ', e)
-            db.session.rollback()
-        finally:
-            db.session.close()
-    
-    def delete(self):
-        try:
-            opciones = Opcion.query.filter(Opcion.pregunta_id == self.id)
-            for opcion in opciones:
-                opcion.delete()
-            
-            db.session.delete(self)
-            db.session.commit()
-        except Exception as e:
-            print(sys.exc_info())
-            print('e', e)
-            db.session.rollback()
-        finally:
-            db.session.close()
 
 
 class Opcion(db.Model):
     __tablename__ = 'opciones'
     id = db.Column(db.String(36), nullable=False,
                    default=lambda: str(uuid.uuid4()), primary_key=True)
-    description = db.Column(db.String(500), nullable=False)
-    answer  = db.Column(db.Boolean, nullable = False, default = False)
-    created_at = db.Column(db.DateTime(timezone=True),
-                           nullable=False, server_default=db.text("now()"))
-    modified_at = db.Column(db.DateTime(timezone=True),
-                            nullable=False, server_default=db.text("now()"))
-    pregunta_id = db.Column(db.String(36), db.ForeignKey('preguntas.id'))
+    text = db.Column(db.String(100), nullable=False)
+    selected = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    pregunta_id = db.Column(db.String, db.ForeignKey('preguntas.id'))
 
-
-    def __init__(self, description, pregunta_id, answer):
-        self.pregunta_id = pregunta_id,
-        self.description = description,
-        self.answer = answer
-        self.created_at = datetime.utcnow(),
-        self.modified_at = datetime.utcnow()
+    def to_dict(self):
+        return dict(id=self.id,
+                    text=self.text,
+                    created_at=self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                    question_id=self.pregunta_id)
 
     def __repr__(self):
         return f"<Opcion: {self.description}>"
-    
+
     def serialize(self):
         return {
             'id': self.id,
@@ -305,7 +232,6 @@ class Opcion(db.Model):
             'created_at': self.created_at,
             'modified_at': self.modified_at
         }
-
 
     def insert(self):
         try:
@@ -319,30 +245,6 @@ class Opcion(db.Model):
         finally:
             db.session.close()
         return created_id
-
-
-    def update(self):
-        try:
-            self.modified_at = datetime.utcnow()
-            db.session.commit()
-        except Exception as e:
-            print(sys.exc_info())
-            print('e: ', e)
-            db.session.rollback()
-        finally:
-            db.session.close()
-    
-    def delete(self):
-        try:
-            db.session.delete(self)
-            db.session.commit()
-        except Exception as e:
-            print(sys.exc_info())
-            print('e', e)
-            db.session.rollback()
-        finally:
-            db.session.close()
-
 
 class Imagen(db.Model):
     __tablename__ = "imagenes"
