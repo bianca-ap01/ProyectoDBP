@@ -1,12 +1,12 @@
 <template>
-  <div v-if="!user">
+  <div v-if="!isLogged">
     <h1>Placeholder</h1>
     <span
       >Por favor <router-link to="/signup">Regístrese</router-link> o
       <router-link to="/login">Ingrese</router-link></span
     >
   </div>
-  <div v-if="user">
+  <div v-if="isLogged">
     <h1>Bienvenido {{ user.nickname }}</h1>
   </div>
 </template>
@@ -17,19 +17,8 @@ import { mapGetters } from "vuex";
 export default {
   name: "HomeView",
   computed: {
-    ...mapGetters(["user"]),
+    ...mapGetters(["user", "isLogged"]),
   },
-  // data() {
-  //   return {
-  //     user: null,
-  //   };
-  // },
-  // async created() {
-  //   const { data, success } = await getUser();
-  //   if (success) {
-  //     this.user = data;
-  //   }
-  // },
 };
 </script>
 

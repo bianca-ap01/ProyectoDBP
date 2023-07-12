@@ -10,18 +10,20 @@
       <ul id="menu">
         <li><router-link to="/">Home</router-link></li>
         <li>
-          <router-link v-if="user" to="/dashboard">Dashboard</router-link>
+          <router-link v-if="isLogged" to="/dashboard">Dashboard</router-link>
         </li>
 
         <li>
-          <router-link v-if="user" to="/profile">Perfil</router-link>
+          <router-link v-if="isLogged" to="/profile">Perfil</router-link>
         </li>
 
-        <li v-if="user">
+        <li v-if="isLogged">
           <a @click="logout" href="javascript:void(0)">Log Out</a>
         </li>
-        <li v-if="!user"><router-link to="/signup">Sign up</router-link></li>
-        <li v-if="!user">
+        <li v-if="!isLogged">
+          <router-link to="/signup">Sign up</router-link>
+        </li>
+        <li v-if="!isLogged">
           <router-link to="/login">Log In</router-link>
         </li>
       </ul>
@@ -40,12 +42,13 @@ export default {
     logout() {
       localStorage.removeItem("TOKEN");
       localStorage.removeItem("user");
-      this.$store.dispatch("user", null);
+      this.$store.dispatch("isLogged", false);
+      this.$store.dispatch("user", "");
       this.$router.push("/");
     },
   },
   computed: {
-    ...mapGetters(["user"]),
+    ...mapGetters(["user", "isLogged"]),
   },
 };
 </script>

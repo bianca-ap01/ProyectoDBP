@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1 class="title">Log In</h1>
-    <div v-if="!user">
+    <div v-if="!isLogged">
       <form @submit.prevent.stop="logInEvent" class="form">
         <div class="form-group">
           <label class="label">Nombre de usuario:</label>
@@ -52,6 +52,7 @@ export default {
         localStorage.setItem("TOKEN", token);
         localStorage.setItem("user", user);
         this.$store.dispatch("user", user);
+        this.$store.dispatch("isLogged", true);
         this.$router.push("/");
       } else {
         this.errorList = errors;
@@ -59,7 +60,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["user"]),
+    ...mapGetters(["user", "isLogged"]),
   },
 };
 </script>
