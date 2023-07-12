@@ -9,6 +9,13 @@
 
       <ul id="menu">
         <li><router-link to="/">Home</router-link></li>
+        <li>
+          <router-link v-if="user" to="/dashboard">Dashboard</router-link>
+        </li>
+
+        <li>
+          <router-link v-if="user" to="/profile">Perfil</router-link>
+        </li>
 
         <li v-if="user">
           <a @click="logout" href="javascript:void(0)">Log Out</a>

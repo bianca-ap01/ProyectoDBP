@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-for="quiz in quizzes" :key="quiz.id">
+    <div v-for="quiz in allQuizzes" :key="quiz.id">
       <div>{{ quiz.title }}</div>
     </div>
   </div>

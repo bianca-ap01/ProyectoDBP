@@ -5,21 +5,21 @@
       <form @submit.prevent.stop="signUpEvent" class="form">
         <div class="form-group">
           <label class="label">Nombre de usuario:</label>
-          <input type="text" v-model="user.nickname" class="input" />
+          <input type="text" v-model="user_C.nickname" class="input" />
         </div>
         <div class="form-group">
           <label class="label">Correo:</label>
-          <input type="text" v-model="user.email" class="input" />
+          <input type="text" v-model="user_C.email" class="input" />
         </div>
         <div class="form-group">
           <label class="label">Contraseña:</label>
-          <input type="password" v-model="user.password" class="input" />
+          <input type="password" v-model="user_C.password" class="input" />
         </div>
         <div class="form-group">
           <label class="label">Confirmar Contraseña:</label>
           <input
             type="password"
-            v-model="user.confirmation_password"
+            v-model="user_C.confirmation_password"
             class="input"
           />
         </div>
@@ -36,6 +36,8 @@
       <span class="user-message-success">Registro existoso</span>
     </div>
   </div>
+  {{ user_C.email }}
+  {{ user_C.nickname }}
 </template>
 
 <script>
@@ -45,7 +47,7 @@ export default {
   name: "SignUp",
   data() {
     return {
-      user: {
+      user_C: {
         username: "",
         email: "",
         password: "",
@@ -57,7 +59,7 @@ export default {
   },
   methods: {
     async signUpEvent() {
-      const { success, errors = [] } = await signUp(this.user);
+      const { success, errors = [] } = await signUp(this.user_C);
       if (success) {
         this.isUserSubmitted = true;
         setTimeout(() => {

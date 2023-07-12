@@ -128,15 +128,16 @@ def login():
         return jsonify({
             "success": True,
             "token": token,
+            "user": user.serialize()
         }), returned_code           
 
 
 @users_bp.route("/usuarios/<token>", methods = ["GET"])
 def obtener_usuario_token(token):
-
     data = jwt.decode(token, config['SECRET_KEY'], config['ALGORYTHM'])
     user = Usuario.query.filter(Usuario.id == data['sub']).first()
-    return user.serialize()
+    if user is not None:
+        return user.serialize()
 
 
 

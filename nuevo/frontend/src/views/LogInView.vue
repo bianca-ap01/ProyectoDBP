@@ -42,10 +42,16 @@ export default {
   },
   methods: {
     async logInEvent() {
-      const { success, token = null, errors = [] } = await logIn(this.user_C);
+      const {
+        success,
+        token = null,
+        errors = [],
+        user = null,
+      } = await logIn(this.user_C);
       if (success) {
         localStorage.setItem("TOKEN", token);
-        this.$store.dispatch("user", this.user_C);
+        localStorage.setItem("user", user);
+        this.$store.dispatch("user", user);
         this.$router.push("/");
       } else {
         this.errorList = errors;
