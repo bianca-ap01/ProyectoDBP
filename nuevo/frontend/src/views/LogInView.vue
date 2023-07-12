@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import { logIn } from "@/services/users.api";
 export default {
   name: "LogIn",
@@ -50,6 +51,9 @@ export default {
         this.errorList = errors;
       }
     },
+  },
+  computed: {
+    ...mapGetters(["user"]),
   },
 };
 </script>

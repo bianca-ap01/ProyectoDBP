@@ -128,7 +128,6 @@ def login():
         return jsonify({
             "success": True,
             "token": token,
-            "errors": error_list,
         }), returned_code           
 
 
