@@ -4,7 +4,6 @@ import SolveQuiz from "@/components/SolveQuiz";
 import CrearQuiz from "@/components/CrearQuiz";
 import SignUp from "../views/SignUpView.vue";
 import Login from "../views/LogInView.vue";
-import Dashboard from "../views/DashboardView.vue";
 import Profile from "../views/ProfileView.vue";
 
 const routes = [
@@ -36,7 +35,8 @@ const routes = [
   {
     path: "/dashboard",
     name: "dashboard",
-    component: Dashboard,
+    component: () =>
+      import(/* webpackChunkName: "dashboard" */ "../views/DashboardView.vue"),
   },
   {
     path: "/profile",

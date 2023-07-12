@@ -56,6 +56,9 @@ export default createStore({
     isLogged(state, log) {
       state.isLogged = log;
     },
+    user(state, user) {
+      state.user = user;
+    },
   },
   actions: {
     user(context, user) {
