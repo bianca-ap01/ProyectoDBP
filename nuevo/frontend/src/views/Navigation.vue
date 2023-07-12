@@ -10,9 +10,7 @@
       <ul id="menu">
         <li><router-link to="/">Home</router-link></li>
 
-        <li v-on:click="logout" v-if="this.$store.state.isLogged">
-          <router-link to="/">Log Out</router-link>
-        </li>
+        <li v-on:click="logout" v-if="this.$store.state.isLogged">Log Out</li>
         <li v-else><router-link to="/signup">Sign up</router-link></li>
         <li v-if="this.$store.state.isLogged == false">
           <router-link to="/login">Log In</router-link>
@@ -35,11 +33,13 @@ export default {
   },
   methods: {
     logout() {
-      localStorage.clear();
+      localStorage.removeItem("TOKEN");
       this.$store.state.isLogged = false;
       this.$store.state.nickname = "";
 
-      this.$router.push({ name: "home" });
+      setTimeout(() => {
+        this.$router.push("/");
+      }, 2000);
     },
   },
 };
