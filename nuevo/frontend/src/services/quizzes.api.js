@@ -1,34 +1,19 @@
 import axios from "axios";
 
-const BASE_URL = "http://127.0.0.1:5000/quizzes";
+const BASE_URL = "http://127.0.0.1:5000";
 
-export const createQuiz = async (payload) => {
-  try {
-    const { data } = await axios.post(BASE_URL, payload);
-    console.log("data", data);
-  } catch (error) {
-    console.log("Error here:", error);
-  }
-};
+export function fetchSurveys() {
+  return axios.get(`${BASE_URL}/quizzes/`);
+}
 
-export const getAllQuizzes = async (payload) => {
-  //   try {
-  const { data } = await axios.get(BASE_URL, payload);
-  console.log("data", data);
-  return data;
-  //   } catch (error) {
-  //     console.log("Error here:", error);
-  //   }
-};
+export function fetchSurvey(surveyId) {
+  return axios.get(`${BASE_URL}/quizzes/${surveyId}/`);
+}
 
-export const getQuizByName = async (payload, name) => {
-  try {
-    const path = "http://127.0.0.1:5000/quizzes/" + name;
-    const { data } = await axios.get(path, payload);
-    console.log("data", data);
+export function saveSurveyResponse(surveyResponse) {
+  return axios.put(`${BASE_URL}/quizzes/${surveyResponse.id}/`, surveyResponse);
+}
 
-    return data;
-  } catch (error) {
-    console.log("Error here:", error);
-  }
-};
+export function postNewSurvey(survey) {
+  return axios.post(`${BASE_URL}/quizzes/`, survey);
+}

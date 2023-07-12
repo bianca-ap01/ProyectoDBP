@@ -1,5 +1,11 @@
 import { createStore } from "vuex";
-import createPersistedState from "vuex-persistedstate";
+
+import {
+  fetchSurveys,
+  fetchSurvey,
+  saveSurveyResponse,
+  postNewSurvey,
+} from "@/services/quizzes.api";
 
 export default createStore({
   state: {
@@ -24,8 +30,16 @@ export default createStore({
     },
   },
   mutations: {
-    user(state, user) {
-      state.user = user;
+    // isolated data mutations
+    setSurveys(state, payload) {
+      state.surveys = payload.surveys;
+    },
+    setSurvey(state, payload) {
+      const nQuestions = payload.survey.questions.length;
+      for (let i = 0; i < nQuestions; i++) {
+        payload.survey.questions[i].choice = null;
+      }
+      state.currentSurvey = payload.survey;
     },
 
     isLogged(state, log) {
@@ -40,6 +54,7 @@ export default createStore({
       context.commit("isLogged", isLogged);
     },
   },
-  modules: {},
-  plugins: [createPersistedState()],
+  getters: {},
 });
+
+export default store;

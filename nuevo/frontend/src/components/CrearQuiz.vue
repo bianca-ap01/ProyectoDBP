@@ -1,45 +1,144 @@
 <template>
   <div>
-    <h1 class="title">Crear Quiz</h1>
-    <div v-if="!isUserSubmitted">
-      <form @submit.prevent.stop="signUpEvent" class="form">
-        <div class="form-group">
-          <label class="label">Titulo: </label>
-          <input type="text" v-model="quiz.title" class="input" />
+    <section class="hero is-primary">
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <h2 class="title">{{ name }}</h2>
         </div>
-        <div class="form-group">
-          <label class="label">Número de preguntas:</label>
-          <input type="number" v-model="quiz.num_preg" class="input" />
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="tabs is-centered is-fullwidth is-large">
+          <ul>
+            <li :class="{ 'is-active': step == 'name' }" @click="step = 'name'">
+              <a>Name</a>
+            </li>
+            <li
+              :class="{ 'is-active': step == 'questions' }"
+              @click="step = 'questions'"
+            >
+              <a>Questions</a>
+            </li>
+            <li
+              :class="{ 'is-active': step == 'review' }"
+              @click="step = 'review'"
+            >
+              <a>Review</a>
+            </li>
+          </ul>
         </div>
-        <div class="form-group">
-          <label class="label">Puntaje máximo:</label>
-          <input type="password" v-model="quiz.max_score" class="input" />
+        <div class="columns">
+          <div class="column is-half is-offset-one-quarter">
+            <div class="name" v-show="step === 'name'">
+              <div class="field">
+                <label class="label is-large" for="name">Survey name:</label>
+                <div class="control">
+                  <input
+                    type="text"
+                    class="input is-large"
+                    id="name"
+                    v-model="name"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="questions" v-show="step === 'questions'">
+              <new-question v-on:questionComplete="appendQuestion" />
+            </div>
+
+            <div class="review" v-show="step === 'review'">
+              <ul>
+                <li
+                  class="question"
+                  v-for="(question, qIdx) in questions"
+                  :key="`question-${qIdx}`"
+                >
+                  <div class="title">
+                    {{ question.question }}
+                    <span
+                      class="icon is-medium is-pulled-right delete-question"
+                      @click.stop="removeQuestion(question)"
+                    >
+                      <i class="fa fa-times" aria-hidden="true"></i>
+                    </span>
+                  </div>
+                  <ul>
+                    <li
+                      v-for="(choice, cIdx) in question.choices"
+                      :key="`choice-${cIdx}`"
+                    >
+                      {{ cIdx + 1 }}. {{ choice }}
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+
+              <div class="control">
+                <a class="button is-large is-primary" @click="submitSurvey"
+                  >Submit</a
+                >
+              </div>
+            </div>
+          </div>
         </div>
-        <button class="submit-button" type="submit">Crear</button>
-      </form>
-    </div>
+      </div>
+    </section>
   </div>
 </template>
+
 <script>
-import { createQuiz } from "@/services/quizzes.api";
+// import CrearPregunta from "@/components/CrearPregunta";
 
 export default {
-  name: "CrearQuiz",
+  components: {},
   data() {
     return {
-      quiz: {
-        title: "",
-        num_preg: 0,
-        max_score: 0,
-      },
+      step: "name",
+      name: "",
+      questions: [],
     };
   },
   methods: {
-    createQuizLocal() {
-      createQuiz();
+    appendQuestion(newQuestion) {
+      this.questions.push(newQuestion);
+    },
+    removeQuestion(question) {
+      const idx = this.questions.findIndex(
+        (q) => q.question === question.question
+      );
+      this.questions.splice(idx, 1);
+    },
+    submitSurvey() {
+      this.$store
+        .dispatch("submitNewSurvey", {
+          name: this.name,
+          questions: this.questions,
+        })
+        .then(() => this.$router.push("/"))
+        .catch((error) => {
+          console.log("Error creating survey", error);
+          this.$router.push("/");
+        });
     },
   },
 };
 </script>
 
-<style></style>
+<style>
+.question {
+  margin: 10px 20px 25px 10px;
+}
+
+.delete-question {
+  cursor: pointer;
+  padding: 10px;
+}
+
+.delete-question:hover {
+  background-color: lightgray;
+  border-radius: 50%;
+}
+</style>

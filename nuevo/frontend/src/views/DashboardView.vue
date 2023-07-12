@@ -8,7 +8,7 @@
 
 <script>
 // @ is an alias to /src
-import { getAllQuizzes } from "@/services/quizzes.api";
+import { fetchSurveys } from "@/services/quizzes.api";
 
 export default {
   name: "HomeView",
@@ -23,7 +23,7 @@ export default {
   },
   methods: {
     async loadQuizzes() {
-      const { success, quizzes } = await getAllQuizzes();
+      const { success, quizzes } = await fetchSurveys();
       if (success) {
         this.allQuizzes = quizzes;
       }

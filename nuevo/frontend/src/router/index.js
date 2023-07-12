@@ -1,52 +1,47 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import SolveQuiz from "@/components/SolveQuiz";
+import CrearQuiz from "@/components/CrearQuiz";
+import SignUp from "../views/SignUpView.vue";
+import Login from "../views/LogInView.vue";
+import Dashboard from "../views/DashboardView.vue";
+import Profile from "../views/ProfileView.vue";
 
 const routes = [
   {
     path: "/",
-    name: "home",
+    name: "Home",
     component: HomeView,
+  },
+  {
+    path: "/quizzes/:id",
+    name: "Survey",
+    component: SolveQuiz,
+  },
+  {
+    path: "/quizzes/new",
+    name: "NewSurvey",
+    component: CrearQuiz,
+  },
+  {
+    path: "/login",
+    name: "Login",
+    component: Login,
   },
   {
     path: "/signup",
     name: "signup",
-    component: () =>
-      import(/* webpackChunkName: "signup" */ "../views/SignUpView.vue"),
+    component: SignUp,
   },
-
-  {
-    path: "/login",
-    name: "login",
-    component: () =>
-      import(/* webpackChunkName: "login" */ "../views/LogInView.vue"),
-  },
-
   {
     path: "/dashboard",
     name: "dashboard",
-    component: () =>
-      import(/* webpackChunkName: "dashboard" */ "../views/DashboardView.vue"),
+    component: Dashboard,
   },
-
   {
     path: "/profile",
     name: "profile",
-    component: () =>
-      import(/* webpackChunkName: "profile" */ "../views/ProfileView.vue"),
-  },
-
-  // {
-  //   path: "/quiz",
-  //   name: "quiz",
-  //   component: () =>
-  //     import(/* webpackChunkName: "quiz" */ "../views/QuizView.vue"),
-  // },
-
-  {
-    path: "/quiz/:name",
-    name: "quiz",
-    component: () =>
-      import(/* webpackChunkName: "quiz" */ "../views/QuizView.vue"),
+    component: Profile,
   },
 ];
 

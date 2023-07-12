@@ -1,218 +1,139 @@
 <template>
-  <main class="app">
-    <h1>{{ title }}</h1>
-
-    <section class="quiz" v-if="!quizCompleted">
-      <div class="quiz-info">
-        <span class="question">{{ getCurrentQuestion.question }}</span>
-        <span class="score">Score {{ score }}/{{ max_score }}</span>
+  <div>
+    <section class="hero is-primary">
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <h2 class="title">{{ survey.name }}</h2>
+        </div>
       </div>
-
-      <div class="options">
-        <label
-          v-for="(option, index) in getCurrentQuestion.options"
-          :key="index"
-          :for="'option' + index"
-          :class="`option ${
-            getCurrentQuestion.selected == index
-              ? index == getCurrentQuestion.answer
-                ? 'correct'
-                : 'wrong'
-              : ''
-          } ${
-            getCurrentQuestion.selected != null &&
-            index != getCurrentQuestion.selected
-              ? 'disabled'
-              : ''
-          }`"
-        >
-          <input
-            type="radio"
-            :id="'option' + index"
-            :name="getCurrentQuestion.index"
-            :value="index"
-            v-model="getCurrentQuestion.selected"
-            :disabled="getCurrentQuestion.selected"
-            @change="setAnswer"
-          />
-          <span>{{ option }}</span>
-        </label>
-      </div>
-
-      <button @click="nextQuestion" :disabled="!getCurrentQuestion.selected">
-        {{
-          getCurrentQuestion.index === questions.length - 1
-            ? "Finish"
-            : getCurrentQuestion.selected === null
-            ? "Select an option"
-            : "Next question"
-        }}
-      </button>
     </section>
 
-    <section v-else>
-      <h2>You have finished the quiz!</h2>
-      <p>Your score is {{ score }}/{{ questions.length }}</p>
+    <section class="section">
+      <div class="container">
+        <div class="columns">
+          <div class="column is-10 is-offset-1">
+            <div
+              v-for="(question, idx) in survey.questions"
+              v-bind:key="question.id"
+              v-show="currentQuestion === idx"
+            >
+              <div class="column is-offset-3 is-6">
+                <h4 class="title has-text-centered">{{ question.text }}</h4>
+              </div>
+              <div class="column is-offset-4 is-4">
+                <div class="control">
+                  <div
+                    v-for="choice in question.choices"
+                    v-bind:key="choice.id"
+                  >
+                    <label class="radio">
+                      <input
+                        type="radio"
+                        v-model="question.choice"
+                        name="choice"
+                        :value="choice.id"
+                      />
+                      {{ choice.text }}
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="column is-offset-one-quarter is-half">
+              <nav
+                class="pagination is-centered"
+                role="navigation"
+                aria-label="pagination"
+              >
+                <a
+                  class="pagination-previous"
+                  @click.stop="goToPreviousQuestion"
+                  ><i class="fa fa-chevron-left" aria-hidden="true"></i>
+                  &nbsp;&nbsp; Back</a
+                >
+                <a class="pagination-next" @click.stop="goToNextQuestion"
+                  >Next &nbsp;&nbsp;
+                  <i class="fa fa-chevron-right" aria-hidden="true"></i
+                ></a>
+              </nav>
+            </div>
+
+            <div class="has-text-centered">
+              <a
+                v-show="surveyComplete"
+                class="button is-large is-focused is-primary"
+                @click="handleSubmit"
+                >Submit</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
-  </main>
+  </div>
 </template>
 
 <script>
 export default {
-  name: "SolveQuiz",
-  components: {},
-  props: {
-    title: {
-      type: String,
-      required: true,
-    },
-    max_score: {
-      type: Number,
-      required: true,
-    },
-    questions: {
-      type: Array,
-      required: true,
-    },
-    quizCompleted: {
-      type: Boolean,
-      required: true,
-    },
-    currentQuestion: {
-      type: Number,
-      required: true,
-    },
+  data() {
+    return {
+      currentQuestion: 0,
+    };
+  },
+  beforeMount() {
+    this.$store.dispatch("loadSurvey", { id: parseInt(this.$route.params.id) });
   },
   methods: {
-    setAnswer() {
-      this.$emit("set-answer", this.currentQuestion);
+    goToNextQuestion() {
+      if (this.currentQuestion === this.survey.questions.length - 1) {
+        this.currentQuestion = 0;
+      } else {
+        this.currentQuestion++;
+      }
     },
-    nextQuestion() {
-      this.$emit("next-question");
+    goToPreviousQuestion() {
+      if (this.currentQuestion === 0) {
+        this.currentQuestion = this.survey.questions.lenth - 1;
+      } else {
+        this.currentQuestion--;
+      }
     },
-    getCurrentQuestion() {
-      return this.questions[this.currentQuestion];
+    handleSubmit() {
+      this.$store
+        .dispatch("addSurveyResponse")
+        .then(() => this.$router.push("/"));
     },
-    score() {
-      return this.questions.filter((q) => q.answer == q.selected).length;
+  },
+  computed: {
+    surveyComplete() {
+      if (this.survey.questions) {
+        const numQuestions = this.survey.questions.length;
+        const numCompleted = this.survey.questions.filter(
+          (q) => q.choice
+        ).length;
+        return numQuestions === numCompleted;
+      }
+      return false;
+    },
+    survey() {
+      return this.$store.state.currentSurvey;
+    },
+    selectedChoice: {
+      get() {
+        const question = this.survey.questions[this.currentQuestion];
+        return question.choice;
+      },
+      set(value) {
+        const question = this.survey.questions[this.currentQuestion];
+        this.$store.commit("setChoice", {
+          questionId: question.id,
+          choice: value,
+        });
+      },
     },
   },
 };
 </script>
 
-<style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Montserrat", sans-serif;
-}
-
-body {
-  background-color: #271c36;
-  color: #fff;
-}
-
-.app {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  height: 100vh;
-}
-
-h1 {
-  font-size: 2rem;
-  margin-bottom: 2rem;
-}
-
-.quiz {
-  background-color: #382a4b;
-  padding: 1rem;
-  width: 100%;
-  max-width: 640px;
-}
-
-.quiz-info {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-}
-
-.quiz-info .question {
-  color: #8f8f8f;
-  font-size: 1.25rem;
-}
-
-.quiz-info.score {
-  color: #fff;
-  font-size: 1.25rem;
-}
-
-.options {
-  margin-bottom: 1rem;
-}
-
-.option {
-  padding: 1rem;
-  display: block;
-  background-color: #271c36;
-  margin-bottom: 0.5rem;
-  border-radius: 0.5rem;
-  cursor: pointer;
-}
-
-.option:hover {
-  background-color: #2d213f;
-}
-
-.option.correct {
-  background-color: #2cce7d;
-}
-
-.option.wrong {
-  background-color: #ff5a5f;
-}
-
-.option:last-of-type {
-  margin-bottom: 0;
-}
-
-.option.disabled {
-  opacity: 0.5;
-}
-
-.option input {
-  display: none;
-}
-
-button {
-  appearance: none;
-  outline: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem 1rem;
-  background-color: #2cce7d;
-  color: #2d213f;
-  font-weight: 700;
-  text-transform: uppercase;
-  font-size: 1.2rem;
-  border-radius: 0.5rem;
-}
-
-button:disabled {
-  opacity: 0.5;
-}
-
-h2 {
-  font-size: 2rem;
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-p {
-  color: #8f8f8f;
-  font-size: 1.5rem;
-  text-align: center;
-}
-</style>
+<style></style>
