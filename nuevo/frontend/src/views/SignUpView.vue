@@ -36,8 +36,6 @@
       <span class="user-message-success">Registro existoso</span>
     </div>
   </div>
-  {{ user_C.email }}
-  {{ user_C.nickname }}
 </template>
 
 <script>

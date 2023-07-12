@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1 class="title">Log In</h1>
-    <div v-if="!isLogged">
+    <div v-if="!isUserSubmitted">
       <form @submit.prevent.stop="logInEvent" class="form">
         <div class="form-group">
           <label class="label">Nombre de usuario:</label>
@@ -14,9 +14,9 @@
         <button class="submit-button" type="submit">Submit</button>
       </form>
 
-      <div class="user-message-errors" v-if="errorList.length > 0">
+      <div class="user-message-errors" v-if="errorLists.length > 0">
         <ul>
-          <li v-for="error in errorList" :key="error">{{ error }}</li>
+          <li v-for="error in errorLists" :key="error">{{ error }}</li>
         </ul>
       </div>
     </div>
@@ -37,7 +37,8 @@ export default {
         nickname: "",
         password: "",
       },
-      errorList: [],
+      errorLists: [],
+      isUserSubmitted: false,
     };
   },
   methods: {
@@ -49,13 +50,16 @@ export default {
         user = null,
       } = await logIn(this.user_C);
       if (success) {
+        this.isUserSubmitted = true;
         localStorage.setItem("TOKEN", token);
         localStorage.setItem("user", user);
         this.$store.dispatch("user", user);
         this.$store.dispatch("isLogged", true);
-        this.$router.push("/");
+        setTimeout(() => {
+          this.$router.push("/");
+        }, 2000);
       } else {
-        this.errorList = errors;
+        this.errorLists = errors;
       }
     },
   },
