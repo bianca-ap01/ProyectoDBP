@@ -20,6 +20,8 @@ export default createStore({
       modified_at: "",
     },
     isLogged: false,
+    surveys: [],
+    currentSurvey: {},
   },
   getters: {
     user: (state) => {
@@ -41,7 +43,16 @@ export default createStore({
       }
       state.currentSurvey = payload.survey;
     },
-
+    setChoice(state, payload) {
+      const { questionId, choice } = payload;
+      const nQuestions = state.currentSurvey.questions.length;
+      for (let i = 0; i < nQuestions; i++) {
+        if (state.currentSurvey.questions[i].id === questionId) {
+          state.currentSurvey.questions[i].choice = choice;
+          break;
+        }
+      }
+    },
     isLogged(state, log) {
       state.isLogged = log;
     },
@@ -53,8 +64,22 @@ export default createStore({
     isLogged(context, isLogged) {
       context.commit("isLogged", isLogged);
     },
+    // asynchronous operations
+    loadSurveys(context) {
+      return fetchSurveys().then((response) => {
+        context.commit("setSurveys", { surveys: response.data });
+      });
+    },
+    loadSurvey(context, { id }) {
+      return fetchSurvey(id).then((response) => {
+        context.commit("setSurvey", { survey: response.data });
+      });
+    },
+    addSurveyResponse(context) {
+      return saveSurveyResponse(context.state.currentSurvey);
+    },
+    submitNewSurvey(context, survey) {
+      return postNewSurvey(survey, context);
+    },
   },
-  getters: {},
 });
-
-export default store;
