@@ -5,13 +5,13 @@
     <section class="quiz" v-if="!quizCompleted">
       <div class="quiz-info">
         <span class="question">{{ getCurrentQuestion.question }}</span>
-        <span class="score">Score {{ score }}/{{ questions.length }}</span>
+        <span class="score">Score {{ score }}/{{ max_score }}</span>
       </div>
 
       <div class="options">
         <label
           v-for="(option, index) in getCurrentQuestion.options"
-          :key="option.id"
+          :key="index"
           :for="'option' + index"
           :class="`option ${
             getCurrentQuestion.selected == index
@@ -33,17 +33,17 @@
             :value="index"
             v-model="getCurrentQuestion.selected"
             :disabled="getCurrentQuestion.selected"
-            @change="SetAnswer"
+            @change="setAnswer"
           />
           <span>{{ option }}</span>
         </label>
       </div>
 
-      <button @click="NextQuestion" :disabled="!getCurrentQuestion.selected">
+      <button @click="nextQuestion" :disabled="!getCurrentQuestion.selected">
         {{
-          getCurrentQuestion.index == questions.length - 1
+          getCurrentQuestion.index === questions.length - 1
             ? "Finish"
-            : getCurrentQuestion.selected == null
+            : getCurrentQuestion.selected === null
             ? "Select an option"
             : "Next question"
         }}
@@ -58,102 +58,71 @@
 </template>
 
 <script>
-import { ref, computed } from "vue";
 import { getQuizByName } from "@/services/quizzes.api";
 
 export default {
-  name: "QuizView",
-  components: {},
-  mounted() {
-    const quiz = getQuizByName(this.$route.params.name);
-    this.title = quiz.title;
-    this.questions = quiz.preguntas;
-    this.num_questions = quiz.preguntas.length;
-    this.max_score = quiz.max_score;
-    this.quizCompleted = false;
-
-    this.currentQuestion = computed(() => {
-      let question = this.questions[this.currentQuestion];
-      question.index = this.currentQuestion;
-      return question;
-    });
-    this.score = computed(() => {
+  name: "QuizComponent",
+  data() {
+    return {
+      quiz: getQuizByName(this.$route.params.name),
+      title: null,
+      max_score: null,
+      questions: [],
+      quizCompleted: false,
+      currentQuestion: 0,
+    };
+  },
+  computed: {
+    score() {
       let value = 0;
-      this.questions.map((q) => {
-        if (q.selected != null && q.answer == q.selected) {
+      this.questions.forEach((q) => {
+        if (q.selected !== null && q.answer === q.selected) {
           console.log("correct");
           value++;
         }
       });
       return value;
-    });
-  },
-  data() {
-    return {
-      title: "",
-      questions: [],
-      num_questions: 0,
-      max_score: 0,
-      quizCompleted: ref(false),
-      currentQuestion: ref(0),
-      score: ref(0),
-    };
+    },
+    getCurrentQuestion() {
+      let question = this.questions[this.currentQuestion];
+      question.index = this.currentQuestion;
+      return question;
+    },
   },
   methods: {
-    computed: {
-      score() {
-        let value = 0;
-        this.questions.map((q) => {
-          if (q.selected != null && q.answer == q.selected) {
-            console.log("correct");
-            value++;
-          }
-        });
-        return value;
-      },
-      getCurrentQuestion() {
-        let question = this.questions[this.currentQuestion];
-        question.index = this.currentQuestion;
-        return question;
-      },
+    setAnswer(e) {
+      this.questions[this.currentQuestion].selected = e.target.value;
+      e.target.value = null;
     },
-    NextQuestion() {
+    nextQuestion() {
       if (this.currentQuestion < this.questions.length - 1) {
         this.currentQuestion++;
       } else {
         this.quizCompleted = true;
       }
     },
-    SetAnswer() {
-      this.questions[this.currentQuestion].selected =
-        this.getCurrentQuestion.selected;
-    },
+  },
+  created() {
+    this.title = this.quiz.title;
+    this.max_score = this.quiz.max_score;
+
+    for (let i = 0; i < this.quiz.questions.length; i++) {
+      let temp = {};
+      temp.question = this.quiz.questions[i].question;
+      temp.answer = this.quiz.questions[i].answer;
+
+      let options = [];
+      for (let j = 0; j < this.quiz.questions[i].options.length; j++) {
+        options.push(this.quiz.questions[i].options[j].option);
+      }
+      temp.options = options;
+
+      temp.selected = null;
+
+      this.questions.push(temp);
+    }
   },
 };
-const questions = ref([
-  {
-    question: "What is Vue?",
-    answer: 0,
-    options: ["A framework", "A library", "A type of hat"],
-    selected: null,
-  },
-  {
-    question: "What is Vuex used for?",
-    answer: 2,
-    options: ["Eating a delicious snack", "Viewing things", "State management"],
-    selected: null,
-  },
-  {
-    question: "What is Vue Router?",
-    answer: 1,
-    options: [
-      "An ice cream maker",
-      "A routing library for Vue",
-      "Burger sauce",
-    ],
-    selected: null,
-  },
-]);
 </script>
 
 <style>

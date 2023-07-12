@@ -6,6 +6,8 @@ from flask import (
     Response
 )
 
+import jwt
+import datetime
 
 from .models import Opcion
 from config.local import config
@@ -14,14 +16,14 @@ from .authentication import authorize
 
 opciones_bp = Blueprint('/opciones', __name__)
 
-@opciones_bp.route('/opciones', methods = ['GET'])
+@opciones_bp.route('/opciones/<_id>', methods = ['GET'])
 def listar_opciones(_id):
     error_list = []
     return_code = 201
 
     try:
         opciones_list = []
-        opciones = Opcion.query.all()#filter(Opcion.pregunta_id == _id)
+        opciones = Opcion.query.filter(Opcion.pregunta_id == _id)
 
         opciones_list = [opcion.serialize() for opcion in opciones]
 
@@ -70,18 +72,8 @@ def crear_opcion():
         else:
             is_answer = body.get('is_answer')
 
-        opcion_db = Opcion.query.filter(Opcion.description==description).first()
-
-
-        #opciones = Opcion.query.filter(Opcion.pregunta_id == pregunta_id)
-
-        if opcion_db is not None:
-            if opcion_db.description.lower() == description.lower():
-                error_list.append('Ya existe esta opción')
-        else:
-            opcion = Opcion(description=description, pregunta_id = pregunta_id, answer = is_answer)
-
-            opcion_id = opcion.insert()
+        opcion = Opcion(description=description, pregunta_id = pregunta_id, answer = is_answer)
+        opcion_id = opcion.insert()
 
     except Exception as e:
         print(e)

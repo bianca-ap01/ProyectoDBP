@@ -69,7 +69,16 @@ def obtener_quiz_por_title(_title):
 
             for pregunta in preguntas_list:
                 opciones = Opcion.query.filter(Opcion.pregunta_id == pregunta['id']).all()
-                opciones_list = [opcion.serialize() for opcion in opciones]
+                answer = 0
+                flag = False
+                opciones_list = []
+                for opcion in opciones:
+                    serialize_opcion = opcion.serialize()
+                    opciones_list.append(serialize_opcion['statement'])
+                    if not flag:
+                        answer += 1
+                    flag = flag or serialize_opcion['is_correct'] 
+                pregunta['answer'] = answer
                 pregunta['opciones'] = opciones_list
 
     except Exception as e:
