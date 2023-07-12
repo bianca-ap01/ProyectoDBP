@@ -1,68 +1,6 @@
-<script setup>
-import { ref, computed } from "vue";
-
-const questions = ref([
-  {
-    question: "What is Vue?",
-    answer: 0,
-    options: ["A framework", "A library", "A type of hat"],
-    selected: null,
-  },
-  {
-    question: "What is Vuex used for?",
-    answer: 2,
-    options: ["Eating a delicious snack", "Viewing things", "State management"],
-    selected: null,
-  },
-  {
-    question: "What is Vue Router?",
-    answer: 1,
-    options: [
-      "An ice cream maker",
-      "A routing library for Vue",
-      "Burger sauce",
-    ],
-    selected: null,
-  },
-]);
-
-const quizCompleted = ref(false);
-const currentQuestion = ref(0);
-const score = computed(() => {
-  let value = 0;
-  questions.value.map((q) => {
-    if (q.selected != null && q.answer == q.selected) {
-      console.log("correct");
-      value++;
-    }
-  });
-  return value;
-});
-
-const getCurrentQuestion = computed(() => {
-  let question = questions.value[currentQuestion.value];
-  question.index = currentQuestion.value;
-  return question;
-});
-
-const SetAnswer = (e) => {
-  questions.value[currentQuestion.value].selected = e.target.value;
-  e.target.value = null;
-};
-
-const NextQuestion = () => {
-  if (currentQuestion.value < questions.value.length - 1) {
-    currentQuestion.value++;
-    return;
-  }
-
-  quizCompleted.value = true;
-};
-</script>
-
 <template>
   <main class="app">
-    <h1>The Quiz</h1>
+    <h1>{{ title }}</h1>
 
     <section class="quiz" v-if="!quizCompleted">
       <div class="quiz-info">
@@ -73,7 +11,7 @@ const NextQuestion = () => {
       <div class="options">
         <label
           v-for="(option, index) in getCurrentQuestion.options"
-          :key="index"
+          :key="option.id"
           :for="'option' + index"
           :class="`option ${
             getCurrentQuestion.selected == index
@@ -118,6 +56,105 @@ const NextQuestion = () => {
     </section>
   </main>
 </template>
+
+<script>
+import { ref, computed } from "vue";
+import { getQuizByName } from "@/services/quizzes.api";
+
+export default {
+  name: "QuizView",
+  components: {},
+  mounted() {
+    const quiz = getQuizByName(this.$route.params.name);
+    this.title = quiz.title;
+    this.questions = quiz.preguntas;
+    this.num_questions = quiz.preguntas.length;
+    this.max_score = quiz.max_score;
+    this.quizCompleted = false;
+
+    this.currentQuestion = computed(() => {
+      let question = this.questions[this.currentQuestion];
+      question.index = this.currentQuestion;
+      return question;
+    });
+    this.score = computed(() => {
+      let value = 0;
+      this.questions.map((q) => {
+        if (q.selected != null && q.answer == q.selected) {
+          console.log("correct");
+          value++;
+        }
+      });
+      return value;
+    });
+  },
+  data() {
+    return {
+      title: "",
+      questions: [],
+      num_questions: 0,
+      max_score: 0,
+      quizCompleted: ref(false),
+      currentQuestion: ref(0),
+      score: ref(0),
+    };
+  },
+  methods: {
+    computed: {
+      score() {
+        let value = 0;
+        this.questions.map((q) => {
+          if (q.selected != null && q.answer == q.selected) {
+            console.log("correct");
+            value++;
+          }
+        });
+        return value;
+      },
+      getCurrentQuestion() {
+        let question = this.questions[this.currentQuestion];
+        question.index = this.currentQuestion;
+        return question;
+      },
+    },
+    NextQuestion() {
+      if (this.currentQuestion < this.questions.length - 1) {
+        this.currentQuestion++;
+      } else {
+        this.quizCompleted = true;
+      }
+    },
+    SetAnswer() {
+      this.questions[this.currentQuestion].selected =
+        this.getCurrentQuestion.selected;
+    },
+  },
+};
+const questions = ref([
+  {
+    question: "What is Vue?",
+    answer: 0,
+    options: ["A framework", "A library", "A type of hat"],
+    selected: null,
+  },
+  {
+    question: "What is Vuex used for?",
+    answer: 2,
+    options: ["Eating a delicious snack", "Viewing things", "State management"],
+    selected: null,
+  },
+  {
+    question: "What is Vue Router?",
+    answer: 1,
+    options: [
+      "An ice cream maker",
+      "A routing library for Vue",
+      "Burger sauce",
+    ],
+    selected: null,
+  },
+]);
+</script>
 
 <style>
 * {

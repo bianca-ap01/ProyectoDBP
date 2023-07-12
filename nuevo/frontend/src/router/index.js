@@ -29,11 +29,18 @@ const routes = [
   },
 
   {
-    path: "/quiz/:name",
+    path: "/quiz",
     name: "quiz",
     component: () =>
       import(/* webpackChunkName: "quiz" */ "../views/QuizView.vue"),
   },
+
+  // {
+  //   path: "/quiz/:name",
+  //   name: "quiz",
+  //   component: () =>
+  //     import(/* webpackChunkName: "quiz" */ "../views/QuizView.vue"),
+  // },
 ];
 
 const router = createRouter({
