@@ -1,17 +1,17 @@
 <template>
-	<div>
-	  <QuizComponent name="my-quiz" />
-	</div>
-  </template>
-  
+  <div>
+    <SolveQuiz name="my-quiz" />
+  </div>
+</template>
+
 <script>
-  import QuizComponent from "@/components/QuizComponent";
-  
-  export default {
-	components: {
-	  QuizComponent,
-	},
-  };
+import SolveQuiz from "@/components/SolveQuiz";
+
+export default {
+  components: {
+    SolveQuiz,
+  },
+};
 </script>
-  
+
 <style></style>

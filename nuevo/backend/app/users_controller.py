@@ -133,10 +133,14 @@ def login():
 
 
 @users_bp.route("/usuarios/<token>", methods = ["GET"])
-def obtener_usuario(token): 
+def obtener_usuario_token(token):
+
     data = jwt.decode(token, config['SECRET_KEY'], config['ALGORYTHM'])
     user = Usuario.query.filter(Usuario.id == data['sub']).first()
-    return user.serialize();
+    return user.serialize()
+
+
+
 
 
 # @users_bp.route("/usuarios", methods = ["PATCH"])

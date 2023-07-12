@@ -18,11 +18,13 @@ export default {
   },
 
   async created() {
-    const response = await axios.get(
-      "http://127.0.0.1:5000/usuarios/" + localStorage.getItem("TOKEN")
-    );
-    this.$store.dispatch("user", response);
-    console.log(this.user);
+    if (localStorage.getItem("TOKEN") != null) {
+      const response = await axios.get(
+        "http://127.0.0.1:5000/usuarios" + "/" + localStorage.getItem("TOKEN")
+      );
+      this.$store.dispatch("user", response);
+      console.log(this.user);
+    }
   },
 };
 </script>
