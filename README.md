@@ -1,111 +1,86 @@
-# Proyecto DBP - 2023-1
+Competitive Programming Club Application - 2023-1
+Team Members
+Bladimir Alferez
+Bianca Aguinaga
+Alvaro García
+Mateo Llallire
+Project Description
+This project is a web application aimed at managing the data related to the Competitive Programming Club at our University. This includes registration of interested users, existing members, and club-related information.
 
-## Integrantes
+Key Objectives
+Public User Login: Develop a login mechanism for users who are neither club members nor part of the administrative team. This section will display information about getting started with competitive programming.
 
-- Bladimir Alferez
-- Bianca Aguinaga
-- Alvaro García
-- Mateo Llallire
+Club Member Login: Create a unique login for registered club members.
 
-### Descripción del proyecto
+Admin Login: Establish an administrator login for club members who are part of the club administration. The administrative interface will provide functionalities like activating, deactivating, and deleting members, teams, and other resources.
 
-Se trata de una aplicación web en la que se manejarán los datos del Club de Programación Competitiva de la universidad. Se incluye el registro de usuarios interesados, miembros e información sobre el club.
+Mission
+To create an interactive web application that facilitates user registration, team creation, and contest management for the Competitive Programming Club.
 
+Vision
+This project is intended to serve as a beta version of a more comprehensive web application that will be developed for the Competitive Programming Club in the near future.
 
-### Objetivos principales
+Additional Resources Used (Front-End, Back-End, Database)
+Flask-Admin: Utilized for the creation and management of administrative interfaces.
 
-- Crear un login para usuarios que no sean miembros, ni parte de la directiva. En ella se mostrará información para iniciarse en la programación competitiva.
-- Crear un login para miembros del club. 
-- Crear un login de tipo administrador para los miembros del club que sean parte de la directiva. Se pretende mostrar un display para activar, desactivar y borrar miembros, equipos, entre otros modelos.
+Flask-Login: Used for handling user sessions. Includes functions that define accessible routes for users.
 
-#### Misión
+Werkzeug: Used for password encryption.
 
-Crear una aplicación web interactiva que permita el registro de usuarios, equipos y contests para manejar la información del Club de Programación Competitiva.
+Execution (Script, Host, etc.)
+Database:
 
-#### Visión
+Management System: PostgreSQL
 
-Se espera que esta página sea tomada como versión beta de la que se desarrollará próximamente para el club.
-
-### Recursos adicionales empleados (front-end, back-end, base de datos)
-
-- Flask-Admin: 
-- Flask-Login: empleado para manejar las sesiones de los usuarios. Se usan funciones que indican las rutas a las que puede acceder un usuario
-- Werkzeug: se emplea para encriptar las contraseñas de los usuarios
-
-### Ejecución (script, host, etc)
-
-- Base de datos:
-
-Sistema de gestión: Postgresql
-
-```
+sql
+Copy code
     psql
     > CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
     > create database "dbCPC";
     > \c dbCPC
-```
+Script:
 
-- Script:
+Clone the Repository:
 
-1. Clonar el repositorio:
-    - SSH:  `git clone git@github.com:bianca-ap01/ProyectoDBP.git`
-    - HTTPS: `git clone https://github.com/bianca-ap01/ProyectoDBP.git`
+SSH: git clone git@github.com:bianca-ap01/ProyectoDBP.git
+HTTPS: git clone https://github.com/bianca-ap01/ProyectoDBP.git
+Create and Activate a Virtual Environment
 
-2. Crear y activar un ambiente virtual
-
-```
+bash
+Copy code
     python -m venv env
     source env/bin/activate
-```
-
-3. Installar las dependencias en el ambiente virtual
-
-```
-    pip install -r requerimientos.txt
-```
-
-4. Correr la aplicación
-
-```
+Install Dependencies in the Virtual Environment
+markdown
+Copy code
+    pip install -r requirements.txt
+Run the Application
+markdown
+Copy code
     python server.py
-```
+Creating Tables
 
-- Creación de tablas
-
-```
+bash
+Copy code
     export FLASK_APP=server.py
     flask shell
     > db.create_all()
     > db.session.commit()
     > exit
-```
+API, Requests, and Responses
+The application uses HTTP requests to retrieve information submitted in forms.
 
-### API, requests and responses
+Upcoming Implementation:
 
-Se emplean requests para solicitar información ingresada en el formulario.
+Codeforces API: Codeforces is one of the largest competitive programming platforms with a comprehensive API. This API can be used to validate user information, connect to existing problems, etc.
 
-Por implementar:
+Error Handling
+Successful and error cases are handled as follows:
 
-Codeforces API: Codeforces es una de las pataformas más grandes de programación competitiva que tiene su propio API, el cual proporciona a la app la oportunidad de validar el usuario ingresado, conectar a problemas ya existentes, etc.
-
-### Manejo de errores
-
-
-200: Caso exitoso
-400: Error en el ingreso de datos del formulario
-401: Contraseña incorrecta
+200: Success
+400: Form submission error
+401: Incorrect password
 404: Not Found
-500: Error del servidor
-
-
-
-
-### Manejo de errores
-
-
-200: Caso exitoso
-400: Error en el ingreso de datos del formulario
-401: Contraseña incorrecta
-404: Not Found
-500: Error del servidor
-
+500: Server Error
+Additional Notes
+Feel free to contribute or report any issues you encounter while using this application. Your feedback is greatly appreciated.
