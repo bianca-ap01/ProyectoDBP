@@ -10,9 +10,11 @@
       <ul id="menu">
         <li><router-link to="/">Home</router-link></li>
 
-        <li v-on:click="logout" v-if="this.$store.state.isLogged">Log Out</li>
-        <li v-else><router-link to="/signup">Sign up</router-link></li>
-        <li v-if="this.$store.state.isLogged == false">
+        <li v-if="user">
+          <a @click="logout" href="javascript:void(0)">Log Out</a>
+        </li>
+        <li v-if="!user"><router-link to="/signup">Sign up</router-link></li>
+        <li v-if="!user">
           <router-link to="/login">Log In</router-link>
         </li>
       </ul>
@@ -21,26 +23,21 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   name: "NavigationBar",
-  data() {
-    return {
-      isLogged: null,
-    };
-  },
-  mounted() {
-    console.log(localStorage.getItem("TOKEN"));
-  },
+  // mounted() {
+  //   console.log(localStorage.getItem("TOKEN"));
+  // },
   methods: {
     logout() {
       localStorage.removeItem("TOKEN");
-      this.$store.state.isLogged = false;
-      this.$store.state.nickname = "";
-
-      setTimeout(() => {
-        this.$router.push("/");
-      }, 2000);
+      this.$store.dispatch("user", null);
+      this.$router.push("/");
     },
+  },
+  computed: {
+    ...mapGetters(["user"]),
   },
 };
 </script>

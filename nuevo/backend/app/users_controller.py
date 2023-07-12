@@ -104,13 +104,13 @@ def login():
 
             user = Usuario.query.filter(Usuario.nickname == nickname).first()
 
-            token = jwt.encode({
-                    'user_id': user.id,
+            token = jwt.encode({                    
+                    'sub': user.id,
+                    'iat': datetime.datetime.utcnow(),
                     'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)
                 }, config['SECRET_KEY'], config['ALGORYTHM'])
 
     
-        
         if len(error_list) > 0:
             returned_code = 400
 
@@ -131,6 +131,12 @@ def login():
             "errors": error_list,
         }), returned_code           
 
+
+@users_bp.route("/usuarios/<token>", methods = ["GET"])
+def obtener_usuario(token): 
+    data = jwt.decode(token, config['SECRET_KEY'], config['ALGORYTHM'])
+    user = Usuario.query.filter(Usuario.id == data['sub']).first()
+    return user.serialize();
 
 
 # @users_bp.route("/usuarios", methods = ["PATCH"])

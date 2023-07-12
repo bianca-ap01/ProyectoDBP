@@ -1,21 +1,25 @@
 import { createStore } from "vuex";
-import createPersistedState from "vuex-persistedstate";
+//import createPersistedState from "vuex-persistedstate";
 
 export default createStore({
   state: {
-    isLogged: false,
-    username: "",
+    user: null,
   },
-  getters: {},
+  getters: {
+    user: (state) => {
+      return state.user;
+    },
+  },
   mutations: {
-    isLogged(state) {
-      state.isLogged = true;
-    },
-    setUsername(state, username) {
-      state.username = username;
+    user(state, user) {
+      state.user = user;
     },
   },
-  actions: {},
+  actions: {
+    user(context, user) {
+      context.commit("user", user);
+    },
+  },
   modules: {},
-  plugins: [createPersistedState()],
+  //plugins: [createPersistedState()],
 });

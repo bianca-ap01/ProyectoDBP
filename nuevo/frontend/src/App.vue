@@ -8,11 +8,21 @@
 </template>
 
 <script>
+import axios from "axios";
+
 import NavigationBar from "@/views/Navigation.vue";
 export default {
   name: "App",
   components: {
     NavigationBar,
+  },
+
+  async created() {
+    const response = await axios.get(
+      "http://127.0.0.1:5000/usuarios/" + localStorage.getItem("TOKEN")
+    );
+    this.$store.dispatch("user", response);
+    console.log(this.user);
   },
 };
 </script>

@@ -1,15 +1,15 @@
 <template>
   <div>
     <h1 class="title">Log In</h1>
-    <div v-if="!isLogged">
+    <div v-if="!user">
       <form @submit.prevent.stop="logInEvent" class="form">
         <div class="form-group">
           <label class="label">Nombre de usuario:</label>
-          <input type="text" v-model="user.nickname" class="input" />
+          <input type="text" v-model="user_C.nickname" class="input" />
         </div>
         <div class="form-group">
           <label class="label">Contraseña:</label>
-          <input type="password" v-model="user.password" class="input" />
+          <input type="password" v-model="user_C.password" class="input" />
         </div>
         <button class="submit-button" type="submit">Submit</button>
       </form>
@@ -32,24 +32,20 @@ export default {
   name: "LogIn",
   data() {
     return {
-      user: {
+      user_C: {
         nickname: "",
         password: "",
       },
       errorList: [],
-      isLogged: false,
     };
   },
   methods: {
     async logInEvent() {
-      const { success, token = null, errors = [] } = await logIn(this.user);
+      const { success, token = null, errors = [] } = await logIn(this.user_C);
       if (success) {
-        this.$store.commit("isLogged");
-        this.$store.commit("setUsername", this.user.nickname);
         localStorage.setItem("TOKEN", token);
-        setTimeout(() => {
-          this.$router.push("/");
-        }, 2000);
+        this.$store.dispatch("user", this.user_C);
+        this.$router.push("/");
       } else {
         this.errorList = errors;
       }
