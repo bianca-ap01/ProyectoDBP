@@ -35,12 +35,14 @@
 import { mapGetters } from "vuex";
 export default {
   name: "NavigationBar",
+
   // mounted() {
   //   console.log(localStorage.getItem("TOKEN"));
   // },
   methods: {
     logout() {
       localStorage.removeItem("TOKEN");
+      localStorage.setItem("TOKEN", "");
       localStorage.removeItem("user");
       this.$store.dispatch("isLogged", false);
       this.$store.dispatch("user", "");

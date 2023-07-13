@@ -1,5 +1,5 @@
 import { createStore } from "vuex";
-
+import createPersistedState from "vuex-persistedstate";
 import {
   fetchSurveys,
   fetchSurvey,
@@ -68,14 +68,14 @@ export default createStore({
       context.commit("isLogged", isLogged);
     },
     // asynchronous operations
-    loadSurveys(context) {
+    async loadSurveys(context) {
       return fetchSurveys().then((response) => {
-        context.commit("setSurveys", { surveys: response.data });
+        context.commit("setSurveys", { surveys: response });
       });
     },
-    loadSurvey(context, { id }) {
+    async loadSurvey(context, { id }) {
       return fetchSurvey(id).then((response) => {
-        context.commit("setSurvey", { survey: response.data });
+        context.commit("setSurvey", { survey: response });
       });
     },
     addSurveyResponse(context) {
@@ -85,4 +85,5 @@ export default createStore({
       return postNewSurvey(survey, context);
     },
   },
+  plugins: [createPersistedState()],
 });
