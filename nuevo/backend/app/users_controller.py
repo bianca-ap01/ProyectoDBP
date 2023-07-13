@@ -202,7 +202,7 @@ def actualizar_perfil():
                 error_list.append("Ya existe ese nombre de usuario de VJudge registrado")
             current_user.vjudge_handle = vjudge
 
-
+        res = current_user.serialize()
         if len(error_list) > 0:
             return_code = 400
         else:
@@ -225,7 +225,7 @@ def actualizar_perfil():
         return jsonify({
             'success': True,
             'message': "Usuario actualizado",
-            "user": current_user.serialize()
+            "user": res
         })
 
 
