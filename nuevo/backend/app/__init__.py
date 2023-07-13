@@ -27,7 +27,8 @@ def create_app(test_config=None):
         app.register_blueprint(quizzes_bp)
         app.register_blueprint(opciones_bp)
         setup_db(app, test_config['database_path'] if test_config else None)
-        CORS(app, origins=['http://localhost:8080'])
+        CORS(app, origins=['http://localhost:8080', "https://cataas.com/"
+])
 
     @app.after_request
     def after_request(response):

@@ -7,6 +7,7 @@ import Login from "../views/LogInView.vue";
 import Profile from "../views/ProfileView.vue";
 import QuizHome from "@/components/QuizHome";
 import VueQuiz from "@/components/QuizVue";
+import ProfileEdit from "@/views/ProfileEdit";
 
 const routes = [
   {
@@ -49,6 +50,11 @@ const routes = [
     path: "/profile",
     name: "profile",
     component: Profile,
+  },
+  {
+    path: "/profile/edit",
+    name: "ProfileEdit",
+    component: ProfileEdit,
   },
   {
     path: "/quizzes/Vue",

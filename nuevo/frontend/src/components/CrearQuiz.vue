@@ -1,4 +1,24 @@
 <template>
+  <!-- <div>
+    <div>
+      <h3>Título:</h3>
+      <input type="text" v-model="name" />
+    </div>
+
+    <div>
+      <h3>Preguntas:</h3>
+      <input type="text" v-model="questions.question" />
+      <a href="javascript:void(0)" @onclick="appendQuestion">Añadir pregunta</a>
+    </div>
+  </div>
+
+  {{ name }} -->
+
+  <!-- <ul>
+    <div v-for="q in questions" :key="questions.idx">
+      <li>{{ q }}</li>
+    </div>
+  </ul> -->
   <div>
     <section class="hero is-primary">
       <div class="hero-body">

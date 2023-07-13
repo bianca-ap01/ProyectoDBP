@@ -126,11 +126,6 @@ const NextQuestion = () => {
   font-family: "Montserrat", sans-serif;
 }
 
-body {
-  background-color: #271c36;
-  color: #fff;
-}
-
 .app {
   display: flex;
   flex-direction: column;
@@ -174,14 +169,14 @@ h1 {
 .option {
   padding: 1rem;
   display: block;
-  background-color: #271c36;
+  background-color: #c1a1ef;
   margin-bottom: 0.5rem;
   border-radius: 0.5rem;
   cursor: pointer;
 }
 
 .option:hover {
-  background-color: #2d213f;
+  background-color: #ceb9ef;
 }
 
 .option.correct {

@@ -102,7 +102,7 @@ class Usuario(db.Model):
             db.session.rollback()
         finally:
             db.session.close()
-    
+        
     
     def delete(self):
         try:
@@ -134,8 +134,6 @@ class Quiz(db.Model):
         return {
             'id': self.id,
             'title': self.title,
-            'num_preg': self.num_preg,
-            'score': self.score,
             'created_at': self.created_at,
             'modified_at': self.modified_at
         }
@@ -185,8 +183,7 @@ class Pregunta(db.Model):
     def serialize(self):
         return {
             'id': self.id,
-            'statement': self.statement,
-            'max_score': self.max_score,
+            'quiz_id': self.quiz_id,
             'created_at': self.created_at,
             'modified_at': self.modified_at
         }
@@ -212,6 +209,8 @@ class Opcion(db.Model):
     text = db.Column(db.String(100), nullable=False)
     selected = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    modified_at = db.Column(db.DateTime, default=datetime.utcnow)
+
     pregunta_id = db.Column(db.String, db.ForeignKey('preguntas.id'))
 
     def to_dict(self):
@@ -226,9 +225,7 @@ class Opcion(db.Model):
     def serialize(self):
         return {
             'id': self.id,
-            'description': self.description,
-            'created_at': self.created_at,
-            'answer': self.answer,
+            'pregunta_id': self.pregunta_id,
             'created_at': self.created_at,
             'modified_at': self.modified_at
         }

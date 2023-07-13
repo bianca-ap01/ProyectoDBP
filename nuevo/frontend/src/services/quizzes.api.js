@@ -48,7 +48,6 @@ export const fetchSurveys = async () => {
   try {
     const { data } = await axios.get(BASE_URL, CONFIG);
     console.log("data: ", data);
-
     return data;
   } catch (error) {
     console.log("error here: ", error);

@@ -22,7 +22,7 @@ def authorize(f):
             return jsonify({
                 'success': False,
                 'message': 'Unauthenticated user, please provide your credentials'
-            }), 401
+            }),401
         
         try:
             jwt.decode(token, config['SECRET_KEY'], config['ALGORYTHM'])

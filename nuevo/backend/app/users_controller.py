@@ -91,7 +91,6 @@ def login():
     try:
         body = request.get_json()
 
-        
         nickname = body.get("nickname")
 
         if not nickname:
@@ -114,13 +113,11 @@ def login():
 
                 user = Usuario.query.filter(Usuario.nickname == nickname).first()
 
-                token = jwt.encode({                    
-                        'sub': user.id,
-                        'iat': datetime.datetime.utcnow(),
-                        'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)
-                    }, config['SECRET_KEY'], config['ALGORYTHM'])
-
-        
+                token = jwt.encode({
+                    'user_created_id': user.id,
+                    'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+                }, config['SECRET_KEY'], config['ALGORYTHM'])
+            
         if len(error_list) > 0:
             returned_code = 400
 
@@ -146,17 +143,89 @@ def login():
         })          
 
 
-@users_bp.route("/usuarios/<token>", methods = ["GET"])
-def obtener_usuario_token(token):
-    data = jwt.decode(token, config['SECRET_KEY'], config['ALGORYTHM'])
-    user = Usuario.query.filter(Usuario.id == data['sub']).first()
-    if user is not None:
-        return user.serialize()
+# @users_bp.route("/usuarios/<token>", methods = ["GET"])
+# def obtener_usuario_token(token):
+#     data = jwt.decode(token, config['SECRET_KEY'], config['ALGORYTHM'])
+#     user = Usuario.query.filter(Usuario.id == data['sub']).first()
+#     if user is not None:
+#         return user.serialize()
 
 
 
+@users_bp.route('/usuarios', methods = ['PATCH'])
+@authorize
+def actualizar_perfil():
+    error_list = []
+    return_code = 201
+    try:
+        body = request.get_json()
+        if 'X-ACCESS-TOKEN' in request.headers:
+            token = request.headers['X-ACCESS-TOKEN']
+
+        data = jwt.decode(token, config['SECRET_KEY'], config['ALGORYTHM'])
+        current_user = Usuario.query.filter(Usuario.id == data["user_created_id"]).first()
+
+        if 'email' in body:
+            email = body.get('email')
+            user = Usuario.query.filter(Usuario.email == email).first()
+            if user is not None:
+                error_list.append("Ya existe este correo")
+            current_user.email = email
+
+        if 'nickname' in body:
+            nickname = body.get('nickname')
+            user = Usuario.query.filter(Usuario.nickname == nickname).first()
+            if user is not None :
+                error_list.append("Ya existe ese apodo")
+            current_user.nickname = nickname
+
+        if "codeforces_handle" in body:
+            cf = body.get("codeforces_handle")
+            user = Usuario.query.filter(Usuario.codeforces_handle == cf).first()
+            if user is not None :
+                error_list.append("Ya existe ese nombre de usuario de codeforces registrado")
+            current_user.codeforces_handle = cf
 
 
-# @users_bp.route("/usuarios", methods = ["PATCH"])
-# @authorize
-# def update_profile(current_user):
+        if "atcoder_handle" in body:
+            atcoder = body.get("atcoder_handle")
+            user = Usuario.query.filter(Usuario.atcoder_handle == atcoder).first()
+            if user is not None :
+                error_list.append("Ya existe ese nombre de usuario de AtCoder registrado")
+            current_user.atcoder_handle = atcoder
+
+
+        if "vjudge_handle" in body:
+            vjudge = body.get("vjudge_handle")
+            user = Usuario.query.filter(Usuario.vjudge_handle == vjudge).first()
+            if user is not None :
+                error_list.append("Ya existe ese nombre de usuario de VJudge registrado")
+            current_user.vjudge_handle = vjudge
+
+
+        if len(error_list) > 0:
+            return_code = 400
+        else:
+            current_user.update()
+
+    except Exception as e:
+        print('e: ', e)
+        return_code = 500
+
+    if return_code == 500:
+        return jsonify({
+           "success": False,
+           "message": "Error creando usuario" 
+        })
+    elif return_code == 400:
+        return jsonify({
+            'success': False,
+            'errors': error_list})
+    else:
+        return jsonify({
+            'success': True,
+            'message': "Usuario actualizado",
+            "user": current_user.serialize()
+        })
+
+

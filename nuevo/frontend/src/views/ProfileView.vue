@@ -1,5 +1,8 @@
 <template>
   <h1>Perfil</h1>
+  <div>
+    <button><router-link to="/profile/edit">Editar perfil</router-link></button>
+  </div>
   <table class="profile-table">
     <tr>
       <td>Nombre de usuario:</td>
@@ -24,6 +27,10 @@
     <tr>
       <td>Fecha de registro:</td>
       <td>{{ user.created_at }}</td>
+    </tr>
+    <tr>
+      <td>Última modificación:</td>
+      <td>{{ user.modified_at }}</td>
     </tr>
   </table>
 </template>
