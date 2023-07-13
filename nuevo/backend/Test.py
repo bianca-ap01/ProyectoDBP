@@ -79,4 +79,17 @@ class Test(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], False)
 
+    # def test_get_preguntas_success(self):
+    #     response = self.client.get('/preguntas')
+    #     data = json.loads(response.data)
+
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertEqual(data['success'], True)
+
+    def test_get_preguntas_fail(self):
+        response = self.client.get('/preguntas')
+        data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual(data['success'], True)
     

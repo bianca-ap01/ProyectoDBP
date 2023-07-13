@@ -17,7 +17,7 @@ preguntas_bp = Blueprint('/preguntas', __name__)
 
 
 @preguntas_bp.route('/preguntas', methods = ['GET'])
-def listar_preguntas(_id):
+def listar_preguntas(_id=None):
     error_list = []
     return_code = 201
 
