@@ -1,25 +1,64 @@
-import { createRouter, createWebHashHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import SolveQuiz from "@/components/SolveQuiz";
+import CrearQuiz from "@/components/CrearQuiz";
+import SignUp from "../views/SignUpView.vue";
+import Login from "../views/LogInView.vue";
+import Profile from "../views/ProfileView.vue";
+import QuizHome from "@/components/QuizHome";
+import VueQuiz from "@/components/QuizVue";
 
 const routes = [
   {
     path: "/",
-    name: "home",
+    name: "Home",
     component: HomeView,
   },
   {
-    path: "/about",
-    name: "about",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
+    path: "/quizzes",
+    name: "Surveys",
+    component: QuizHome,
+  },
+  {
+    path: "/quizzes/:id",
+    name: "Survey",
+    component: SolveQuiz,
+  },
+  {
+    path: "/quizzes/new",
+    name: "NewSurvey",
+    component: CrearQuiz,
+  },
+  {
+    path: "/login",
+    name: "Login",
+    component: Login,
+  },
+  {
+    path: "/signup",
+    name: "signup",
+    component: SignUp,
+  },
+  {
+    path: "/dashboard",
+    name: "dashboard",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+      import(/* webpackChunkName: "dashboard" */ "../views/DashboardView.vue"),
+  },
+  {
+    path: "/profile",
+    name: "profile",
+    component: Profile,
+  },
+  {
+    path: "/quizzes/Vue",
+    name: "Vue Quiz",
+    component: VueQuiz,
   },
 ];
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes,
 });
 
